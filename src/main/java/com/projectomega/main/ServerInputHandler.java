@@ -16,10 +16,15 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
         int size = bytebuf.readByte();
         int packetid = bytebuf.readByte();
         List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersByID(packetid);
-        if (packethandlers != null)
+        if (packethandlers != null) {
+            System.out.println("Packet Handlers found for "+packetid+" : "+packethandlers.size());
             for (PacketHandler packetHandler : packethandlers) {
-                packetHandler.call(bytebuf, size - 1, ctx.channel().remoteAddress());
+                packetHandler.call(bytebuf, size - 1, ctx.channel().remoteAddress(),ctx.channel());
             }
+        }else{
+            System.out.println("Failed to find packetHandler for packet "+packetid);
+        }
+
     }
 
     @Override

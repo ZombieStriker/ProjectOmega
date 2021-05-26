@@ -3,6 +3,7 @@ package com.projectomega.main;
 import com.projectomega.main.packets.PacketUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -14,6 +15,7 @@ import io.netty.handler.logging.LoggingHandler;
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ServerThread extends Thread {
 
@@ -21,6 +23,7 @@ public class ServerThread extends Thread {
     private String address;
 
     private ServerBootstrap b;
+    private Channel channel;
 
     private HashMap<SocketAddress, ChannelFuture> connections = new HashMap<SocketAddress, ChannelFuture>();
 
@@ -29,6 +32,10 @@ public class ServerThread extends Thread {
         this.start();
         port = 25565;
         address = "localhost";
+    }
+
+    public Channel getChannel() {
+        return channel;
     }
 
     @Override
@@ -56,6 +63,7 @@ public class ServerThread extends Thread {
             // Start the server.
             ChannelFuture f = b.bind(port).sync();
 
+            channel= f.channel();
             // Wait until the server socket is closed.
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {
@@ -65,23 +73,5 @@ public class ServerThread extends Thread {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-    }
-
-    public ChannelFuture getConnection(SocketAddress connection) {
-        return connections.get(connection);
-    }
-
-    public ChannelFuture createConnection(SocketAddress address) {
-        try {
-            Bootstrap bootstrap = new Bootstrap();
-            EventLoopGroup group = new NioEventLoopGroup();
-            bootstrap.group(group).channel(NioSocketChannel.class).handler(new ServerOutputHandler());
-            ChannelFuture channel = bootstrap.bind(address).sync();
-            connections.put(address,channel);
-            return channel;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

@@ -26,7 +26,7 @@ public class PacketUtil {
     }
 
     public static void writePacketToOutputStream(SocketAddress connection, OutboundPacket packet) {
-        byte[] bytes = new byte[256 * 9];
+        byte[] bytes = new byte[256 * 2];
         int length = 0;
         int offset = 2;
         length = (offset += ByteUtils.addShortToByteArray(bytes, offset, (short) packet.getType().getId()));
@@ -43,19 +43,11 @@ public class PacketUtil {
         }
         ByteUtils.addByteToByteArray(bytes, 0, (byte) length);
         ByteBuf bytebuf = Unpooled.buffer();
-        for (int i = 0; i < bytes.length; i++) {
+        for (int i = 0; i < length; i++) {
             bytebuf.writeByte(bytes[i]);
         }
-
-
-        ChannelFuture channel = server.getConnection(connection);
-        if (channel == null) {
-            channel = server.createConnection(connection);
-        }
         try {
-            channel.sync().channel().writeAndFlush(bytebuf);
-            channel.await(1L, TimeUnit.MILLISECONDS);
-            channel.sync();
+            server.getChannel().writeAndFlush(bytebuf).sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -2,11 +2,13 @@ package com.projectomega.main.game.packetlogic;
 
 import com.projectomega.main.packets.*;
 
+import java.nio.channels.Channel;
+
 public class SendMOTDPacketLogic extends PacketListener {
 
     @Override
     public void onCall(InboundPacket packet) {
-        System.out.println(packet.getAddress()+"|"+packet.getData(0));
+        System.out.println(packet.getAddress()+"|"+packet.getData(0)+"|"+packet.getData(1)+"|"+packet.getData(2));
         OutboundPacket outboundPacket = new OutboundPacket(PacketType.STATUS_PING,new Object[]{"{\n" +
                 "    \"version\": {\n" +
                 "        \"name\": \"1.8.7\",\n" +
