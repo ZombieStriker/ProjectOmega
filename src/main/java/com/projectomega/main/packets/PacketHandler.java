@@ -2,6 +2,7 @@ package com.projectomega.main.packets;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.net.SocketAddress;
 
@@ -13,9 +14,10 @@ public abstract class PacketHandler {
         this.type = type;
     }
 
-    public abstract void call(ByteBuf byteBuf, int packetsize, SocketAddress socketAddress, Channel channel);
 
     public PacketType getPacketType() {
         return type;
     }
+
+    public abstract void call(ByteBuf bytebuf, int i, ChannelHandlerContext ctx);
 }

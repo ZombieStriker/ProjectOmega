@@ -1,19 +1,14 @@
 package com.projectomega.main.packets;
 
 import com.projectomega.main.ServerThread;
-import com.projectomega.main.packets.types.Packet_Handshake;
+import com.projectomega.main.packets.types.PacketHandshake;
+import com.projectomega.main.packets.types.PacketPing;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 
-import java.net.SocketAddress;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class PacketUtil {
 
@@ -21,11 +16,12 @@ public class PacketUtil {
     private static ServerThread server;
 
     public static void init(ServerThread serverThread) {
-        handlers.put(PacketType.HANDSHAKE, new ArrayList<>(Arrays.asList(new Packet_Handshake())));
+        handlers.put(PacketType.HANDSHAKE, new ArrayList<>(Arrays.asList(new PacketHandshake())));
+        handlers.put(PacketType.HANDSHAKE_PING, new ArrayList<>(Arrays.asList(new PacketPing())));
         server = serverThread;
     }
 
-    public static void writePacketToOutputStream(SocketAddress connection, OutboundPacket packet) {
+    public static void writePacketToOutputStream(Channel connection, OutboundPacket packet) {
         byte[] bytes = new byte[256 * 2];
         int length = 0;
         int offset = 2;
@@ -47,7 +43,7 @@ public class PacketUtil {
             bytebuf.writeByte(bytes[i]);
         }
         try {
-            server.getChannel().writeAndFlush(bytebuf).sync();
+           connection.writeAndFlush(bytebuf).sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

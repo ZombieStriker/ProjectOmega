@@ -19,7 +19,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
         if (packethandlers != null) {
             System.out.println("Packet Handlers found for "+packetid+" : "+packethandlers.size());
             for (PacketHandler packetHandler : packethandlers) {
-                packetHandler.call(bytebuf, size - 1, ctx.channel().remoteAddress(),ctx.channel());
+                packetHandler.call(bytebuf, size - 1, ctx);
             }
         }else{
             System.out.println("Failed to find packetHandler for packet "+packetid);

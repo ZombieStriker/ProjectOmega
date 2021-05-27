@@ -19,7 +19,7 @@ public class Core extends Thread {
             long start = System.currentTimeMillis();
             for (Player player : players) {
                 for (OutboundPacket packet : player.getOutgoingPackets()) {
-                    PacketUtil.writePacketToOutputStream(player.getConnection(), packet);
+                    //PacketUtil.writePacketToOutputStream(player.getConnection(), packet);
                 }
                 player.clearPackets();
             }

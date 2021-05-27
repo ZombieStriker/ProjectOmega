@@ -23,7 +23,7 @@ public class ServerThread extends Thread {
     private String address;
 
     private ServerBootstrap b;
-    private Channel channel;
+    private static Channel channel;
 
     private HashMap<SocketAddress, ChannelFuture> connections = new HashMap<SocketAddress, ChannelFuture>();
 
@@ -34,7 +34,7 @@ public class ServerThread extends Thread {
         address = "localhost";
     }
 
-    public Channel getChannel() {
+    public static Channel getChannel() {
         return channel;
     }
 

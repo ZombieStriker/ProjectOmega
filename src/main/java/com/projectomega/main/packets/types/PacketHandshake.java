@@ -4,19 +4,20 @@ import com.projectomega.main.packets.*;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.net.SocketAddress;
 import java.util.List;
 
-public class Packet_Handshake extends PacketHandler {
+public class PacketHandshake extends PacketHandler {
 
 
-    public Packet_Handshake() {
+    public PacketHandshake() {
         super(PacketType.HANDSHAKE);
     }
 
     @Override
-    public void call(ByteBuf byteBuf, int packetsize, SocketAddress socketAddress, Channel channel) {
+    public void call(ByteBuf byteBuf, int packetsize, ChannelHandlerContext ctx) {
         int int1 = byteBuf.readByte();
         int int2 = byteBuf.readByte();
         int messageLength = byteBuf.readByte();
@@ -25,7 +26,7 @@ public class Packet_Handshake extends PacketHandler {
         int status = byteBuf.readByte();
         int k = byteBuf.readByte();
         int l = byteBuf.readByte();
-        InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE,new Object[]{ip,port,status},socketAddress);
+        InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE,new Object[]{ip,port,status},ctx.channel());
         List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE);
         if(packetlisteners!=null){
             for(PacketListener listener : packetlisteners){
