@@ -7,6 +7,6 @@ public class SendPongPacketLogic extends PacketListener {
     @Override
     public void onCall(InboundPacket packet) {
         OutboundPacket outboundpacket = new OutboundPacket(PacketType.HANDSHAKE_PONG,new Object[]{packet.getData(0)});
-        PacketUtil.writePacketToOutputStream(packet.getAddress(),outboundpacket);
+        PacketUtil.writePacketToOutputStream(packet.getChannel(),outboundpacket);
     }
 }

@@ -1,15 +1,12 @@
 package com.projectomega.main.game.packetlogic;
 
-import com.projectomega.main.Main;
 import com.projectomega.main.packets.*;
-
-import java.nio.channels.Channel;
 
 public class SendMOTDPacketLogic extends PacketListener {
 
     @Override
     public void onCall(InboundPacket packet) {
-        System.out.println(packet.getAddress()+"|"+packet.getData(0)+"|"+packet.getData(1)+"|"+packet.getData(2));
+        System.out.println(packet.getChannel()+"|"+packet.getData(0)+"|"+packet.getData(1)+"|"+packet.getData(2));
         if(((int)packet.getData(2)) ==1) {
             OutboundPacket outboundPacket = new OutboundPacket(PacketType.STATUS_PING, new Object[]{("{\n" +
                     "    \"version\": {\n" +
@@ -29,8 +26,8 @@ public class SendMOTDPacketLogic extends PacketListener {
                     "    \"description\": {\n" +
                     "        \"text\": \"Hello world\"\n" +
                     "    }\n" +
-                    "}").replaceAll("\n", "")});
-            PacketUtil.writePacketToOutputStream(packet.getAddress(), outboundPacket);
+                    "}")/*.replaceAll("\n", "")*/});
+            PacketUtil.writePacketToOutputStream(packet.getChannel(), outboundPacket);
         }
     }
 }

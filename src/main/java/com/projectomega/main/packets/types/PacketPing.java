@@ -25,7 +25,7 @@ public class PacketPing extends PacketHandler {
         int k = byteBuf.readByte();
         int l = byteBuf.readByte();*/
 
-        long longdata = byteBuf.readLong();
+        long longdata = PacketUtil.readVarLong(byteBuf);
 
         InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE_PING,new Object[]{longdata},ctx.channel());
         List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE_PING);

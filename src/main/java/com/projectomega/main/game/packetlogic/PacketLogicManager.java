@@ -7,6 +7,6 @@ public class PacketLogicManager {
 
     public static void init(){
         PacketManager.registerPacketListener(PacketType.HANDSHAKE,new SendMOTDPacketLogic());
-        PacketManager.registerPacketListener(PacketType.HANDSHAKE_PING,new SendMOTDPacketLogic());
+        PacketManager.registerPacketListener(PacketType.HANDSHAKE_PING,new SendPongPacketLogic());
     }
 }

@@ -2,20 +2,18 @@ package com.projectomega.main.packets;
 
 import io.netty.channel.Channel;
 
-import java.net.SocketAddress;
-
 public class InboundPacket {
 
     private Object[] array;
     private PacketType type;
-    private Channel receiver = null;
+    private Channel channel = null;
 
     private boolean cancel = false;
 
-    public InboundPacket(PacketType type, Object[] data, Channel receiver){
+    public InboundPacket(PacketType type, Object[] data, Channel channel){
         this.type = type;
         this.array = data;
-        this.receiver = receiver;
+        this.channel = channel;
     }
 
     public void setCancelled(boolean cancel){
@@ -25,14 +23,16 @@ public class InboundPacket {
         return cancel;
     }
 
-    public Channel getAddress(){
-        return receiver;
+    public Channel getChannel(){
+        return channel;
     }
 
     public PacketType getType(){
         return type;
     }
     public Object getData(int index){
+        if(index >= getDataLength())
+            return null;
         return array[index];
     }
     public int getDataLength(){
