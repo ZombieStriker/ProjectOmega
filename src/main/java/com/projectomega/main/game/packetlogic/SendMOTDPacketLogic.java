@@ -10,8 +10,8 @@ public class SendMOTDPacketLogic extends PacketListener {
         if(((int)packet.getData(2)) ==1) {
             OutboundPacket outboundPacket = new OutboundPacket(PacketType.STATUS_PING, new Object[]{("{\n" +
                     "    \"version\": {\n" +
-                    "        \"name\": \"1.8.7\",\n" +
-                    "        \"protocol\": 47\n" +
+                    "        \"name\": \"ProjectOmegga V0.1\",\n" +
+                    "        \"protocol\": 754\n" +
                     "    },\n" +
                     "    \"players\": {\n" +
                     "        \"max\": 100,\n" +
@@ -26,7 +26,7 @@ public class SendMOTDPacketLogic extends PacketListener {
                     "    \"description\": {\n" +
                     "        \"text\": \"Hello world\"\n" +
                     "    }\n" +
-                    "}")/*.replaceAll("\n", "")*/});
+                    "}").replaceAll("\n", "")});
             PacketUtil.writePacketToOutputStream(packet.getChannel(), outboundPacket);
         }
     }

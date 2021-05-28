@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class PacketHandshake extends PacketHandler {
         int status = byteBuf.readByte();
         int k = byteBuf.readByte();
         int l = byteBuf.readByte();
+
         InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE,new Object[]{ip,port,status},ctx.channel());
         List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE);
         if(packetlisteners!=null){

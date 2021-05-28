@@ -27,6 +27,9 @@ public class ServerThread extends Thread {
 
     private HashMap<SocketAddress, ChannelFuture> connections = new HashMap<SocketAddress, ChannelFuture>();
 
+    public ServerBootstrap getBootstrap(){
+        return b;
+    }
 
     public ServerThread() throws IOException {
         this.start();

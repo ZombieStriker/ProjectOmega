@@ -1,5 +1,6 @@
 package com.projectomega.main.utils;
 
+import com.projectomega.main.packets.PacketUtil;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.ByteBuffer;
@@ -8,12 +9,10 @@ import java.nio.charset.StandardCharsets;
 public class ByteUtils {
 
     public static int addIntegerToByteArray(byte[] bytes,int offset, int number){
-        ByteBuffer buffer = ByteBuffer.allocate(3);
-        buffer.putInt(number);
-        for(int i = 0; i < 3 ; i++) {
-            bytes[offset+i] = buffer.get(i);
-        }
-        return 3;
+        return  PacketUtil.writeVarInt(bytes,offset,number);
+    }
+    public static int addLongToByteArray(byte[] bytes,int offset, long number){
+        return  PacketUtil.writeVarLong(bytes,offset,number);
     }
     public static int addShortToByteArray(byte[] bytes,int offset, short number){
         ByteBuffer buffer = ByteBuffer.allocate(2);
