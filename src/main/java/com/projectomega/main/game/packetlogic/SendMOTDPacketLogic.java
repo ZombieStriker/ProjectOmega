@@ -10,7 +10,7 @@ public class SendMOTDPacketLogic extends PacketListener {
         if(((int)packet.getData(2)) ==1) {
             OutboundPacket outboundPacket = new OutboundPacket(PacketType.STATUS_PING, new Object[]{("{\n" +
                     "    \"version\": {\n" +
-                    "        \"name\": \"ProjectOmegga V0.1\",\n" +
+                    "        \"name\": \"ProjectOmega V0.1\",\n" +
                     "        \"protocol\": 754\n" +
                     "    },\n" +
                     "    \"players\": {\n" +

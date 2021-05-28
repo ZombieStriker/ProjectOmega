@@ -12,6 +12,14 @@
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>io.netty</groupId>
@@ -19,5 +27,18 @@
             <version>4.1.24.Final</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.TheNullicorn</groupId>
+            <artifactId>Nedit</artifactId>
+            <version>v1.1.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 </project>

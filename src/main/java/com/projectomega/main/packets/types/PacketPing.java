@@ -16,17 +16,7 @@ public class PacketPing extends PacketHandler {
 
     @Override
     public void call(ByteBuf byteBuf, int packetsize, ChannelHandlerContext ctx) {
-       /* int int1 = byteBuf.readByte();
-        int int2 = byteBuf.readByte();
-        int messageLength = byteBuf.readByte();
-        String ip = ByteUtils.buildString(byteBuf,messageLength);
-        int port =  byteBuf.readShort();
-        int status = byteBuf.readByte();
-        int k = byteBuf.readByte();
-        int l = byteBuf.readByte();*/
-
-        long longdata = PacketUtil.readVarLong(byteBuf);
-
+        long longdata = PacketUtil.readLong(byteBuf);
         InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE_PING,new Object[]{longdata},ctx.channel());
         List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE_PING);
         if(packetlisteners!=null){
