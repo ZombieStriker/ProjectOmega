@@ -1,5 +1,6 @@
 package com.projectomega.main;
 
+import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.packets.PacketHandler;
 import com.projectomega.main.packets.PacketUtil;
 import io.netty.buffer.ByteBuf;
@@ -17,6 +18,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
         int packetid = bytebuf.readByte();
         List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersByID(packetid);
         if (packethandlers != null) {
+            if(DebuggingUtil.DEBUG)
             System.out.println("Packet Handlers found for "+packetid+" : "+packethandlers.size());
             for (PacketHandler packetHandler : packethandlers) {
                 packetHandler.call(bytebuf, size - 1, ctx);

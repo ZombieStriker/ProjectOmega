@@ -4,7 +4,9 @@ import com.projectomega.main.ServerThread;
 import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.packets.datatype.UnsignedByte;
 import com.projectomega.main.packets.datatype.VarInt;
+import com.projectomega.main.packets.datatype.VarLong;
 import com.projectomega.main.packets.types.PacketHandshake;
+import com.projectomega.main.packets.types.PacketKeepAlive;
 import com.projectomega.main.packets.types.PacketPing;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
@@ -25,6 +27,7 @@ public class PacketUtil {
     public static void init(ServerThread serverThread) {
         handlers.put(PacketType.HANDSHAKE, new ArrayList<>(Arrays.asList(new PacketHandshake())));
         handlers.put(PacketType.HANDSHAKE_PING, new ArrayList<>(Arrays.asList(new PacketPing())));
+        handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND_OLD, new ArrayList<>(Arrays.asList(new PacketKeepAlive())));
         server = serverThread;
     }
 
@@ -131,57 +134,66 @@ public class PacketUtil {
         offset += ByteUtils.addVarIntToByteArray(bytes, offset, packet.getType().getId());
         for (int dataIndex = 0; dataIndex < packet.getDataLength(); dataIndex++) {
             Object data = packet.getData(dataIndex);
-            System.out.println("Writing "+data+" to index "+offset);
+            if (DebuggingUtil.DEBUG)
+                System.out.println("Writing " + data + " to index " + offset);
             if (data instanceof VarInt) {
                 offset += ByteUtils.addVarIntToByteArray(bytes, offset, ((VarInt) data).getInteger());
             } else if (data instanceof Integer) {
                 offset += ByteUtils.addIntToByteArray(bytes, offset, (Integer) data);
+            } else if (data instanceof VarLong) {
+                offset += writeVarLong(bytes, offset, ((VarLong) data).getLong());
             } else if (data instanceof Long) {
-                offset += ByteUtils.addLongToByteArray(bytes, offset, (Long) data);
+                offset += writeLong(bytes, offset, (Long) data);
             } else if (data instanceof Short) {
-                offset += ByteUtils.addShortToByteArray(bytes, offset, (short) data);
+                offset += ByteUtils.addShortToByteArray(bytes, offset, (Short) data);
+            } else if (data instanceof Double) {
+                offset += ByteUtils.addDoubleToByteArray(bytes, offset, (Double) data);
+            } else if (data instanceof Float) {
+                offset += ByteUtils.addFloatToByteArray(bytes, offset, (Float) data);
             } else if (data instanceof UUID) {
                 offset += writeUUID(bytes, offset, (UUID) data);
             } else if (data instanceof NBTCompound) {
                 try {
                     //byte[] byteArray = NBTWriter.writeToBase64((NBTCompound) data,false);
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    NBTWriter.write((NBTCompound) data,out,false);
+                    NBTWriter.write((NBTCompound) data, out, false);
                     byte[] byteArray = out.toByteArray();
                     //offset += ByteUtils.addByteToByteArray(bytes,offset, (byte) 10);//byteArray.length);
                     //offset += ByteUtils.addByteToByteArray(bytes,offset, (byte) 0x10);
                     //offset += ByteUtils.addByteToByteArray(bytes,offset, (byte) 0);
                     //offset += ByteUtils.addByteToByteArray(bytes,offset, (byte) 8);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(byteArray.length+"||");
-                    StringBuilder sb2 = new StringBuilder();
-                    sb2.append("Char||");
-                    for(int i = 0; i < byteArray.length; i++){
-                        sb.append(" "+byteArray[i]);
-                    }
-                    for(int i = 0; i < byteArray.length; i++){
-                        char c = (char) byteArray[i];
-                        if(DebuggingUtil.isCharacter(c)) {
-                            sb2.append((char) byteArray[i]);
-                        }else{
-                            if(i+2<byteArray.length){
-                            if(DebuggingUtil.isCharacter((char) byteArray[i+2])) {
-                                if (DebuggingUtil.isCharacter((char) byteArray[i + 1])) {
-                                    sb2.append(":" + byteArray[i] + ")");
+                    if (DebuggingUtil.DEBUG) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(byteArray.length + "||");
+                        StringBuilder sb2 = new StringBuilder();
+                        sb2.append("Char||");
+                        for (int i = 0; i < byteArray.length; i++) {
+                            sb.append(" " + byteArray[i]);
+                        }
+                        for (int i = 0; i < byteArray.length; i++) {
+                            char c = (char) byteArray[i];
+                            if (DebuggingUtil.isCharacter(c)) {
+                                sb2.append((char) byteArray[i]);
+                            } else {
+                                if (i + 2 < byteArray.length) {
+                                    if (DebuggingUtil.isCharacter((char) byteArray[i + 2])) {
+                                        if (DebuggingUtil.isCharacter((char) byteArray[i + 1])) {
+                                            sb2.append(":" + byteArray[i] + ")");
+                                        } else {
+                                            sb2.append("(" + byteArray[i]);
+                                        }
+                                    } else {
+                                        sb2.append(" " + byteArray[i]);
+                                    }
                                 } else {
-                                    sb2.append("(" + byteArray[i]);
+                                    sb2.append(" " + byteArray[i]);
                                 }
-                            }else{
-                                sb2.append(" "+byteArray[i]);
-                            }
-                            }else {
-                                sb2.append(" " + byteArray[i]);
                             }
                         }
+                        System.out.println(sb.toString());
+                        System.out.println(sb2.toString());
                     }
-                    System.out.println(sb.toString());
-                    System.out.println(sb2.toString());
-                    offset += writeBytes(bytes, offset,byteArray);
+                    offset += writeBytes(bytes, offset, byteArray);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -208,9 +220,10 @@ public class PacketUtil {
         //  if(packet.getType()==PacketType.HANDSHAKE)
         bytebuf.writeByte(0);
         bytebuf.writeByte(0);
-          bytebuf.writeByte(0);
+        bytebuf.writeByte(0);
         try {
-            System.out.println("Writing " + length + " bytes for  " + packet.getType().getId()+"  || "+bytebuf.array().length);
+            if(DebuggingUtil.DEBUG)
+            System.out.println("Writing " + length + " bytes for  " + packet.getType().getId() + "  || " + bytebuf.array().length);
             connection.writeAndFlush(bytebuf).awaitUninterruptibly().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -286,5 +299,13 @@ public class PacketUtil {
             i++;
         } while (i != 16);
         return i;
+    }
+
+    public static boolean readBoolean(ByteBuf bytebuf) {
+        return bytebuf.readByte()==0x01;
+    }
+
+    public static byte readUnsignedByte(ByteBuf bytebuf) {
+        return bytebuf.readByte();
     }
 }

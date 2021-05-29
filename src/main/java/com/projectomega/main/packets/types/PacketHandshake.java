@@ -25,8 +25,6 @@ public class PacketHandshake extends PacketHandler {
         String ip = ByteUtils.buildString(byteBuf,messageLength);
         int port =  byteBuf.readShort();
         int status = byteBuf.readByte();
-        int k = byteBuf.readByte();
-        int l = byteBuf.readByte();
 
         InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE,new Object[]{ip,port,status},ctx.channel());
         List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE);

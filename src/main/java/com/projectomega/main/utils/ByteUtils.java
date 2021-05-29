@@ -11,7 +11,7 @@ public class ByteUtils {
     public static int addVarIntToByteArray(byte[] bytes, int offset, int number){
         return  PacketUtil.writeVarInt(bytes,offset,number);
     }
-    public static int addLongToByteArray(byte[] bytes,int offset, long number){
+    public static int addVarLongToByteArray(byte[] bytes, int offset, long number){
         return  PacketUtil.writeVarLong(bytes,offset,number);
     }
     public static int addShortToByteArray(byte[] bytes,int offset, short number){
@@ -47,5 +47,19 @@ public class ByteUtils {
 
     public static int addIntToByteArray(byte[] bytes, int offset, Integer data) {
         return PacketUtil.writeInt(bytes,offset,data);
+    }
+
+    public static int addFloatToByteArray(byte[] bytes, int offset, float data) {
+        int floatingPointNumber = (int) (data * 32);
+        return addIntToByteArray(bytes,offset,floatingPointNumber);
+    }
+
+    public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {
+        long doubleFloatingPointNumber = (long) (data*(0x34));
+        return PacketUtil.writeLong(bytes,offset,doubleFloatingPointNumber);
+    }
+
+    public static String buildString(ByteBuf bytebuf) {
+        return buildString(bytebuf,PacketUtil.readVarInt(bytebuf));
     }
 }
