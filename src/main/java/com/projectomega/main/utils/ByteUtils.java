@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 public class ByteUtils {
 
-    public static int addIntegerToByteArray(byte[] bytes,int offset, int number){
+    public static int addVarIntToByteArray(byte[] bytes, int offset, int number){
         return  PacketUtil.writeVarInt(bytes,offset,number);
     }
     public static int addLongToByteArray(byte[] bytes,int offset, long number){
@@ -43,5 +43,9 @@ public class ByteUtils {
     public static int addByteToByteArray(byte[] bytes, int offset, byte length) {
         bytes[offset]=length;
         return 1;
+    }
+
+    public static int addIntToByteArray(byte[] bytes, int offset, Integer data) {
+        return PacketUtil.writeInt(bytes,offset,data);
     }
 }

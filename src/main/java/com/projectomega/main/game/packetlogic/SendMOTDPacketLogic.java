@@ -26,7 +26,7 @@ public class SendMOTDPacketLogic extends PacketListener {
                     "    \"description\": {\n" +
                     "        \"text\": \"Hello world\"\n" +
                     "    }\n" +
-                    "}").replaceAll("\n", "")});
+                    "}")/*.replaceAll("\n", "")*/});
             PacketUtil.writePacketToOutputStream(packet.getChannel(), outboundPacket);
         }
     }
