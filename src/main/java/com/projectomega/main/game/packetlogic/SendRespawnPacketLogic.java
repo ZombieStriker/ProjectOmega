@@ -7,7 +7,7 @@ import com.projectomega.main.packets.datatype.UnsignedByte;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-public class SendRespawnPacketLogic extends PacketListener {
+public class SendRespawnPacketLogic implements PacketListener {
     @Override
     public void onCall(InboundPacket packet) {
         if(((int)packet.getData(0))==0){

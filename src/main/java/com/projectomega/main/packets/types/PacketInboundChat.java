@@ -1,12 +1,12 @@
 package com.projectomega.main.packets.types;
 
+import com.projectomega.main.events.EventBus;
+import com.projectomega.main.events.types.PlayerChatEvent;
+import com.projectomega.main.events.types.PlayerSendCommandEvent;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
 import com.projectomega.main.game.chat.JsonChatBuilder;
 import com.projectomega.main.game.chat.JsonChatElement;
-import com.projectomega.main.events.EventManager;
-import com.projectomega.main.events.types.PlayerChatEvent;
-import com.projectomega.main.events.types.PlayerSendCommandEvent;
 import com.projectomega.main.packets.*;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
@@ -25,28 +25,23 @@ public class PacketInboundChat extends PacketHandler {
         String message = ByteUtils.buildString(bytebuf);
         Player player = Omega.getPlayerByChannel(ctx.channel());
 
-
-        InboundPacket packet = new InboundPacket(PacketType.CHAT_SERVERBOUND,new Object[]{message},ctx.channel());
+        InboundPacket packet = new InboundPacket(PacketType.CHAT_SERVERBOUND, new Object[]{message}, ctx.channel());
         List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.CHAT_SERVERBOUND);
-        if(packetlisteners!=null){
-            for(PacketListener listener : packetlisteners){
+        if (packetlisteners != null) {
+            for (PacketListener listener : packetlisteners) {
                 listener.onCall(packet);
             }
         }
 
-
         if (message.startsWith("/")) {
             PlayerSendCommandEvent chatEvent = new PlayerSendCommandEvent(player, message);
-            EventManager.call(chatEvent);
-            if (!chatEvent.isCanceled()) {
+            if (!EventBus.INSTANCE.post(chatEvent).isCancelled()) {
                 //TODO: Issue Command
             }
-
         } else {
             JsonChatBuilder json = new JsonChatBuilder().setTranslate(JsonChatBuilder.CHAT_TYPE_TEXT).add(new JsonChatElement(player.getName())).add(new JsonChatElement(": " + message));
             PlayerChatEvent chatEvent = new PlayerChatEvent(player, message, json);
-            EventManager.call(chatEvent);
-            if (!chatEvent.isCanceled()) {
+            if (!EventBus.INSTANCE.post(chatEvent).isCancelled()) {
                 Omega.broadcastJSONMessage(json.build());
             }
         }

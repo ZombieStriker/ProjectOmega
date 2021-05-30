@@ -2,7 +2,7 @@ package com.projectomega.main.game.packetlogic;
 
 import com.projectomega.main.packets.*;
 
-public class SendPongPacketLogic extends PacketListener {
+public class SendPongPacketLogic implements PacketListener {
 
     @Override
     public void onCall(InboundPacket packet) {

@@ -1,17 +1,19 @@
 package com.projectomega.main.events.types;
 
-import com.projectomega.main.events.CancelableEvent;
+import com.projectomega.main.events.Cancellable;
+import com.projectomega.main.events.Event;
 import com.projectomega.main.game.Player;
 
-public class PlayerJoinEvent extends CancelableEvent {
+@Cancellable
+public class PlayerJoinEvent extends Event {
 
-    private Player player;
+    private final Player player;
 
-    public PlayerJoinEvent(Player player){
+    public PlayerJoinEvent(Player player) {
         this.player = player;
     }
 
     public Player getPlayer() {
-    return player;
+        return player;
     }
 }

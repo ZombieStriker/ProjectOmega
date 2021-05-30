@@ -14,7 +14,7 @@ import com.projectomega.main.packets.datatype.VarInt;
 
 import java.util.UUID;
 
-public class TestClickPacketListtener extends PacketListener {
+public class TestClickPacketListtener implements PacketListener {
 
     @Override
     public void onCall(InboundPacket packet) {

@@ -2,7 +2,7 @@ package com.projectomega.main.game.packetlogic;
 
 import com.projectomega.main.packets.*;
 
-public class SendMOTDPacketLogic extends PacketListener {
+public class SendMOTDPacketLogic implements PacketListener {
 
     @Override
     public void onCall(InboundPacket packet) {

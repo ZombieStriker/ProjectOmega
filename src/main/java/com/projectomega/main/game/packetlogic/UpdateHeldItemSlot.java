@@ -8,7 +8,7 @@ import com.projectomega.main.packets.PacketListener;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.UnsignedByte;
 
-public class UpdateHeldItemSlot extends PacketListener {
+public class UpdateHeldItemSlot implements PacketListener {
     @Override
     public void onCall(InboundPacket packet) {
         short slot = (short) packet.getData(0);

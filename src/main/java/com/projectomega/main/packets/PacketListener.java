@@ -1,8 +1,6 @@
 package com.projectomega.main.packets;
 
-public class PacketListener {
+public interface PacketListener {
 
-    public void onCall(InboundPacket packet){
-
-    }
+    void onCall(InboundPacket packet);
 }
