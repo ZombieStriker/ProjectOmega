@@ -26,9 +26,12 @@ public class PacketUtil {
     public static void init(ServerThread serverThread) {
         handlers.put(PacketType.HANDSHAKE, new ArrayList<>(Arrays.asList(new PacketHandshake())));
         handlers.put(PacketType.HANDSHAKE_PING, new ArrayList<>(Arrays.asList(new PacketPing())));
-        handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND_OLD, new ArrayList<>(Arrays.asList(new PacketKeepAlive())));
+        handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND_OLD, new ArrayList<>(Arrays.asList(new PacketKeepAliveOld())));
         handlers.put(PacketType.CHAT_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketInboundChat())));
         handlers.put(PacketType.CLIENT_SETTINGS, new ArrayList<>(Arrays.asList(new PacketClientSettings())));
+        handlers.put(PacketType.CLICK_WINDOW, new ArrayList<>(Arrays.asList(new PacketClickWindow())));
+        handlers.put(PacketType.CLIENT_STATUS, new ArrayList<>(Arrays.asList(new PacketClientStatus())));
+        handlers.put(PacketType.HELD_ITEM_CHANGE_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketHeldItemChange())));
         server = serverThread;
     }
 

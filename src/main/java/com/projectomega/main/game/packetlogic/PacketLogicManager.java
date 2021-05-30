@@ -9,5 +9,8 @@ public class PacketLogicManager {
         PacketManager.registerPacketListener(PacketType.HANDSHAKE,new SendMOTDPacketLogic());
         PacketManager.registerPacketListener(PacketType.HANDSHAKE_PING,new SendPongPacketLogic());
         PacketManager.registerPacketListener(PacketType.HANDSHAKE,new SendLoginHandshake1PacketLogic());
+        PacketManager.registerPacketListener(PacketType.CLIENT_SETTINGS,new SendClientSettingsPacketLogic());
+        PacketManager.registerPacketListener(PacketType.CLIENT_STATUS,new SendRespawnPacketLogic());
+        PacketManager.registerPacketListener(PacketType.HELD_ITEM_CHANGE_SERVERBOUND,new UpdateHeldItemSlot());
     }
 }

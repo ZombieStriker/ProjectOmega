@@ -1,6 +1,12 @@
 package com.projectomega.main.game;
 
+import com.projectomega.main.game.chat.JsonChatBuilder;
+import com.projectomega.main.game.chat.JsonChatElement;
+import com.projectomega.main.game.inventory.Inventory;
+import com.projectomega.main.game.inventory.PlayerInventory;
 import com.projectomega.main.packets.OutboundPacket;
+import com.projectomega.main.packets.PacketType;
+import com.projectomega.main.packets.datatype.VarInt;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -20,6 +26,16 @@ public class Player {
     private int mainHand = 1;
     private String displayname = "Notch";
 
+    private int xp = 0;
+    private float health=20.0f;
+    private int food = 20;
+    private float foodSaturation = 0.0f;
+
+
+    private Inventory viewedInventory = null;
+    private Inventory playerInventory = new PlayerInventory();
+    private int heldSlot = 0;
+
     public String getLocale(){
         return locale;
     }
@@ -34,6 +50,10 @@ public class Player {
     }
     public boolean isMainhandRighthanded(){
         return mainHand == 1;
+    }
+
+    public Inventory getInventory(){
+        return playerInventory;
     }
 
     /**
@@ -112,5 +132,56 @@ public class Player {
 
     public int getProtocolVersion() {
         return protocolVersion;
+    }
+
+    public void openInventory(Inventory newinv) {
+        if(viewedInventory != null){
+            viewedInventory.removeViewer(this);
+        }
+        viewedInventory = newinv;
+        viewedInventory.addViewer(this);
+        OutboundPacket open = new OutboundPacket(PacketType.OPEN_WINDOW, new Object[]{new VarInt(viewedInventory.getWindowID()), new VarInt(viewedInventory.getType().getId()),new JsonChatBuilder().add(new JsonChatElement("inv")).build(),0});
+        this.sendPacket(open);
+    }
+
+    public Inventory getViewedInventory() {
+        return viewedInventory;
+    }
+
+    public void setHotbarSlot(int i) {
+        heldSlot = i;
+        OutboundPacket packet = new OutboundPacket(PacketType.HELD_ITEM_CHANGE, new Object[]{(byte)i});
+        sendPacket(packet);
+    }
+    public void updateHeldItemSlot(int slot){
+        this.heldSlot = slot;
+    }
+    public int getHeldItemSlot(){
+        return heldSlot;
+    }
+    public void setXP(float barLevel, int level, int totalXP){
+        this.xp = xp;
+        OutboundPacket packet = new OutboundPacket(PacketType.SET_EXPERIENCE, new Object[]{barLevel,new VarInt(level), new VarInt(totalXP)});
+        sendPacket(packet);
+    }
+    public void setHealth(float health){
+        this.health = health;
+        updateHealth();
+    }
+    public float getHealth(){return health;}
+    public void setFood(int food){
+        this.food = food;
+        updateHealth();
+    }
+    public int getFood(){
+        return food;
+    }
+    public int getXp(){
+        return xp;
+    }
+
+    public void updateHealth(){
+        OutboundPacket packet = new OutboundPacket(PacketType.UPDATE_HEALTH, new Object[]{health,new VarInt(food),foodSaturation});
+        sendPacket(packet);
     }
 }

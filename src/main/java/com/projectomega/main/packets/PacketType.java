@@ -18,18 +18,30 @@ public enum PacketType {
     KEEP_ALIVE_CLIENTBOUND(0x1F ,PacketDirection.CLIENTBOUND),
     KEEP_ALIVE_SERVERBOUND(0x10,PacketDirection.SERVERBOUND),
 
+    CLICK_WINDOW_BUTTON(0x08,PacketDirection.SERVERBOUND),
+    CLICK_WINDOW(0x09,PacketDirection.SERVERBOUND),
+
+    HELD_ITEM_CHANGE(0x40,PacketDirection.CLIENTBOUND),
+    SET_EXPERIENCE(0x48,PacketDirection.CLIENTBOUND),
+
     CHUNK_DATA(0x22,PacketDirection.CLIENTBOUND),
+    WINDOW_ITEMS(0x13,PacketDirection.CLIENTBOUND),
+    OPEN_WINDOW(0x2D,PacketDirection.CLIENTBOUND),
 
     PLAYER_POSITION_AND_LOOK(0x36 ,PacketDirection.CLIENTBOUND),
-    RESPAWN(0x39 ,PacketDirection.CLIENTBOUND),
+    RESPAWN(0x3B ,PacketDirection.CLIENTBOUND),
     JOIN_GAME_OLD(0x26 , PacketDirection.CLIENTBOUND ),
     JOIN_GAME(0x24 , PacketDirection.CLIENTBOUND ),
+
+    HELD_ITEM_CHANGE_SERVERBOUND(0x23,PacketDirection.SERVERBOUND),
 
     CHAT_SERVERBOUND(0x03,PacketDirection.SERVERBOUND),
     CHAT_CLIENTBOUND(0x0F,PacketDirection.CLIENTBOUND),
 
-    BOSS_BAR(0x0D,PacketDirection.CLIENTBOUND)
+    BOSS_BAR(0x0D,PacketDirection.CLIENTBOUND),
 
+    UPDATE_HEALTH(0x49,PacketDirection.CLIENTBOUND ),
+    CLIENT_STATUS(0x04,PacketDirection.SERVERBOUND)
     ;
 
     private int id;

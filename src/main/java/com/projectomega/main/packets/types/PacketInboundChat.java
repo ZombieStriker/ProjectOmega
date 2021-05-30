@@ -7,11 +7,12 @@ import com.projectomega.main.game.chat.JsonChatElement;
 import com.projectomega.main.events.EventManager;
 import com.projectomega.main.events.types.PlayerChatEvent;
 import com.projectomega.main.events.types.PlayerSendCommandEvent;
-import com.projectomega.main.packets.PacketHandler;
-import com.projectomega.main.packets.PacketType;
+import com.projectomega.main.packets.*;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.List;
 
 public class PacketInboundChat extends PacketHandler {
 
@@ -23,6 +24,16 @@ public class PacketInboundChat extends PacketHandler {
     public void call(ByteBuf bytebuf, int i, ChannelHandlerContext ctx) {
         String message = ByteUtils.buildString(bytebuf);
         Player player = Omega.getPlayerByChannel(ctx.channel());
+
+
+        InboundPacket packet = new InboundPacket(PacketType.CHAT_SERVERBOUND,new Object[]{message},ctx.channel());
+        List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.CHAT_SERVERBOUND);
+        if(packetlisteners!=null){
+            for(PacketListener listener : packetlisteners){
+                listener.onCall(packet);
+            }
+        }
+
         if (message.startsWith("/")) {
             PlayerSendCommandEvent chatEvent = new PlayerSendCommandEvent(player, message);
             EventManager.call(chatEvent);
