@@ -11,8 +11,11 @@ import io.netty.channel.Channel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class Omega extends Thread {
+
+    private static final Logger LOGGER = Logger.getLogger(Omega.class.getName());
 
     public static List<Player> players = new ArrayList<>();
     public static List<World> worlds = new ArrayList<>();
@@ -31,51 +34,52 @@ public class Omega extends Thread {
         instance = this;
     }
 
-    public static BossBar createBossBar(String title, float health, BossBarColor color, BossBarDivisions divisions){
-        BossBar bossBar = new BossBar(UUID.randomUUID(),title,health,color,divisions,false,false,false);
+    public static BossBar createBossBar(String title, float health, BossBarColor color, BossBarDivisions divisions) {
+        BossBar bossBar = new BossBar(UUID.randomUUID(), title, health, color, divisions, false, false, false);
         return bossBar;
     }
 
 
-    public static  World getWorld(String name){
-        for(World world : worlds){
-            if(world.getName().equals(name))
+    public static World getWorld(String name) {
+        for (World world : worlds) {
+            if (world.getName().equals(name))
                 return world;
         }
         return null;
     }
 
-    public static World createWorld(String name){
+    public static World createWorld(String name) {
         World world = new World(name);
         worlds.add(world);
         return world;
     }
-    public static List<World> getWorlds(){
+
+    public static List<World> getWorlds() {
         return new ArrayList<World>(worlds);
     }
 
     @Deprecated
     public static void init() {
-        if(!init) {
+        if (!init) {
             getInstance().start();
             init = true;
-        }else{
+        } else {
             broadcastMessage("Some plugin tried to call init twice!");
         }
     }
 
     private static void broadcastMessage(String s) {
-        for(Player player : players){
-            if(player.getChatmode()==0){
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{new JsonChatBuilder().setTranslate(JsonChatBuilder.TEXT).add(new JsonChatElement(s)).build(),(byte)0}));
+        for (Player player : players) {
+            if (player.getChatmode() == 0) {
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{new JsonChatBuilder().setTranslate(JsonChatBuilder.TEXT).add(new JsonChatElement(s)).build(), (byte) 0}));
             }
         }
     }
 
     public static void broadcastJSONMessage(String s) {
-        for(Player player : players){
-            if(player.getChatmode()==0){
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{s,(byte)0}));
+        for (Player player : players) {
+            if (player.getChatmode() == 0) {
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{s, (byte) 0}));
             }
         }
     }
@@ -122,5 +126,9 @@ public class Omega extends Thread {
                 return player;
         }
         return null;
+    }
+
+    public static Logger getLogger() {
+        return LOGGER;
     }
 }
