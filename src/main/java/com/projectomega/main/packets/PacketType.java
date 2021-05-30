@@ -10,6 +10,8 @@ public enum PacketType {
 
     LOGIN_SUCCESS(2,PacketDirection.CLIENTBOUND),
 
+    SPAWN_ENTITY(0x00,PacketDirection.CLIENTBOUND),
+
     CLIENT_SETTINGS(0x05,PacketDirection.SERVERBOUND),
     TIME_UPDATE(0x4E,PacketDirection.CLIENTBOUND),
 

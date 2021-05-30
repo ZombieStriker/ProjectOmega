@@ -2,7 +2,7 @@ package com.projectomega.main.game.utils;
 
 public class ExperiencePointsUtil {
 
-    public int getXPRequired(int level) {
+    public static int getXPRequired(int level) {
         if (level >= 0 && level <= 15) {
             return 2 * level + 7;
         } else if (level >= 16 && level <= 30) {
@@ -12,7 +12,7 @@ public class ExperiencePointsUtil {
         }
     }
 
-    public int getTotalXP(int level) {
+    public static int getTotalXP(int level) {
         if (level >= 0 && level <= 16) {
             return (level * level) + (6 * level);
         } else if (level >= 0 && level <= 16) {
