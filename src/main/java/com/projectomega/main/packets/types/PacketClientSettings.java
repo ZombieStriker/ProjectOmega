@@ -1,6 +1,7 @@
 package com.projectomega.main.packets.types;
 
 import com.projectomega.main.Main;
+import com.projectomega.main.game.Core;
 import com.projectomega.main.game.Player;
 import com.projectomega.main.packets.PacketHandler;
 import com.projectomega.main.packets.PacketType;
@@ -23,7 +24,7 @@ public class PacketClientSettings extends PacketHandler {
         byte displayedSkinParts = PacketUtil.readUnsignedByte(bytebuf);
         int mainhand = PacketUtil.readVarInt(bytebuf);
 
-        Player player = Main.getCore().getPlayerByChannel(ctx.channel());
+        Player player = Core.getPlayerByChannel(ctx.channel());
         if(player!=null){
             player.setLocale(locale);
             player.setRenderDistance(viewDistance);

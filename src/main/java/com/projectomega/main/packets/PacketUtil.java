@@ -6,6 +6,7 @@ import com.projectomega.main.packets.datatype.UnsignedByte;
 import com.projectomega.main.packets.datatype.VarInt;
 import com.projectomega.main.packets.datatype.VarLong;
 import com.projectomega.main.packets.types.PacketHandshake;
+import com.projectomega.main.packets.types.PacketInboundChat;
 import com.projectomega.main.packets.types.PacketKeepAlive;
 import com.projectomega.main.packets.types.PacketPing;
 import com.projectomega.main.utils.ByteUtils;
@@ -17,6 +18,7 @@ import me.nullicorn.nedit.type.NBTCompound;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 public class PacketUtil {
@@ -28,6 +30,7 @@ public class PacketUtil {
         handlers.put(PacketType.HANDSHAKE, new ArrayList<>(Arrays.asList(new PacketHandshake())));
         handlers.put(PacketType.HANDSHAKE_PING, new ArrayList<>(Arrays.asList(new PacketPing())));
         handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND_OLD, new ArrayList<>(Arrays.asList(new PacketKeepAlive())));
+        handlers.put(PacketType.CHAT_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketInboundChat())));
         server = serverThread;
     }
 
@@ -193,6 +196,11 @@ public class PacketUtil {
                         System.out.println(sb.toString());
                         System.out.println(sb2.toString());
                     }
+                    /*offset+= writeByte(bytes,offset, (byte) 10);
+                    offset+= writeByte(bytes,offset, (byte) 0);
+                    offset+= writeByte(bytes,offset, (byte) 0);
+                    offset+= writeByte(bytes,offset, (byte) 0);*/
+                    //offset += writeShort(bytes,offset, (short) byteArray.length);
                     offset += writeBytes(bytes, offset, byteArray);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -228,6 +236,20 @@ public class PacketUtil {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private static int writeShort(byte[] bytes, int offset, short length) {
+        ByteBuffer buffer = ByteBuffer.allocate(2);
+        buffer.putShort(length);
+        for(int i = 0; i < 2 ; i++) {
+            bytes[offset+i] = buffer.get(i);
+        }
+        return 2;
+    }
+
+    private static int writeByte(byte[] bytes, int offset, byte i) {
+        bytes[offset]=i;
+        return 1;
     }
 
     private static int writeBytes(byte[] bytes, int offset, byte[] writeToBase64) {

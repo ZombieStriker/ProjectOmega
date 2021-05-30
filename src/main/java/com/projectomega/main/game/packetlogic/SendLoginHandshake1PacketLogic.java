@@ -1,6 +1,7 @@
 package com.projectomega.main.game.packetlogic;
 
 import com.projectomega.main.Main;
+import com.projectomega.main.game.Core;
 import com.projectomega.main.game.Player;
 import com.projectomega.main.packets.*;
 import com.projectomega.main.packets.datatype.UnsignedByte;
@@ -40,7 +41,7 @@ public class SendLoginHandshake1PacketLogic extends PacketListener {
             PacketUtil.writePacketToOutputStream(packet.getChannel(),joingame);
 
             Player player = new Player(packet.getChannel());
-            Main.getCore().addPlayerConnection(player);
+            Core.addPlayerConnection(player);
 
             player.sendPacket(new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK,new Object[]{0d,0d,0d,0f,0f,(byte)0,new VarInt(1)}));
 

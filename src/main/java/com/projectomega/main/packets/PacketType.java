@@ -18,10 +18,17 @@ public enum PacketType {
     KEEP_ALIVE_CLIENTBOUND(0x1F ,PacketDirection.CLIENTBOUND),
     KEEP_ALIVE_SERVERBOUND(0x10,PacketDirection.SERVERBOUND),
 
+    CHUNK_DATA(0x22,PacketDirection.CLIENTBOUND),
+
     PLAYER_POSITION_AND_LOOK(0x36 ,PacketDirection.CLIENTBOUND),
     RESPAWN(0x39 ,PacketDirection.CLIENTBOUND),
     JOIN_GAME_OLD(0x26 , PacketDirection.CLIENTBOUND ),
-    JOIN_GAME(0x24 , PacketDirection.CLIENTBOUND );
+    JOIN_GAME(0x24 , PacketDirection.CLIENTBOUND ),
+
+    CHAT_SERVERBOUND(0x03,PacketDirection.SERVERBOUND),
+    CHAT_CLIENTBOUND(0x0F,PacketDirection.CLIENTBOUND)
+
+    ;
 
     private int id;
     private PacketDirection direction;

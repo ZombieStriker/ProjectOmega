@@ -16,6 +16,7 @@ public class Player {
     private boolean chatColors = true;
     private byte displayedSkinParts = 127;
     private int mainHand = 1;
+    private String displayname = "Notch";
 
     public String getLocale(){
         return locale;
@@ -97,5 +98,12 @@ public class Player {
     @Deprecated
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public String getName() {
+        return displayname;
+    }
+    public void setName(String name){
+        this.displayname = name;
     }
 }

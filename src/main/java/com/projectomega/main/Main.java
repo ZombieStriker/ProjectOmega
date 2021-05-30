@@ -7,11 +7,9 @@ import java.io.IOException;
 public class Main {
 
     private static ServerThread serverThread;
-    private static Core core;
 
     public static void main(String... args){
-        core = new Core();
-        core.start();
+        Core.init();
         try {
             serverThread = new ServerThread();
         } catch (IOException e) {
@@ -21,8 +19,5 @@ public class Main {
 
     public static ServerThread getServerThread(){
         return serverThread;
-    }
-    public static Core getCore(){
-        return core;
     }
 }
