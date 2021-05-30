@@ -1,9 +1,11 @@
 package com.projectomega.main.events.types;
 
+import com.projectomega.main.events.Cancellable;
 import com.projectomega.main.events.Event;
 import com.projectomega.main.game.Player;
 import com.projectomega.main.game.chat.JsonChatBuilder;
 
+@Cancellable
 public class PlayerChatEvent extends Event {
 
     private String message;
