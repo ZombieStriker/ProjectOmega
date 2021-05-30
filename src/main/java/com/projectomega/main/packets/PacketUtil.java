@@ -5,10 +5,7 @@ import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.packets.datatype.UnsignedByte;
 import com.projectomega.main.packets.datatype.VarInt;
 import com.projectomega.main.packets.datatype.VarLong;
-import com.projectomega.main.packets.types.PacketHandshake;
-import com.projectomega.main.packets.types.PacketInboundChat;
-import com.projectomega.main.packets.types.PacketKeepAlive;
-import com.projectomega.main.packets.types.PacketPing;
+import com.projectomega.main.packets.types.*;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -31,6 +28,7 @@ public class PacketUtil {
         handlers.put(PacketType.HANDSHAKE_PING, new ArrayList<>(Arrays.asList(new PacketPing())));
         handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND_OLD, new ArrayList<>(Arrays.asList(new PacketKeepAlive())));
         handlers.put(PacketType.CHAT_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketInboundChat())));
+        handlers.put(PacketType.CLIENT_SETTINGS, new ArrayList<>(Arrays.asList(new PacketClientSettings())));
         server = serverThread;
     }
 

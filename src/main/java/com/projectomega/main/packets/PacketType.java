@@ -26,7 +26,9 @@ public enum PacketType {
     JOIN_GAME(0x24 , PacketDirection.CLIENTBOUND ),
 
     CHAT_SERVERBOUND(0x03,PacketDirection.SERVERBOUND),
-    CHAT_CLIENTBOUND(0x0F,PacketDirection.CLIENTBOUND)
+    CHAT_CLIENTBOUND(0x0F,PacketDirection.CLIENTBOUND),
+
+    BOSS_BAR(0x0D,PacketDirection.CLIENTBOUND)
 
     ;
 

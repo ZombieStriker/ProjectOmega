@@ -10,6 +10,8 @@ public class Player {
 
     private Channel connection;
 
+    private int protocolVersion;
+
     private String locale = "en_GB";
     private int renderDistance = 10;
     private int chatmode = 0;
@@ -80,8 +82,9 @@ public class Player {
         outgoingPackets.remove(packet);
     }
 
-    public Player(Channel connection){
+    public Player(Channel connection, int protocolversion){
         this.connection = connection;
+        this.protocolVersion = protocolversion;
     }
     public Channel getConnection(){
         return connection;
@@ -105,5 +108,9 @@ public class Player {
     }
     public void setName(String name){
         this.displayname = name;
+    }
+
+    public int getProtocolVersion() {
+        return protocolVersion;
     }
 }

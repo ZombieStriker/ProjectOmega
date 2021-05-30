@@ -1,30 +1,59 @@
 package com.projectomega.main.game;
 
+import com.projectomega.main.game.chat.BossBar;
+import com.projectomega.main.game.chat.BossBarColor;
+import com.projectomega.main.game.chat.BossBarDivisions;
 import com.projectomega.main.game.packetlogic.PacketLogicManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
+import com.projectomega.main.plugins.PluginManager;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class Core extends Thread {
+public class Omega extends Thread {
 
     public static List<Player> players = new ArrayList<>();
+    public static List<World> worlds = new ArrayList<>();
 
-    private static Core instance;
+    private static Omega instance;
     private static boolean init = false;
 
-    protected static Core getInstance() {
+    protected static Omega getInstance() {
         if (instance == null) {
-            instance = new Core();
+            instance = new Omega();
         }
         return instance;
     }
 
-    private Core() {
+    private Omega() {
         instance = this;
+    }
+
+    public static BossBar createBossBar(String title, float health, BossBarColor color, BossBarDivisions divisions){
+        BossBar bossBar = new BossBar(UUID.randomUUID(),title,health,color,divisions,false,false,false);
+        return bossBar;
+    }
+
+
+    public static  World getWorld(String name){
+        for(World world : worlds){
+            if(world.getName().equals(name))
+                return world;
+        }
+        return null;
+    }
+
+    public static World createWorld(String name){
+        World world = new World(name);
+        worlds.add(world);
+        return world;
+    }
+    public static List<World> getWorlds(){
+        return new ArrayList<World>(worlds);
     }
 
     @Deprecated
@@ -49,6 +78,8 @@ public class Core extends Thread {
     public void run() {
         System.out.println("Starting Server...");
         PacketLogicManager.init();
+        PluginManager.init();
+        PluginManager.enableAllPlugins();
         while (true) {
             long start = System.currentTimeMillis();
             for (Player player : new ArrayList<>(players)) {

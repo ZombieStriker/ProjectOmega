@@ -19,14 +19,12 @@ public class PacketHandshake extends PacketHandler {
 
     @Override
     public void call(ByteBuf byteBuf, int packetsize, ChannelHandlerContext ctx) {
-        int int1 = byteBuf.readByte();
-        int int2 = byteBuf.readByte();
-        int messageLength = byteBuf.readByte();
-        String ip = ByteUtils.buildString(byteBuf,messageLength);
+        int protocolVersion = PacketUtil.readVarInt(byteBuf);
+        String ip = ByteUtils.buildString(byteBuf);
         int port =  byteBuf.readShort();
         int status = byteBuf.readByte();
 
-        InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE,new Object[]{ip,port,status},ctx.channel());
+        InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE,new Object[]{protocolVersion,ip,port,status},ctx.channel());
         List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE);
         if(packetlisteners!=null){
             for(PacketListener listener : packetlisteners){

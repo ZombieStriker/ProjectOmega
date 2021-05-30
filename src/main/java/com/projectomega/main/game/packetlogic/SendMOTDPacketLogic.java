@@ -7,7 +7,7 @@ public class SendMOTDPacketLogic extends PacketListener {
     @Override
     public void onCall(InboundPacket packet) {
         System.out.println(packet.getChannel()+"|"+packet.getData(0)+"|"+packet.getData(1)+"|"+packet.getData(2));
-        if(((int)packet.getData(2)) ==1) {
+        if(((int)packet.getData(3)) ==1) {
             OutboundPacket outboundPacket = new OutboundPacket(PacketType.STATUS_PING, new Object[]{("{\n" +
                     "    \"version\": {\n" +
                     "        \"name\": \"ProjectOmega V0.1\",\n" +

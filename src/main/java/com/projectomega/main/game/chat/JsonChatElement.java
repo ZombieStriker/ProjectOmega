@@ -5,9 +5,9 @@ import com.github.cliftonlabs.json_simple.JsonObject;
 public class JsonChatElement {
 
     private String text;
-    private JsonAction actionClickEvent;
+    private JsonClickAction actionClickEvent;
     private String clickEvent;
-    private JsonAction actionHoverEvent;
+    private JsonHoverAction actionHoverEvent;
     private String hoverEvent;
     private String insertion;
 
@@ -18,12 +18,12 @@ public class JsonChatElement {
         this.text = message;
         this.insertion = insertion;
     }
-    public JsonChatElement setClickEventAction(JsonAction action, String value){
+    public JsonChatElement setClickEventAction(JsonClickAction action, String value){
         clickEvent = value;
         actionClickEvent = action;
         return this;
     }
-    public JsonChatElement setHoverEventAction(JsonAction action, String value){
+    public JsonChatElement setHoverEventAction(JsonHoverAction action, String value){
         this.actionHoverEvent = action;
         this.hoverEvent = value;
         return this;

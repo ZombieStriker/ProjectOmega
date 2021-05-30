@@ -9,7 +9,15 @@ import java.util.List;
 
 public class World {
 
-    public List<Region> regions = new ArrayList<>();
+    private List<Region> regions = new ArrayList<>();
+    private String name;
+
+    public World(String name) {
+    this.name = name;
+    }
+    public String getName(){
+        return name;
+    }
 
     public void sendChunkData(ChunkPosition position, Player player){
         Region region = getRegion(position.getRegionX(),position.getRegionZ());

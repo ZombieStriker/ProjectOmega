@@ -1,14 +1,14 @@
 package com.projectomega.main.game.chat;
 
-public enum JsonAction {
+public enum JsonClickAction {
 
     SUGGEST_COMMAND("suggest_command"),
-    SHOW_ENTITY("show_entity")
+    OPEN_URL("open_url"),
     ;
 
     private String action;
 
-    JsonAction(String j){
+    JsonClickAction(String j){
         this.action = j;
     }
     public String getAction(){
