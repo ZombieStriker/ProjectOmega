@@ -1,15 +1,15 @@
 package com.projectomega.main.events;
 
 
+import com.projectomega.main.game.Omega;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 @SuppressWarnings("rawtypes") // we had to.
 public class EventBus {
@@ -35,7 +35,15 @@ public class EventBus {
             try {
                 sub.handle(event);
             } catch (Throwable throwable) {
-                new EventException(sub, throwable).printStackTrace();
+                List<StackTraceElement> stackTrace = new ArrayList<>();
+                Collections.addAll(stackTrace, throwable.getStackTrace());
+                stackTrace.removeIf(c -> c.getClassName().contains(MethodHandle.class.getName()));
+                stackTrace.removeIf(c -> c.getClassName().contains(EventSubscription.class.getName()));
+                stackTrace.removeIf(c -> c.getClassName().contains(EventBus.class.getName()));
+                stackTrace.removeIf(c -> c.getClassName().contains(RuntimeEventSubscription.class.getName()));
+                stackTrace.removeIf(c -> c.getClassName().contains("java.util.stream"));
+                throwable.setStackTrace(stackTrace.toArray(new StackTraceElement[0]));
+                Omega.getLogger().log(Level.WARNING, sub.getListenerName() + " threw an exception while handling event", throwable);
             }
         });
         return event;
@@ -45,6 +53,7 @@ public class EventBus {
 
         public EventException(EventSubscription<?> subscription, Throwable cause) {
             super(subscription.getListenerName() + " threw an error when handling event", cause);
+            setStackTrace(cause.getStackTrace());
         }
     }
 
