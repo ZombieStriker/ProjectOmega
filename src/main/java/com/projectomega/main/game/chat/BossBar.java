@@ -30,7 +30,7 @@ public class BossBar {
     }
 
     public void sendBossbarPacketToPlayer(Player player){
-        String titleJson = new JsonChatBuilder().setTranslate(JsonChatBuilder.TEXT).add(new JsonChatElement(title)).build();
+        String titleJson = new JsonChatBuilder().add(new JsonChatElement(title)).build();
         OutboundPacket outboundPacket = new OutboundPacket(PacketType.BOSS_BAR, new Object[]{bossbaruuid,new VarInt(0),titleJson,health,new VarInt(color.getId()),new VarInt(divisions.getId()),(byte)0});
         player.sendPacket(outboundPacket);
     }

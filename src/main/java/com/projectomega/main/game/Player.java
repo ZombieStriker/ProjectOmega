@@ -184,4 +184,9 @@ public class Player {
         OutboundPacket packet = new OutboundPacket(PacketType.UPDATE_HEALTH, new Object[]{health,new VarInt(food),foodSaturation});
         sendPacket(packet);
     }
+
+    public void sendMessage(String s) {
+        sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{new JsonChatBuilder().add(new JsonChatElement(s)).build(),(byte)0}));
+
+    }
 }

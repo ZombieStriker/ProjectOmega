@@ -1,8 +1,6 @@
 package com.projectomega.main.game;
 
-import com.projectomega.main.game.chat.BossBar;
-import com.projectomega.main.game.chat.BossBarColor;
-import com.projectomega.main.game.chat.BossBarDivisions;
+import com.projectomega.main.game.chat.*;
 import com.projectomega.main.game.packetlogic.PacketLogicManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
@@ -66,7 +64,15 @@ public class Omega extends Thread {
         }
     }
 
-    public static void broadcastMessage(String s) {
+    private static void broadcastMessage(String s) {
+        for(Player player : players){
+            if(player.getChatmode()==0){
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{new JsonChatBuilder().setTranslate(JsonChatBuilder.TEXT).add(new JsonChatElement(s)).build(),(byte)0}));
+            }
+        }
+    }
+
+    public static void broadcastJSONMessage(String s) {
         for(Player player : players){
             if(player.getChatmode()==0){
                 player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{s,(byte)0}));

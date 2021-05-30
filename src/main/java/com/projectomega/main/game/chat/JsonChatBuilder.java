@@ -46,13 +46,18 @@ public class JsonChatBuilder {
 
     public String build() {
         JsonObject jsonObject = new JsonObject();
-        if (translate != null)
+        if (translate != null) {
             jsonObject.put("translate", translate);
-        JsonArray array = new JsonArray();
-        for (JsonChatElement element : elements) {
-            array.add(element.build());
+            JsonArray array = new JsonArray();
+            for (JsonChatElement element : elements) {
+                array.add(element.build());
+            }
+            jsonObject.put("with", array);
+        }else {
+            for (JsonChatElement element : elements) {
+                jsonObject.put("text",element.getValue());
+            }
         }
-        jsonObject.put("with", array);
         return jsonObject.toJson();
     }
 

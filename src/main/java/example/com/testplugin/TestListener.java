@@ -17,7 +17,7 @@ public class TestListener extends EventListener<PlayerJoinEvent> {
         System.out.println("Sending boss bar");
         bossBar.sendBossbarPacketToPlayer(event.getPlayer());
 
-        Inventory newinv = new Inventory(InventoryType.GENERIC_9x1,(byte)1);
-        event.getPlayer().openInventory(newinv);
+       // Inventory newinv = new Inventory(InventoryType.GENERIC_9x1,(byte)1);
+       // event.getPlayer().openInventory(newinv);
     }
 }

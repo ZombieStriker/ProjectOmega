@@ -11,6 +11,7 @@ public enum PacketType {
     LOGIN_SUCCESS(2,PacketDirection.CLIENTBOUND),
 
     SPAWN_ENTITY(0x00,PacketDirection.CLIENTBOUND),
+    SPAWN_LIVING_ENTITY(0x03,PacketDirection.CLIENTBOUND),
 
     CLIENT_SETTINGS(0x05,PacketDirection.SERVERBOUND),
     TIME_UPDATE(0x4E,PacketDirection.CLIENTBOUND),
@@ -22,6 +23,8 @@ public enum PacketType {
 
     CLICK_WINDOW_BUTTON(0x08,PacketDirection.SERVERBOUND),
     CLICK_WINDOW(0x09,PacketDirection.SERVERBOUND),
+
+    PLAYER_INFO(0x34,PacketDirection.CLIENTBOUND),
 
     HELD_ITEM_CHANGE(0x40,PacketDirection.CLIENTBOUND),
     SET_EXPERIENCE(0x48,PacketDirection.CLIENTBOUND),

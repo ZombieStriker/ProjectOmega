@@ -34,6 +34,7 @@ public class PacketInboundChat extends PacketHandler {
             }
         }
 
+
         if (message.startsWith("/")) {
             PlayerSendCommandEvent chatEvent = new PlayerSendCommandEvent(player, message);
             EventManager.call(chatEvent);
@@ -46,7 +47,7 @@ public class PacketInboundChat extends PacketHandler {
             PlayerChatEvent chatEvent = new PlayerChatEvent(player, message, json);
             EventManager.call(chatEvent);
             if (!chatEvent.isCanceled()) {
-                Omega.broadcastMessage(json.build());
+                Omega.broadcastJSONMessage(json.build());
             }
         }
     }

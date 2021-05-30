@@ -55,4 +55,8 @@ public class JsonChatElement {
         }
         return obj;
     }
+
+    public String getValue() {
+        return text;
+    }
 }

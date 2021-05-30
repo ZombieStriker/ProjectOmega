@@ -1,5 +1,6 @@
 package com.projectomega.main.packets.types;
 
+import com.projectomega.main.game.Omega;
 import com.projectomega.main.packets.*;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
@@ -19,16 +20,18 @@ public class PacketHandshake extends PacketHandler {
 
     @Override
     public void call(ByteBuf byteBuf, int packetsize, ChannelHandlerContext ctx) {
-        int protocolVersion = PacketUtil.readVarInt(byteBuf);
-        String ip = ByteUtils.buildString(byteBuf);
-        int port =  byteBuf.readShort();
-        int status = byteBuf.readByte();
+        if(Omega.getPlayerByChannel(ctx.channel())==null) {
+            int protocolVersion = PacketUtil.readVarInt(byteBuf);
+            String ip = ByteUtils.buildString(byteBuf);
+            int port = byteBuf.readShort();
+            int status = byteBuf.readByte();
 
-        InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE,new Object[]{protocolVersion,ip,port,status},ctx.channel());
-        List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE);
-        if(packetlisteners!=null){
-            for(PacketListener listener : packetlisteners){
-                listener.onCall(packet);
+            InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE, new Object[]{protocolVersion, ip, port, status}, ctx.channel());
+            List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE);
+            if (packetlisteners != null) {
+                for (PacketListener listener : packetlisteners) {
+                    listener.onCall(packet);
+                }
             }
         }
     }

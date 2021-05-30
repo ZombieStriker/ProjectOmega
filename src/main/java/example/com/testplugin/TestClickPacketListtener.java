@@ -28,12 +28,16 @@ public class TestClickPacketListtener extends PacketListener {
         player.setHotbarSlot(4);
         player.setXP(0.5f,69, ExperiencePointsUtil.getTotalXP(69));
 
-        byte pitch = (byte) (256/256*0.5);
-        byte yaw = (byte) (256/256*0.5);
+        byte pitch = (byte) (256*0.0);
+        byte yaw = (byte) (256*0.0);
+        byte headpitch = (byte) (256*0.0);
         int data = 0;
 
-        OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(12), UUID.randomUUID(),new VarInt(EntityType.ARROW.getTypeID()),5d,0d,0d,pitch,yaw,data,(short)0,(short)0,(short)0});
+        OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(12), UUID.randomUUID(),new VarInt(EntityType.CREEPER.getTypeID()),5d,0d,0d,pitch,yaw,data,(short)0,(short)0,(short)0});
         player.sendPacket(spawnentity);
+
+        OutboundPacket spawnLivingentity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new Object[]{new VarInt(13), UUID.randomUUID(),new VarInt(EntityType.CREEPER.getTypeID()),5d,0d,0d,pitch,yaw,headpitch,(short)0,(short)0,(short)0});
+        player.sendPacket(spawnLivingentity);
         // player.setHealth(5f);
        // player.setFood((player.getFood()+1)%20);
     }
