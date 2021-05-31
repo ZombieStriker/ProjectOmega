@@ -17,11 +17,17 @@ public class Omega extends Thread {
 
     private static final Logger LOGGER = Logger.getLogger(Omega.class.getName());
 
+    private static ConsoleSender consoleSender = new ConsoleSender();
+
     public static List<Player> players = new ArrayList<>();
     public static List<World> worlds = new ArrayList<>();
 
     private static Omega instance;
     private static boolean init = false;
+
+    public static ConsoleSender getConsoleSender(){
+        return consoleSender;
+    }
 
     protected static Omega getInstance() {
         if (instance == null) {

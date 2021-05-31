@@ -1,5 +1,7 @@
 package com.projectomega.main.game;
 
+import com.projectomega.main.events.EventBus;
+import com.projectomega.main.events.types.PlayerChatEvent;
 import com.projectomega.main.game.chat.JsonChatBuilder;
 import com.projectomega.main.game.chat.JsonChatElement;
 import com.projectomega.main.game.inventory.Inventory;
@@ -14,7 +16,7 @@ import io.netty.channel.Channel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player implements CommandSender{
 
     private Channel connection;
 
@@ -196,6 +198,20 @@ public class Player {
     public void sendMessage(String s) {
         sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{new JsonChatBuilder().add(new JsonChatElement(s)).build(),(byte)0}));
 
+    }
+
+    @Override
+    public void issueCommand(String command) {
+        //TODO: Issue Command
+    }
+
+    @Override
+    public void chat(String message) {
+        JsonChatBuilder json = new JsonChatBuilder().setTranslate(JsonChatBuilder.CHAT_TYPE_TEXT).add(new JsonChatElement(this.getName())).add(new JsonChatElement(": " + message));
+        PlayerChatEvent chatEvent = new PlayerChatEvent(this, message, json);
+        if (!EventBus.INSTANCE.post(chatEvent).isCancelled()) {
+            Omega.broadcastJSONMessage(json.build());
+        }
     }
 
     public void playSound(Sound sound, SoundCategory catagory, Location location, float volume, float pitch){
