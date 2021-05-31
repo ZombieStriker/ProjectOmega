@@ -7,11 +7,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Mork2" />
+        <module name="Mork" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Mork" target="16" />
-    </bytecodeTargetLevel>
   </component>
 </project>
