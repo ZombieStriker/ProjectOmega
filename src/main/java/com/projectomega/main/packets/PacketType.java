@@ -24,6 +24,9 @@ public enum PacketType {
     CLICK_WINDOW_BUTTON(0x08,PacketDirection.SERVERBOUND),
     CLICK_WINDOW(0x09,PacketDirection.SERVERBOUND),
 
+    SOUND_EFFECT(0x52, PacketDirection.CLIENTBOUND),
+    TITLE(0x50,PacketDirection.CLIENTBOUND),
+
     PLAYER_INFO(0x34,PacketDirection.CLIENTBOUND),
 
     HELD_ITEM_CHANGE(0x40,PacketDirection.CLIENTBOUND),

@@ -9,10 +9,12 @@ public class Region {
 
     private int x;
     private int z;
+    private World world;
 
-    public Region(int x, int z){
+    public Region(World world,int x, int z){
         this.x = x;
         this.z = z;
+        this.world= world;
     }
     public int getX(){
         return x;
@@ -27,5 +29,11 @@ public class Region {
                 return c.getValue();
         }
         return null;
+    }
+
+    public Chunk createChunk(int x, int z) {
+        Chunk chunk = new Chunk(world,x,z);
+        chunks.put(new ChunkPosition(x,z),chunk);
+        return chunk;
     }
 }

@@ -31,7 +31,7 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
             // OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME, new Object[]{1,true, new UnsignedByte((byte) 0),(byte)-1,new VarInt(1),"world","world_nether","world_the_end", NBTTagUtil.generateDimensionCodec(), NBTTagUtil.generateDimensionType(),"world",0l,new VarInt(32),new VarInt(10),false,true,false,false});
             //OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME, new Object[]{1,true, new UnsignedByte((byte) 0),(byte)-1,new VarInt(1),"overworld", dimensionCodec, NBTTagUtil.generateDimensionType(),"overworld",0l,new VarInt(32),new VarInt(10),false,true,false,false});
 
-            Player player = new Player(packet.getChannel(), (Integer) packet.getData(0));
+            Player player = new Player(packet.getChannel(), (Integer) packet.getData(0), Omega.getWorlds().get(0));
 
             PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
             if (!EventBus.INSTANCE.post(joinEvent).isCancelled()) {

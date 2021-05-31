@@ -4,6 +4,8 @@ import com.projectomega.main.game.chat.JsonChatBuilder;
 import com.projectomega.main.game.chat.JsonChatElement;
 import com.projectomega.main.game.inventory.Inventory;
 import com.projectomega.main.game.inventory.PlayerInventory;
+import com.projectomega.main.game.sound.Sound;
+import com.projectomega.main.game.sound.SoundCategory;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.VarInt;
@@ -35,6 +37,7 @@ public class Player {
     private Inventory viewedInventory = null;
     private Inventory playerInventory = new PlayerInventory();
     private int heldSlot = 0;
+    private World world;
 
     public String getLocale(){
         return locale;
@@ -50,6 +53,10 @@ public class Player {
     }
     public boolean isMainhandRighthanded(){
         return mainHand == 1;
+    }
+
+    public void setWorld(World world){
+        this.world = world;
     }
 
     public Inventory getInventory(){
@@ -102,9 +109,10 @@ public class Player {
         outgoingPackets.remove(packet);
     }
 
-    public Player(Channel connection, int protocolversion){
+    public Player(Channel connection, int protocolversion, World world){
         this.connection = connection;
         this.protocolVersion = protocolversion;
+        this.world = world;
     }
     public Channel getConnection(){
         return connection;
@@ -188,5 +196,23 @@ public class Player {
     public void sendMessage(String s) {
         sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{new JsonChatBuilder().add(new JsonChatElement(s)).build(),(byte)0}));
 
+    }
+
+    public void playSound(Sound sound, SoundCategory catagory, Location location, float volume, float pitch){
+        OutboundPacket packet = new OutboundPacket(PacketType.SOUND_EFFECT,new Object[]{new VarInt(sound.getId()), new VarInt(catagory.getId()), location.getBlockX()*8,location.getBlockY()*8,location.getBlockZ()*8, volume,pitch});
+        sendPacket(packet);
+    }
+
+    public void sendTitle(String title, String subtitle, int fadein, int stay, int fadeout){
+        OutboundPacket settile = new OutboundPacket(PacketType.TITLE, new Object[]{new VarInt(0), new JsonChatBuilder().add(new JsonChatElement(title)).build()});
+        OutboundPacket setsubtitle = new OutboundPacket(PacketType.TITLE, new Object[]{new VarInt(1), new JsonChatBuilder().add(new JsonChatElement(subtitle)).build()});
+        OutboundPacket settimesanddisplay = new OutboundPacket(PacketType.TITLE, new Object[]{new VarInt(2), fadein,stay,fadeout});
+        sendPacket(settile);
+        sendPacket(setsubtitle);
+        //sendPacket(settimesanddisplay);
+    }
+
+    public World getWorld() {
+        return world;
     }
 }

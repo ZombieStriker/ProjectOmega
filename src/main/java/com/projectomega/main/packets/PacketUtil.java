@@ -70,8 +70,11 @@ public class PacketUtil {
 
         return result;
     }
-
     public static int writeInt(byte[] bytes, int offset, int value) {
+        return writeInt(bytes,offset,value,false);
+    }
+
+    public static int writeInt(byte[] bytes, int offset, int value, boolean invert) {
         int i = 0;
         do {
             byte temp = (byte) (value & 0b01111111);
@@ -80,6 +83,9 @@ public class PacketUtil {
             if (value != 0) {
                 temp |= 0b10000000;
             }
+            if(invert)
+                bytes[offset + 3- i] = temp;
+            else
             bytes[offset + i] = temp;
             i++;
         } while (i != 4);
@@ -146,6 +152,11 @@ public class PacketUtil {
                 offset += ByteUtils.addIntToByteArray(bytes, offset, (Integer) data);
             } else if (data instanceof VarLong) {
                 offset += writeVarLong(bytes, offset, ((VarLong) data).getLong());
+            } else if (data instanceof byte[]) {
+                offset += writeBytes(bytes, offset, (byte[]) data);
+            } else if (data instanceof int[]) {
+                for (int i = 0; i < ((int[]) data).length; i++)
+                    offset += writeInt(bytes, offset, ((int[]) data)[i]);
             } else if (data instanceof Long) {
                 offset += writeLong(bytes, offset, (Long) data);
             } else if (data instanceof Short) {
@@ -231,8 +242,8 @@ public class PacketUtil {
         bytebuf.writeByte(0);
         bytebuf.writeByte(0);
         try {
-            if(DebuggingUtil.DEBUG)
-            System.out.println("Writing " + length + " bytes for  " + packet.getType().getId() + "  || " + bytebuf.array().length);
+            if (DebuggingUtil.DEBUG)
+                System.out.println("Writing " + length + " bytes for  " + packet.getType().getId() + "  || " + bytebuf.array().length);
             connection.writeAndFlush(bytebuf).awaitUninterruptibly().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -242,14 +253,14 @@ public class PacketUtil {
     private static int writeShort(byte[] bytes, int offset, short length) {
         ByteBuffer buffer = ByteBuffer.allocate(2);
         buffer.putShort(length);
-        for(int i = 0; i < 2 ; i++) {
-            bytes[offset+i] = buffer.get(i);
+        for (int i = 0; i < 2; i++) {
+            bytes[offset + i] = buffer.get(i);
         }
         return 2;
     }
 
     private static int writeByte(byte[] bytes, int offset, byte i) {
-        bytes[offset]=i;
+        bytes[offset] = i;
         return 1;
     }
 
@@ -325,7 +336,7 @@ public class PacketUtil {
     }
 
     public static boolean readBoolean(ByteBuf bytebuf) {
-        return bytebuf.readByte()==0x01;
+        return bytebuf.readByte() == 0x01;
     }
 
     public static byte readUnsignedByte(ByteBuf bytebuf) {

@@ -32,6 +32,9 @@ public class Omega extends Thread {
 
     private Omega() {
         instance = this;
+        createWorld("world");
+        createWorld("world_nether");
+        createWorld("world_the_end");
     }
 
     public static BossBar createBossBar(String title, float health, BossBarColor color, BossBarDivisions divisions) {
