@@ -8,9 +8,6 @@
     <artifactId>ProjectOmega</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>Mork</module>
-    </modules>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
