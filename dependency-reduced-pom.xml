@@ -49,6 +49,16 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
+  <distributionManagement>
+    <repository>
+      <id>codemc-releases</id>
+      <url>https://repo.codemc.io/repository/maven-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>codemc-snapshots</id>
+      <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
   <properties>
     <maven.compiler.target>16</maven.compiler.target>
     <maven.compiler.source>16</maven.compiler.source>
