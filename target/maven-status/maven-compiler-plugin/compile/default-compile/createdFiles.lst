@@ -5,6 +5,7 @@ com\projectomega\main\game\Location.class
 com\projectomega\main\game\packetlogic\SendClientSettingsPacketLogic.class
 com\projectomega\main\game\Player.class
 com\projectomega\main\plugins\OmegaPlugin.class
+com\projectomega\main\game\ConsoleSender.class
 com\projectomega\main\debugging\DebuggingUtil.class
 com\projectomega\main\utils\NBTTagUtil.class
 com\projectomega\main\game\packetlogic\UpdateHeldItemSlot.class
@@ -19,6 +20,7 @@ com\projectomega\main\game\packetlogic\SendMOTDPacketLogic.class
 com\projectomega\main\packets\types\PacketClickWindowButton.class
 com\projectomega\main\game\chat\JsonHoverAction.class
 com\projectomega\main\events\Cancellable.class
+com\projectomega\main\game\OfflinePlayer.class
 com\projectomega\main\packets\types\PacketHeldItemChange.class
 com\projectomega\main\packets\types\PacketClickWindow.class
 com\projectomega\main\game\World.class
@@ -67,13 +69,16 @@ org\apache\xbean\finder\ResourceFinder.class
 example\com\testplugin\TestPlugin.class
 com\projectomega\main\game\inventory\PlayerInventory.class
 com\projectomega\main\events\EventBus$EventException.class
+com\projectomega\main\game\entity\Entity.class
 com\projectomega\main\game\chat\BossBarDivisions.class
 example\com\testplugin\TestClickPacketListtener.class
 com\projectomega\main\game\chat\BossBar.class
+com\projectomega\main\game\CommandSender.class
 com\projectomega\main\game\sound\Sound.class
 com\projectomega\main\packets\datatype\VarLong.class
 com\projectomega\main\ServerThread.class
 com\projectomega\main\ServerThread$1.class
+com\projectomega\main\events\types\PingServerEvent.class
 com\projectomega\main\game\Block.class
 com\projectomega\main\game\chat\BossBarColor.class
 com\projectomega\main\events\EventBus.class

@@ -15,8 +15,9 @@ import io.netty.channel.Channel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class Player implements CommandSender{
+public class Player extends  OfflinePlayer implements CommandSender{
 
     private Channel connection;
 
@@ -111,7 +112,8 @@ public class Player implements CommandSender{
         outgoingPackets.remove(packet);
     }
 
-    public Player(Channel connection, int protocolversion, World world){
+    public Player(String name, UUID uuid, Channel connection, int protocolversion, World world){
+        super(name,uuid);
         this.connection = connection;
         this.protocolVersion = protocolversion;
         this.world = world;

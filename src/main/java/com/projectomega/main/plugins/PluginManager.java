@@ -26,14 +26,7 @@ public class PluginManager {
         if (DebuggingUtil.enableTestPlugin) {
             registerPluginClass(TestPlugin.class);
         }
-        File jarPath = null;
-        try {
-            URI uri = Omega.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-            if (uri != null) ;
-            jarPath = new File(uri);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        File jarPath = Omega.getJarFile();
         if (jarPath != null) {
             File pluginfolder = new File(jarPath.getParent(), "/plugins");
             if (!pluginfolder.exists()) {
