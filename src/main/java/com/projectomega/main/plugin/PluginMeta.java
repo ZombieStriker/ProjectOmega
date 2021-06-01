@@ -53,13 +53,14 @@ public final class PluginMeta {
                 requireNonNull(data.get("name"), "Missing 'name' property!").toString(),
                 requireNonNull(data.get("main"), "Missing 'main' property!").toString(),
                 (String) data.get("author"),
-                data.getOrDefault("version", "1.0").toString(),
-                (String) data.get("description")
+                (String) data.get("description"),
+                data.getOrDefault("version", "1.0").toString()
         );
         if (data.containsKey("runtime-dependencies")) {
             Map<String, Object> deps = (Map<String, Object>) data.get("runtime-dependencies");
             List<Repository> repositories = ((List<String>) deps.getOrDefault("repositories", new ArrayList<>()))
                     .stream().map(Repository::new).collect(Collectors.toList());
+            repositories.add(Repository.MAVEN_CENTRAL);
             Map<String, String> relocationsMap = (Map<String, String>) deps.getOrDefault("relocations", new LinkedHashMap<>());
             List<Map<String, Object>> dependencies = (List<Map<String, Object>>) deps.getOrDefault("dependencies", new ArrayList<>());
             meta.dependencies = new DependencyData(

@@ -1,6 +1,7 @@
 package com.projectomega.main.plugin.loader.dependency;
 
 import lombok.SneakyThrows;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+@ToString
 public final class Repository {
 
     public static final Repository MAVEN_CENTRAL = new Repository("https://repo1.maven.org/maven2/");
@@ -61,16 +63,23 @@ public final class Repository {
     public File downloadFile(Dependency dependency, File directory, DependencyData data, RelocationHandler handler) {
         try {
             for (Dependency transitive : dependency.getTransitiveDependencies(this)) {
-                File input = new File(directory, transitive.getName() + "-unrelocated.jar");
-                File output = new File(directory, transitive.getName() + ".jar");
+                File input = new File(directory, transitive.getName() + ".jar");
+                File output = new File(directory, transitive.getName() + "-remapped.jar");
                 download(transitive, input);
-                handler.remap(input, output, data.getRelocations());
+                if (!data.getRelocations().isEmpty() && !output.exists()) {
+                    output.createNewFile();
+                    handler.remap(input, output, data.getRelocations());
+                }
             }
-            File input = new File(directory, dependency.getName() + "-unrelocated.jar");
-            File output = new File(directory, dependency.getName() + ".jar");
+            File input = new File(directory, dependency.getName() + ".jar");
+            File output = new File(directory, dependency.getName() + "-remapped.jar");
             download(dependency, input);
-            handler.remap(input, output, data.getRelocations());
-            return output;
+            if (!data.getRelocations().isEmpty()) {
+                if (!output.exists())
+                    handler.remap(input, output, data.getRelocations());
+                return output;
+            }
+            return input;
         } catch (Exception e) {
             return null; // try another repository.
         }

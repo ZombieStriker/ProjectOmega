@@ -33,11 +33,10 @@ public class RelocationHandler {
     }
 
     public void remap(File input, File output, Map<String, String> relocations) throws Exception {
-
+        output.createNewFile();
         // create and invoke a new relocator
         Object relocator = jarRelocatorConstructor.newInstance(input, output, relocations);
         jarRelocatorRunMethod.invoke(relocator);
-        input.delete();
     }
 
     public static class IsolatedClassLoader extends URLClassLoader {

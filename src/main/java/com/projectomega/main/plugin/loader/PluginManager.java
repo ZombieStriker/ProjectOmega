@@ -9,7 +9,6 @@ import example.com.testplugin.TestPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -17,11 +16,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -32,14 +28,6 @@ public class PluginManager {
     private RelocationHandler relocationHandler;
 
     public void searchPlugins() {
-        File jarPath = Omega.getJarFile();
-        if (jarPath != null) {
-            File pluginFolder = new File(jarPath.getParent(), "/plugins");
-            if (!pluginFolder.exists()) {
-                pluginFolder.mkdirs();
-            }
-            registerPlugins(pluginFolder);
-        }
         File librariesFolder = new File(Objects.requireNonNull(Omega.getJarFile()).getParent(), "libs");
         librariesFolder.mkdirs();
         Repository.MAVEN_CENTRAL.downloadFile(Relocation.RELOCATOR, librariesFolder);
@@ -51,6 +39,15 @@ public class PluginManager {
             }
         }).filter(Objects::nonNull).toArray(URL[]::new);
         relocationHandler = new RelocationHandler(urls);
+
+        File jarPath = Omega.getJarFile();
+        if (jarPath != null) {
+            File pluginFolder = new File(jarPath.getParent(), "/plugins");
+            if (!pluginFolder.exists()) {
+                pluginFolder.mkdirs();
+            }
+            registerPlugins(pluginFolder);
+        }
         if (DebuggingUtil.enableTestPlugin) {
             plugins.put(new TestPlugin(), new PluginMeta("Test Plugin", TestPlugin.class.getName()));
         }
@@ -92,12 +89,19 @@ public class PluginManager {
                             File dir = new File(pluginFolder, meta.getName() + File.separator + "libraries");
                             dir.mkdirs();
                             for (Dependency dependency : data.getDependencies()) {
+                                boolean downloaded = false;
                                 for (Repository repository : data.getRepositories()) {
                                     File f = repository.downloadFile(dependency, dir, data, relocationHandler);
                                     if (f != null) {
                                         classLoader.load(f.toURI().toURL());
+                                        downloaded = true;
                                         break;
                                     }
+                                }
+                                if (!downloaded) {
+                                    StringJoiner repositories = new StringJoiner("\n-", "\n-", "").setEmptyValue("[None]");
+                                    data.getRepositories().forEach(r -> repositories.add(r.getURL().toString()));
+                                    throw new IllegalArgumentException("Could not download dependency " + dependency.getArtifactId() + " from the specified repositories: " + repositories);
                                 }
                             }
                         }
@@ -105,6 +109,7 @@ public class PluginManager {
                                 .asSubclass(OmegaPlugin.class);
                         try {
                             OmegaPlugin plugin = getPlugin(mainClass);
+                            System.out.println(plugin.hashCode());
                             Omega.getLogger().log(Level.INFO, "Registering plugin class: -" + mainClass.getName());
                             plugins.put(plugin, meta);
                         } catch (Throwable t) {
