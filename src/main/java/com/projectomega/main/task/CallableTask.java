@@ -34,6 +34,6 @@ public abstract class CallableTask<T> extends Task {
         return completableFuture;
     }
 
-    public abstract T call();
+    protected abstract T call();
 
 }

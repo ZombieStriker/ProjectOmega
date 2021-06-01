@@ -24,6 +24,7 @@ hs_err_pid*
 
 # IntelliJ
 /.idea/
+ProjectOmega.iml
 
 # Maven
 /target/
