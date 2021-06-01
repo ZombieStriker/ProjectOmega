@@ -1,7 +1,7 @@
 package example.com.testplugin;
 
-import com.projectomega.main.events.EventListener;
-import com.projectomega.main.events.types.PlayerSendCommandEvent;
+import com.projectomega.main.events.*;
+import com.projectomega.main.events.types.*;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.VarInt;
@@ -9,6 +9,21 @@ import com.projectomega.main.packets.datatype.VarInt;
 import java.util.UUID;
 
 public class TestCommandListener {
+
+    @EventListener(priority = Priority.LOWEST)
+    public void onPlayerChat3(PlayerChatEvent event) {
+        System.out.println("Chat3: "+event.getMessage());
+    }
+
+    @EventListener(priority = Priority.NORMAL)
+    public void onPlayerChat(PlayerChatEvent event) {
+        System.out.println("Chat2: "+event.getMessage());
+    }
+
+    @EventListener(priority = Priority.LOW)
+    public void onPlayerChat2(PlayerChatEvent event) {
+        System.out.println("Chat: "+event.getMessage());
+    }
 
     @EventListener
     public void onPlayerSendCommand(PlayerSendCommandEvent event) {

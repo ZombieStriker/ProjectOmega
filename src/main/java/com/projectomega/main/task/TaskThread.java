@@ -31,16 +31,14 @@ public class TaskThread {
     public void unregisterUncaughtExceptionHandler(OmegaPlugin plugin) {
         exceptionHandlers.removeIf(handler -> {
             ClassLoader loader = handler.getClass().getClassLoader();
-            return loader instanceof PluginClassLoader;
-            // TODO get the plugin associated with the PluginClassLoader and compare it with the "plugin" argument
+            return loader instanceof PluginClassLoader && ((PluginClassLoader) loader).getPlugin() == plugin;
         });
     }
 
     public void cancelTask(OmegaPlugin plugin) {
         tasks.removeIf(task -> {
             ClassLoader loader = task.getClass().getClassLoader();
-            if (loader instanceof PluginClassLoader) {
-                // TODO check if the associated plugin is the same plugin as specified in the parameter
+            if (loader instanceof PluginClassLoader && ((PluginClassLoader) loader).getPlugin() == plugin) {
                 task.getFuture().cancel(false);
                 return true;
             }
