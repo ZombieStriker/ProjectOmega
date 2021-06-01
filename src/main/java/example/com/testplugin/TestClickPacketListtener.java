@@ -15,17 +15,17 @@ public class TestClickPacketListtener implements PacketListener {
         byte windowid = (byte) packet.getData(0);
         short slot = (short) packet.getData(1);
         Player player = Omega.getPlayerByChannel(packet.getChannel());
-        if(player!=null){
+        if (player != null) {
             player.getInventory().setItem(slot, new ItemStack(Material.STONE));
         }
 
         player.setHotbarSlot(4);
-        player.setXP(0.5f,69, ExperiencePointsUtil.getTotalXP(69));
+        player.setXP(0.5f, 69, ExperiencePointsUtil.getTotalXP(69));
 
         World world = Omega.getWorlds().get(0);
-        player.playSound(Sound.SOUND_TEST, SoundCategory.MASTER,new Location(player.getWorld(),0,0,0),1f,1f);
+        player.playSound(Sound.SOUND_TEST, SoundCategory.MASTER, Location.at(0, 0, 0, player.getWorld()), 1f, 1f);
         player.sendTitle("Test", "Message", 20, 60, 20);
-        world.sendChunkData(new ChunkPosition(0,0),player);
+        world.sendChunkData(new ChunkPosition(0, 0), player);
         //world.sendChunkData(new ChunkPosition(1,2),player);
 
         //OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(12), UUID.randomUUID(),new VarInt(EntityType.CREEPER.getTypeID()),5d,0d,0d,pitch,yaw,data,(short)0,(short)0,(short)0});
@@ -34,6 +34,6 @@ public class TestClickPacketListtener implements PacketListener {
         //OutboundPacket spawnLivingentity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new Object[]{new VarInt(13), UUID.randomUUID(),new VarInt(EntityType.CREEPER.getTypeID()),5d,0d,0d,pitch,yaw,headpitch,(short)0,(short)0,(short)0});
         //player.sendPacket(spawnLivingentity);
         // player.setHealth(5f);
-       // player.setFood((player.getFood()+1)%20);
+        // player.setFood((player.getFood()+1)%20);
     }
 }

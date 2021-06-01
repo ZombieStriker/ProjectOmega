@@ -17,8 +17,8 @@ import java.util.List;
 
 public class World {
 
-    private List<Region> regions = new ArrayList<>();
-    private String name;
+    private final List<Region> regions = new ArrayList<>();
+    private final String name;
 
     public World(String name) {
         this.name = name;
