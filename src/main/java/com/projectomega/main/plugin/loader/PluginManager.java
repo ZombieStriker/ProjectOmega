@@ -109,7 +109,6 @@ public class PluginManager {
                                 .asSubclass(OmegaPlugin.class);
                         try {
                             OmegaPlugin plugin = getPlugin(mainClass);
-                            System.out.println(plugin.hashCode());
                             Omega.getLogger().log(Level.INFO, "Registering plugin class: -" + mainClass.getName());
                             plugins.put(plugin, meta);
                         } catch (Throwable t) {
