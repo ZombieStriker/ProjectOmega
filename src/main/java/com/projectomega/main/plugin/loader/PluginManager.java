@@ -4,16 +4,20 @@ import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.plugin.OmegaPlugin;
 import com.projectomega.main.plugin.PluginMeta;
+import com.projectomega.main.plugin.loader.dependency.*;
 import example.com.testplugin.TestPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,42 +28,36 @@ import java.util.logging.Level;
 
 public class PluginManager {
 
-    private static final PluginInstanceProvider NO_ARG = Class::newInstance;
-
-    private static final PluginInstanceProvider SINGLETON = pluginClass -> {
-        for (Method method : pluginClass.getDeclaredMethods()) {
-            if (!Modifier.isStatic(method.getModifiers())) continue;
-            if (method.getReturnType() != pluginClass || method.getParameterCount() != 0) continue;
-            if (!method.isAccessible()) method.setAccessible(true);
-            return (OmegaPlugin) method.invoke(null);
-        }
-        for (Field field : pluginClass.getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers())) continue;
-            if (!field.isAccessible()) field.setAccessible(true);
-            return (OmegaPlugin) field.get(null);
-        }
-        throw new IllegalStateException("Cannot find a singleton field or method.");
-    };
-
     private final Map<OmegaPlugin, PluginMeta> plugins = new HashMap<>();
+    private RelocationHandler relocationHandler;
 
     public void searchPlugins() {
-        if (DebuggingUtil.enableTestPlugin) {
-            plugins.put(new TestPlugin(), new PluginMeta("Test Plugin", TestPlugin.class.getName()));
-        }
         File jarPath = Omega.getJarFile();
         if (jarPath != null) {
-            File pluginfolder = new File(jarPath.getParent(), "/plugins");
-            if (!pluginfolder.exists()) {
-                pluginfolder.mkdirs();
-                pluginfolder = new File(jarPath.getParent(), "/plugins");
+            File pluginFolder = new File(jarPath.getParent(), "/plugins");
+            if (!pluginFolder.exists()) {
+                pluginFolder.mkdirs();
             }
-            registerPlugins(pluginfolder);
+            registerPlugins(pluginFolder);
+        }
+        File librariesFolder = new File(Objects.requireNonNull(Omega.getJarFile()).getParent(), "libs");
+        librariesFolder.mkdirs();
+        Repository.MAVEN_CENTRAL.downloadFile(Relocation.RELOCATOR, librariesFolder);
+        URL[] urls = Arrays.stream(Objects.requireNonNull(librariesFolder.listFiles())).map(file -> {
+            try {
+                return file.toURL();
+            } catch (MalformedURLException e) {
+                return null;
+            }
+        }).filter(Objects::nonNull).toArray(URL[]::new);
+        relocationHandler = new RelocationHandler(urls);
+        if (DebuggingUtil.enableTestPlugin) {
+            plugins.put(new TestPlugin(), new PluginMeta("Test Plugin", TestPlugin.class.getName()));
         }
     }
 
     public void registerPlugins(File pluginFolder) {
-        for (File file : pluginFolder.listFiles()) {
+        for (File file : Objects.requireNonNull(pluginFolder.listFiles())) {
             if (file.getName().endsWith(".jar")) {
                 Omega.getLogger().log(Level.INFO, "Found Jar " + file.getName());
                 JarFile jar = null;
@@ -89,7 +87,20 @@ public class PluginManager {
                                 new URL[]{file.toURI().toURL()},
                                 PluginManager.class.getClassLoader()
                         );
-
+                        if (meta.getDependencies() != null) {
+                            DependencyData data = meta.getDependencies();
+                            File dir = new File(pluginFolder, meta.getName() + File.separator + "libraries");
+                            dir.mkdirs();
+                            for (Dependency dependency : data.getDependencies()) {
+                                for (Repository repository : data.getRepositories()) {
+                                    File f = repository.downloadFile(dependency, dir, data, relocationHandler);
+                                    if (f != null) {
+                                        classLoader.load(f.toURI().toURL());
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                         Class<? extends OmegaPlugin> mainClass = Class.forName(meta.getMainClass(), true, classLoader)
                                 .asSubclass(OmegaPlugin.class);
                         try {
@@ -154,4 +165,21 @@ public class PluginManager {
             }
         }
     }
+
+    private static final PluginInstanceProvider NO_ARG = Class::newInstance;
+
+    private static final PluginInstanceProvider SINGLETON = pluginClass -> {
+        for (Method method : pluginClass.getDeclaredMethods()) {
+            if (!Modifier.isStatic(method.getModifiers())) continue;
+            if (method.getReturnType() != pluginClass || method.getParameterCount() != 0) continue;
+            if (!method.isAccessible()) method.setAccessible(true);
+            return (OmegaPlugin) method.invoke(null);
+        }
+        for (Field field : pluginClass.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) continue;
+            if (!field.isAccessible()) field.setAccessible(true);
+            return (OmegaPlugin) field.get(null);
+        }
+        throw new IllegalStateException("Cannot find a singleton field or method.");
+    };
 }

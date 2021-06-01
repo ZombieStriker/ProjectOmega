@@ -7,8 +7,7 @@ import com.projectomega.main.plugin.OmegaPlugin;
 
 public class TestPlugin extends OmegaPlugin {
 
-    @Override
-    public void onEnable() {
+    @Override public void onEnable() {
         EventBus.INSTANCE.register(new TestListener());
         EventBus.INSTANCE.register(new TestCommandListener());
         PacketManager.registerPacketListener(PacketType.CLICK_WINDOW, new TestClickPacketListtener());

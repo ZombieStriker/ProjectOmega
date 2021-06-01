@@ -2,6 +2,12 @@ package com.projectomega.main.plugin.loader.dependency;
 
 public final class Relocation {
 
+    public static final Dependency RELOCATOR = new Dependency(
+            "me.lucko",
+            "jar-relocator",
+            "1.4"
+    );
+
     private final String pattern;
     private final String relocatedPattern;
 

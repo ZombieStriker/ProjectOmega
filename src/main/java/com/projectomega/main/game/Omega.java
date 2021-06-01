@@ -128,7 +128,6 @@ public class Omega extends Thread {
         File file = null;
         try {
             URI uri = Omega.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-            if (uri != null) ;
             file = new File(uri);
         } catch (URISyntaxException e) {
             e.printStackTrace();
