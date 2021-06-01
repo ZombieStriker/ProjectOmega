@@ -5,7 +5,7 @@ import com.projectomega.main.game.packetlogic.PacketLogicManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
-import com.projectomega.main.plugins.PluginManager;
+import com.projectomega.main.plugin.loader.PluginManager;
 import io.netty.channel.Channel;
 
 import javax.imageio.ImageIO;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -32,6 +31,7 @@ public class Omega extends Thread {
     private static Omega instance;
     private static boolean init = false;
     private BufferedImage icon;
+    private final PluginManager pluginManager = new PluginManager();
 
     public static ConsoleSender getConsoleSender() {
         return consoleSender;
@@ -141,8 +141,8 @@ public class Omega extends Thread {
     public void run() {
         System.out.println("Starting Server...");
         PacketLogicManager.init();
-        PluginManager.init();
-        PluginManager.enableAllPlugins();
+        pluginManager.searchPlugins();
+        pluginManager.enableAllPlugins();
         while (true) {
             long start = System.currentTimeMillis();
             for (Player player : new ArrayList<>(players)) {

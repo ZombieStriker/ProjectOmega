@@ -131,6 +131,18 @@ public class Location {
         return z;
     }
 
+    public int getBlockX() {
+        return block(x);
+    }
+
+    public int getBlockY() {
+        return block(y);
+    }
+
+    public int getBlockZ() {
+        return block(z);
+    }
+
     public float getYaw() {
         return yaw;
     }
@@ -142,4 +154,5 @@ public class Location {
     public World getWorld() {
         return world;
     }
+
 }

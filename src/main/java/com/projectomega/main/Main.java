@@ -4,7 +4,6 @@ import com.projectomega.main.game.Omega;
 
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.logging.Level;
 
 public class Main {
 
@@ -29,7 +28,6 @@ public class Main {
             } else {
                 Omega.getConsoleSender().chat(message);
             }
-
         }
     }
 
