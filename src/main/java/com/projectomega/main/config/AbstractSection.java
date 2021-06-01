@@ -7,11 +7,12 @@ import java.util.*;
 import java.util.regex.*;
 
 public abstract class AbstractSection implements Section {
-    protected ConfigOption option = new ConfigOption();
+    protected ConfigOption option;
     protected Section parent;
 
     public AbstractSection(Section parent) {
         this.parent = parent;
+        this.option = parent == null ? new ConfigOption() : parent.getOptions();
     }
 
     @Override

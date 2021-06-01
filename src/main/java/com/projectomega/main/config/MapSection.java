@@ -20,6 +20,7 @@ public class MapSection extends AbstractSection implements Map<String, Object> {
         map.put(key, value);
         if (value instanceof AbstractSection) {
             ((AbstractSection) value).parent = this;
+            ((AbstractSection) value).option = getOptions();
         }
     }
 
@@ -43,7 +44,7 @@ public class MapSection extends AbstractSection implements Map<String, Object> {
     }
 
     @Override
-    public Object getInScope(String key) {
+    protected Object getInScope(String key) {
         return map.get(key);
     }
 

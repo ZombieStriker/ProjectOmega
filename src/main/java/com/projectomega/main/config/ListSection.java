@@ -24,6 +24,7 @@ public class ListSection extends AbstractSection implements List<Object> {
         }
         if (value instanceof AbstractSection) {
             ((AbstractSection) value).parent = this;
+            ((AbstractSection) value).option = getOptions();
         }
     }
 
@@ -47,7 +48,7 @@ public class ListSection extends AbstractSection implements List<Object> {
     }
 
     @Override
-    public Object getInScope(String key) {
+    protected Object getInScope(String key) {
         try {
             return list.get(Integer.parseInt(key));
         } catch (NumberFormatException e) {
