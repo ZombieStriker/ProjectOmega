@@ -1,24 +1,24 @@
-#Project Omega (Name still WIP)
+#Project Omega
+(Name still WIP)
 
-Project Omega is an open-source, mod-able Minecraft server. It is licensed under the MIT License.
+Project Omega is an open-source, mod-able Minecraft server. It is licensed under the [MIT License].
+* [Homepage]
+* [Source]
+* [Issues]
+* [Documentation]
+* [Discord]
 
-    [Homepage]
-    [Source]
-    [Issues]
-    [Documentation]
-    Discord
-
-#Compilation We use maven to handle the dependancies
-
-    Do mvn clean install to build the jar
+#Compilation
+We use maven to handle the dependancies
+* Do `mvn clean install` to build the jar
 
 #Prerequisites
+* Java 16
 
-    Java 16
-
-Contributing
-
+## Contributing
 Are you a talented programmer looking to contribute some code? We'd love the help!
+* Open a pull request with your changes, following our [guidelines](CONTRIBUTING.md).
+* Please follow the above guidelines and requirements for your pull request(s) to be accepted.
 
-    Open a pull request with your changes, following our guidelines.
-    Please follow the above guidelines and requirements for your pull request(s) to be accepted.
+[MIT License]: http://www.tldrlegal.com/license/mit-license
+[Discord]: https://discord.gg/mcmU4gZ5Ba

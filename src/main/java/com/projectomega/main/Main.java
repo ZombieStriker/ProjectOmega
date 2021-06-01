@@ -20,7 +20,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String message = scanner.nextLine();
-            if (message.equalsIgnoreCase("stop")) {
+            if (message.equalsIgnoreCase("/stop")) {
                 serverThread.stop();
                 return;
             }

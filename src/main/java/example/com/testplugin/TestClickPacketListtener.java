@@ -25,7 +25,7 @@ public class TestClickPacketListtener implements PacketListener {
         World world = Omega.getWorlds().get(0);
         player.playSound(Sound.SOUND_TEST, SoundCategory.MASTER,new Location(player.getWorld(),0,0,0),1f,1f);
         player.sendTitle("Test", "Message", 20, 60, 20);
-        //world.sendChunkData(new ChunkPosition(0,0),player);
+        world.sendChunkData(new ChunkPosition(0,0),player);
         //world.sendChunkData(new ChunkPosition(1,2),player);
 
         //OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(12), UUID.randomUUID(),new VarInt(EntityType.CREEPER.getTypeID()),5d,0d,0d,pitch,yaw,data,(short)0,(short)0,(short)0});
