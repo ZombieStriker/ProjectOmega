@@ -6,6 +6,7 @@ import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.plugin.loader.PluginManager;
+import com.projectomega.main.task.*;
 import io.netty.channel.Channel;
 
 import javax.imageio.ImageIO;
@@ -31,7 +32,9 @@ public class Omega extends Thread {
     private static Omega instance;
     private static boolean init = false;
     private BufferedImage icon;
+
     private final PluginManager pluginManager = new PluginManager();
+    private final TaskManager taskManager = new TaskManager();
 
     public static ConsoleSender getConsoleSender() {
         return consoleSender;
@@ -51,11 +54,14 @@ public class Omega extends Thread {
         createWorld("world_the_end");
     }
 
+    public static TaskManager getTaskManager() {
+        return getInstance().taskManager;
+    }
+
     public static BossBar createBossBar(String title, float health, BossBarColor color, BossBarDivisions divisions) {
         BossBar bossBar = new BossBar(UUID.randomUUID(), title, health, color, divisions, false, false, false);
         return bossBar;
     }
-
 
     public static World getWorld(String name) {
         for (World world : worlds) {
