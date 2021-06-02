@@ -28,11 +28,11 @@ public class TestCommandListener {
     @EventListener
     public void onPlayerSendCommand(PlayerSendCommandEvent event) {
         if (event.getCommand().equals("/spawn")) {
-            if (event.getArgsLength() < 1) {
+            if (event.getArgumentsLength() < 1) {
                 event.getPlayer().sendMessage("Usage: /spawn <entityID>");
                 return;
             }
-            int id = Integer.parseInt(event.getArg(0));
+            int id = Integer.parseInt(event.getArgument(0));
 
             byte pitch = (byte) (256 * 0.0);
             byte yaw = (byte) (256 * 0.0);

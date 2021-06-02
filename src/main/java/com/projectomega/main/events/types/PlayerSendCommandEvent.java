@@ -4,17 +4,22 @@ import com.projectomega.main.events.Cancellable;
 import com.projectomega.main.events.Event;
 import com.projectomega.main.game.Player;
 
+import java.util.*;
+
 @Cancellable
 public class PlayerSendCommandEvent extends Event {
 
     private final Player player;
     private final String command;
-    private final String[] segments;
+    private final String label;
+    private final String[] args;
 
     public PlayerSendCommandEvent(Player player, String command) {
         this.player = player;
         this.command = command;
-        segments = command.split(" ");
+        String[] split = command.split("\\s+");
+        this.label = split[0];
+        this.args = Arrays.copyOfRange(split, 1, split.length);
     }
 
     public String getFullCommand() {
@@ -26,14 +31,18 @@ public class PlayerSendCommandEvent extends Event {
     }
 
     public String getCommand() {
-        return segments[0];
+        return label;
     }
 
-    public int getArgsLength() {
-        return segments.length - 1;
+    public int getArgumentsLength() {
+        return args.length;
     }
 
-    public String getArg(int arg) {
-        return segments[1 + arg];
+    public String getArgument(int arg) {
+        return args[arg];
+    }
+
+    public String[] getArguments() {
+        return args;
     }
 }

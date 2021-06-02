@@ -28,19 +28,19 @@ public class PingServerEvent extends Event {
         this.icon = icon;
     }
 
-    public int getPlayercount() {
+    public int getPlayerCount() {
         return playercount;
     }
 
-    public void setPlayercount(int playercount) {
+    public void setPlayerCount(int playercount) {
         this.playercount = playercount;
     }
 
-    public void setMaxplayercount(int maxplayercount) {
+    public void setMaxPlayerCount(int maxplayercount) {
         this.maxplayercount = maxplayercount;
     }
 
-    public int getMaxplayercount() {
+    public int getMaxPlayerCount() {
         return maxplayercount;
     }
     public void addPlayerToList(OfflinePlayer player){
