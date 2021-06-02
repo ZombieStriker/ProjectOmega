@@ -39,7 +39,7 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
             if (!EventBus.INSTANCE.post(joinEvent).isCancelled()) {
                 if (player.getProtocolVersion() < 750) {
                     //Outdated for 1.13-1.15
-                    OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME_OLD, new Object[]{0, new UnsignedByte((byte) 0), 0, 0l, new UnsignedByte((byte) 32), "flat", new VarInt(2), false, true});
+                    OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME_OLD, new Object[]{player.getEntityID(), new UnsignedByte((byte) 0), 0, 0l, new UnsignedByte((byte) 32), "flat", new VarInt(2), false, true});
                     PacketUtil.writePacketToOutputStream(packet.getChannel(), joingame);
 
                     Omega.addPlayerConnection(player);

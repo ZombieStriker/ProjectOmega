@@ -11,10 +11,11 @@ public enum PacketType {
     LOGIN_SUCCESS(2,PacketDirection.CLIENTBOUND),
 
     SPAWN_ENTITY(0x00,PacketDirection.CLIENTBOUND),
-    SPAWN_LIVING_ENTITY(0x03,PacketDirection.CLIENTBOUND),
 
     CLIENT_SETTINGS(0x05,PacketDirection.SERVERBOUND),
     TIME_UPDATE(0x4E,PacketDirection.CLIENTBOUND),
+
+    ENTITY_METADATA(0x44,PacketDirection.CLIENTBOUND),
 
     KEEP_ALIVE_CLIENTBOUND_OLD(0x21 ,PacketDirection.CLIENTBOUND),
     KEEP_ALIVE_SERVERBOUND_OLD(0x0F,PacketDirection.SERVERBOUND),
@@ -27,7 +28,7 @@ public enum PacketType {
     SOUND_EFFECT(0x52, PacketDirection.CLIENTBOUND),
     TITLE(0x50,PacketDirection.CLIENTBOUND),
 
-    PLAYER_INFO(0x34,PacketDirection.CLIENTBOUND),
+    PLAYER_INFO(0x32,PacketDirection.CLIENTBOUND),
 
     HELD_ITEM_CHANGE(0x40,PacketDirection.CLIENTBOUND),
     SET_EXPERIENCE(0x48,PacketDirection.CLIENTBOUND),
@@ -47,10 +48,10 @@ public enum PacketType {
     CHAT_CLIENTBOUND(0x0F,PacketDirection.CLIENTBOUND),
 
     BOSS_BAR(0x0D,PacketDirection.CLIENTBOUND),
-
+    ENTITY_TELEPORT(0x56,PacketDirection.CLIENTBOUND),
     UPDATE_HEALTH(0x49,PacketDirection.CLIENTBOUND ),
-    CLIENT_STATUS(0x04,PacketDirection.SERVERBOUND)
-    ;
+    CLIENT_STATUS(0x04,PacketDirection.SERVERBOUND),
+    SPAWN_LIVING_ENTITY(0x03,PacketDirection.CLIENTBOUND);
 
     private int id;
     private PacketDirection direction;
