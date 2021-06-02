@@ -5,6 +5,9 @@ import org.jetbrains.annotations.*;
 
 public abstract class OmegaPlugin {
 
+    public void onLoad() {
+    }
+
     public abstract void onEnable();
 
     public abstract void onDisable();

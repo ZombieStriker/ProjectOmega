@@ -6,7 +6,7 @@ import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.plugin.loader.PluginManager;
-import com.projectomega.main.task.*;
+import com.projectomega.main.task.TaskManager;
 import io.netty.channel.Channel;
 
 import javax.imageio.ImageIO;
@@ -147,7 +147,7 @@ public class Omega extends Thread {
         System.out.println("Starting Server...");
         PacketLogicManager.init();
         pluginManager.searchPlugins();
-        pluginManager.enableAllPlugins();
+        pluginManager.enablePlugins();
         while (true) {
             long start = System.currentTimeMillis();
             for (Player player : new ArrayList<>(players)) {
@@ -155,9 +155,9 @@ public class Omega extends Thread {
                     players.remove(player);
                     continue;
                 }
-                if(player.getProtocolVersion() < 754) {
+                if (player.getProtocolVersion() < 754) {
                     //player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND_OLD, new Object[]{start}));
-                }else{
+                } else {
                     player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND, new Object[]{start}));
                 }
                 for (OutboundPacket packet : player.getOutgoingPackets()) {

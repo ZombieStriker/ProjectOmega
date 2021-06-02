@@ -50,7 +50,7 @@ public final class Repository {
         }
     }
 
-    public void downloadFile(Dependency dependency, File directory) {
+    public void downloadFile(@NotNull Dependency dependency, @NotNull File directory) {
         try {
             for (Dependency transitive : dependency.getTransitiveDependencies(this)) {
                 download(transitive, new File(directory, transitive.getName() + ".jar"));
