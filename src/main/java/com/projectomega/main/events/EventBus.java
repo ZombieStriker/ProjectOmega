@@ -1,16 +1,13 @@
 package com.projectomega.main.events;
 
 
-import com.projectomega.main.game.Omega;
-import com.projectomega.main.plugin.*;
+import com.projectomega.main.plugin.OmegaPlugin;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.invoke.MethodHandle;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 @SuppressWarnings("rawtypes") // we had to.
 public class EventBus {
@@ -30,7 +27,7 @@ public class EventBus {
                     EventHandler handler = handlerMap.computeIfAbsent(
                             type.asSubclass(Event.class),
                             key -> new EventHandler());
-                    listeners.forEach(listener -> handler.register(listener));
+                    listeners.forEach(handler::register);
                 });
     }
 
@@ -44,14 +41,6 @@ public class EventBus {
             handler.fire(event);
         }
         return event;
-    }
-
-    private static class EventException extends RuntimeException {
-
-        public EventException(EventSubscription<?> subscription, Throwable cause) {
-            super(subscription.getListenerName() + " threw an error when handling event", cause);
-            setStackTrace(cause.getStackTrace());
-        }
     }
 
     /**
