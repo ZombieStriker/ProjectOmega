@@ -24,6 +24,10 @@ public final class TextComponent extends TextMessage {
         asJson = GSON.toJson(this);
     }
 
+    public Builder asBuilder() {
+        return new Builder(this);
+    }
+
     public static TextComponent simple(@NonNull String message) {
         return new TextComponent(colorize(message), null, null, null);
     }
@@ -38,6 +42,16 @@ public final class TextComponent extends TextMessage {
         private String insertion = null;
         private Hover hover = null;
         private Click click = null;
+
+        public Builder() {
+        }
+
+        public Builder(TextComponent component) {
+            message = component.text;
+            insertion = component.insertion;
+            hover = component.hoverEvent;
+            click = component.clickEvent;
+        }
 
         public Builder message(@NonNull String message) {
             this.message = colorize(message);
@@ -62,7 +76,6 @@ public final class TextComponent extends TextMessage {
         public TextComponent build() {
             return new TextComponent(message, insertion, hover, click);
         }
-
     }
 
     public static String colorize(@NonNull String textToTranslate) {
