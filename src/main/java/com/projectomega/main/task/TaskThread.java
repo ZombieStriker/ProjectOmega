@@ -60,6 +60,7 @@ public class TaskThread {
                 () -> {
                     task.impl_run();
                     tasks.remove(task);
+                    task.unregister(this);
                 }
         ));
         tasks.add(task);
@@ -70,6 +71,7 @@ public class TaskThread {
                 () -> {
                     task.impl_run();
                     tasks.remove(task);
+                    task.unregister(this);
                 },
                 delay.getDurationInMillis(),
                 TimeUnit.MILLISECONDS));

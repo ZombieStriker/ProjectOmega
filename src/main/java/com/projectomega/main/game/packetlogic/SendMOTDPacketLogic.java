@@ -2,7 +2,6 @@ package com.projectomega.main.game.packetlogic;
 
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
-import com.github.cliftonlabs.json_simple.Jsoner;
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PingServerEvent;
 import com.projectomega.main.game.OfflinePlayer;
@@ -10,7 +9,6 @@ import com.projectomega.main.game.Omega;
 import com.projectomega.main.packets.*;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
@@ -34,8 +32,8 @@ public class SendMOTDPacketLogic implements PacketListener {
             version.put("protocol", event.getVersionID());
             object.put("version", version);
             JsonObject players = new JsonObject();
-            players.put("max", event.getMaxplayercount());
-            players.put("online", event.getPlayercount());
+            players.put("max", event.getMaxPlayerCount());
+            players.put("online", event.getPlayerCount());
             JsonArray array = new JsonArray();
             for (OfflinePlayer player : event.getPlayers()) {
                 JsonObject playerJson = new JsonObject();
