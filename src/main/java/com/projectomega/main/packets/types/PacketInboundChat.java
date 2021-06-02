@@ -5,8 +5,8 @@ import com.projectomega.main.events.types.PlayerChatEvent;
 import com.projectomega.main.events.types.PlayerSendCommandEvent;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
-import com.projectomega.main.game.chat.JsonChatBuilder;
-import com.projectomega.main.game.chat.JsonChatElement;
+import com.projectomega.main.game.chat.TextMessage;
+import com.projectomega.main.game.chat.TranslatedComponent;
 import com.projectomega.main.packets.*;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
@@ -39,10 +39,11 @@ public class PacketInboundChat extends PacketHandler {
                 //TODO: Issue Command
             }
         } else {
-            JsonChatBuilder json = new JsonChatBuilder().setTranslate(JsonChatBuilder.CHAT_TYPE_TEXT).add(new JsonChatElement(player.getName())).add(new JsonChatElement(": " + message));
+
+            TranslatedComponent.Builder json = TextMessage.chat(player.getName(), ": " + message).asBuilder();
             PlayerChatEvent chatEvent = new PlayerChatEvent(player, message, json);
             if (!EventBus.INSTANCE.post(chatEvent).isCancelled()) {
-                Omega.broadcastJSONMessage(json.build());
+                Omega.broadcastJSONMessage(json.build().getAsJson());
             }
         }
     }

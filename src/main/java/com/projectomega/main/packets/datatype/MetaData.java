@@ -1,7 +1,7 @@
 package com.projectomega.main.packets.datatype;
 
-import com.projectomega.main.game.chat.JsonChatBuilder;
-import com.projectomega.main.game.chat.JsonChatElement;
+import com.projectomega.main.game.chat.TextComponent;
+import com.projectomega.main.game.chat.TextMessage;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
@@ -11,14 +11,12 @@ import me.nullicorn.nedit.type.NBTCompound;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MetaData {
 
-    HashMap<Integer,Object> metaData = new HashMap<>();
+    HashMap<Integer, Object> metaData = new HashMap<>();
 
     public MetaData() {
         /*metaData.put(0,(byte)0x00);
@@ -29,14 +27,17 @@ public class MetaData {
         metaData.put(5,false);*/
     }
 
-    public MetaData add(int index,Object obj) {
-        metaData.put(index,obj);
+    public MetaData add(int index, Object obj) {
+        metaData.put(index, obj);
         return this;
     }
-    public Object get(int index){return metaData.get(index);
+
+    public Object get(int index) {
+        return metaData.get(index);
     }
-    public void set(int index, Object object){
-        metaData.put(index,object);
+
+    public void set(int index, Object object) {
+        metaData.put(index, object);
     }
 
     public byte[] build() {
@@ -44,7 +45,7 @@ public class MetaData {
         int length = 0;
 
         for (Map.Entry<Integer, Object> object : metaData.entrySet()) {
-            buf.writeByte((byte)(int)object.getKey());
+            buf.writeByte((byte) (int) object.getKey());
             length += 1;
             if (object.getValue() instanceof Byte) {
                 byte[] varint = new byte[4];
@@ -54,7 +55,7 @@ public class MetaData {
                 length += varintlength;
                 buf.writeByte((byte) object.getValue());
                 length += 1;
-            } else if (object.getValue() instanceof JsonChatBuilder) {
+            } else if (object.getValue() instanceof TextMessage) {
                 byte[] varint = new byte[4];
                 int varintlength = PacketUtil.writeVarInt(varint, 0, 5);
                 for (int i = 0; i < varintlength; i++)
@@ -63,14 +64,14 @@ public class MetaData {
                 buf.writeByte(1);
                 length += 1;
 
-                String json = ((JsonChatBuilder) object.getValue()).build();
+                String json = ((TextMessage) object.getValue()).getAsJson();
                 byte[] string = new byte[3];
                 int stringlength = ByteUtils.addVarIntToByteArray(string, 0, json.length());
                 for (int i = 0; i < stringlength; i++)
                     buf.writeByte(string[i]);
                 length += stringlength;
                 byte[] jsonbytes = new byte[json.length()];
-                int jsonlength = ByteUtils.addStringToByteArray(jsonbytes,0,json);
+                int jsonlength = ByteUtils.addStringToByteArray(jsonbytes, 0, json);
                 for (int i = 0; i < jsonlength; i++)
                     buf.writeByte(jsonbytes[i]);
                 length += jsonlength;
@@ -79,7 +80,7 @@ public class MetaData {
                 length += 1;
                 buf.writeByte(0);
                 length += 1;*/
-            }else if (object.getValue() instanceof VarInt) {
+            } else if (object.getValue() instanceof VarInt) {
                 byte[] varint = new byte[4];
                 int varintlength = PacketUtil.writeVarInt(varint, 0, 1);
                 for (int i = 0; i < varintlength; i++)
@@ -91,7 +92,7 @@ public class MetaData {
                     buf.writeByte(value[i]);
                 length += varintlength2;
             }
-            if (object .getValue() instanceof Boolean) {
+            if (object.getValue() instanceof Boolean) {
                 byte[] varint = new byte[4];
                 int varintlength = PacketUtil.writeVarInt(varint, 0, 7);
                 for (int i = 0; i < varintlength; i++)
@@ -138,7 +139,7 @@ public class MetaData {
                 length += 1;
 
                 buf.writeByte(0x00);
-                length+=1;
+                length += 1;
 
                 /*
                 byte[] value = new byte[4];
@@ -205,11 +206,11 @@ public class MetaData {
             }
         }
 
-        byte[] bytes = new byte[length + 1 ];
-        StringBuilder debug =  new StringBuilder();
+        byte[] bytes = new byte[length + 1];
+        StringBuilder debug = new StringBuilder();
         for (int i = 0; i < length; i++) {
             bytes[i] = buf.readByte();
-            debug.append(bytes[i]+" ");
+            debug.append(bytes[i] + " ");
         }
         System.out.println(debug);
         bytes[bytes.length - 1] = (byte) 0xff;// new UnsignedByte((byte)0xff).getUnsignedBy

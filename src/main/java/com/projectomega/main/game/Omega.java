@@ -1,6 +1,9 @@
 package com.projectomega.main.game;
 
-import com.projectomega.main.game.chat.*;
+import com.projectomega.main.game.chat.BossBar;
+import com.projectomega.main.game.chat.BossBarColor;
+import com.projectomega.main.game.chat.BossBarDivisions;
+import com.projectomega.main.game.chat.TextMessage;
 import com.projectomega.main.game.packetlogic.PacketLogicManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
@@ -103,7 +106,7 @@ public class Omega extends Thread {
     private static void broadcastMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{new JsonChatBuilder().setTranslate(JsonChatBuilder.TEXT).add(new JsonChatElement(s)).build(), (byte) 0}));
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0));
             }
         }
     }
@@ -111,7 +114,7 @@ public class Omega extends Thread {
     public static void broadcastJSONMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, new Object[]{s, (byte) 0}));
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, s, (byte) 0));
             }
         }
     }
@@ -158,7 +161,7 @@ public class Omega extends Thread {
                 if (player.getProtocolVersion() < 754) {
                     //player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND_OLD, new Object[]{start}));
                 } else {
-                    player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND, new Object[]{start}));
+                    player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND, start));
                 }
                 for (OutboundPacket packet : player.getOutgoingPackets()) {
                     try {
