@@ -2,12 +2,17 @@ package com.projectomega.main.game.packetlogic;
 
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerJoinEvent;
+import com.projectomega.main.game.DelayedTask;
 import com.projectomega.main.game.Location;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
 import com.projectomega.main.packets.*;
 import com.projectomega.main.packets.datatype.UnsignedByte;
 import com.projectomega.main.packets.datatype.VarInt;
+import com.projectomega.main.task.Duration;
+import com.projectomega.main.task.Task;
+import com.projectomega.main.task.TaskManager;
+import com.projectomega.main.task.TaskThread;
 import com.projectomega.main.utils.NBTTagUtil;
 import me.nullicorn.nedit.type.NBTCompound;
 
@@ -43,24 +48,25 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
                 } else {
                     OutboundPacket outboundPacket = new OutboundPacket(PacketType.LOGIN_SUCCESS, new Object[]{uuid, name});
                     PacketUtil.writePacketToOutputStream(packet.getChannel(), outboundPacket);
-                    try {
-                        Thread.sleep(10L);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    NBTCompound dimensionCodec = NBTTagUtil.generateDimensionCodec();
-                    OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME, new Object[]{player.getEntityID(), true, new UnsignedByte((byte) 0), (byte) -1, new VarInt(1), "overworld", dimensionCodec, NBTTagUtil.generateDimensionType(), "overworld", 0l, new VarInt(32), new VarInt(10), false, true, false, false});
-                    PacketUtil.writePacketToOutputStream(packet.getChannel(), joingame);
 
                     Omega.addPlayerConnection(player);
 
-                    player.sendPacket(new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, new Object[]{
-                            player.getEntity().getLocation().getX(),
-                            player.getEntity().getLocation().getY(),
-                            player.getEntity().getLocation().getZ(),
-                            player.getEntity().getLocation().getYaw(),
-                            player.getEntity().getLocation().getPitch(),
-                            (byte) 0, new VarInt(1)}));
+                    Omega.getTaskManager().getMainThread().runTaskLater(new Task() {
+                        @Override
+                        protected void run() {
+                            NBTCompound dimensionCodec = NBTTagUtil.generateDimensionCodec();
+                            OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME, new Object[]{player.getEntityID(), true, new UnsignedByte((byte) 0), (byte) -1, new VarInt(1), "overworld", dimensionCodec, NBTTagUtil.generateDimensionType(), "overworld", 0l, new VarInt(32), new VarInt(10), false, true, false, false});
+                            player.sendPacket(joingame);
+
+                            player.sendPacket(new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, new Object[]{
+                                    player.getEntity().getLocation().getX(),
+                                    player.getEntity().getLocation().getY(),
+                                    player.getEntity().getLocation().getZ(),
+                                    player.getEntity().getLocation().getYaw(),
+                                    player.getEntity().getLocation().getPitch(),
+                                    (byte) 0, new VarInt(1)}));
+                        }
+                    }, Duration.seconds(1));
 
                 }
             }

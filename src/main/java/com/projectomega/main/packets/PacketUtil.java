@@ -4,6 +4,7 @@ import com.projectomega.main.ServerThread;
 import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
+import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.datatype.*;
 import com.projectomega.main.packets.types.*;
 import com.projectomega.main.utils.ByteUtils;
@@ -148,13 +149,16 @@ public class PacketUtil {
         if(player!=null){
             protocolVersion = player.getProtocolVersion();
         }
-        offset += ByteUtils.addVarIntToByteArray(bytes, offset, ProtocolManager.getPacketIDForProtocol(protocolVersion,packet.getType()));
+        int packetid = ProtocolManager.getPacketIDForProtocol(protocolVersion,packet.getType());
+        offset += ByteUtils.addVarIntToByteArray(bytes, offset, packetid);
         for (int dataIndex = 0; dataIndex < packet.getDataLength(); dataIndex++) {
             Object data = packet.getData(dataIndex);
             if (DebuggingUtil.DEBUG)
                 System.out.println("Writing " + data + " to index " + offset);
             if (data instanceof VarInt) {
                 offset += ByteUtils.addVarIntToByteArray(bytes, offset, ((VarInt) data).getInteger());
+            }else if (data instanceof EntityType) {
+                    offset += ByteUtils.addVarIntToByteArray(bytes, offset, new VarInt(ProtocolManager.getEntityIDForProtocol(protocolVersion,(EntityType) data)).getInteger());
             } else if (data instanceof Integer) {
                 offset += ByteUtils.addIntToByteArray(bytes, offset, (Integer) data);
             } else if (data instanceof VarLong) {
@@ -224,7 +228,7 @@ public class PacketUtil {
         bytebuf.writeByte(0);
         try {
             if (DebuggingUtil.DEBUG)
-                System.out.println("Writing " + length + " bytes for  " + packet.getType().getId() + "  || " + bytebuf.array().length);
+                System.out.println("Writing " + length + " bytes for packetid: " + packetid+ "  || " + bytebuf.array().length);
             connection.writeAndFlush(bytebuf).awaitUninterruptibly().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -259,9 +263,9 @@ public class PacketUtil {
         return offset2;
     }
 
-    public static List<PacketHandler> getPacketHandlersByID(int packetid) {
+    public static List<PacketHandler> getPacketHandlersBy(PacketType type) {
         for (Map.Entry<PacketType, List<PacketHandler>> packetHandler : handlers.entrySet()) {
-            if (packetHandler.getKey().getId() == packetid) {
+            if (packetHandler.getKey() == type) {
                 return packetHandler.getValue();
             }
         }

@@ -138,18 +138,18 @@ public class World {
         entities.add(ent);
         System.out.println(type.isLiving());
         if (type.isLiving()) {
-            OutboundPacket spawnLivingEntity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new Object[]{new VarInt(ent.getEntityID()), ent.getUniqueID(),
-                    new VarInt(ent.getType().getTypeID()), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
-                    new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), new Angle(ent.getLocation().getPitch()), (short) 0, (short) 0, (short) 0});
-            for (Player player : getPlayers()) {
-                player.sendPacket(spawnLivingEntity);
+               for (Player player : getPlayers()) {
+                   OutboundPacket spawnLivingEntity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new Object[]{new VarInt(ent.getEntityID()), ent.getUniqueID(),
+                           ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
+                           new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), new Angle(ent.getLocation().getPitch()), (short) 0, (short) 0, (short) 0});
+                   player.sendPacket(spawnLivingEntity);
             }
         } else {
-            OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(ent.getEntityID()), ent.getUniqueID(),
-                    new VarInt(ent.getType().getTypeID()), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
-                    new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0});
-            for (Player player : getPlayers()) {
-                player.sendPacket(spawnEntity);
+           for (Player player : getPlayers()) {
+               OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(ent.getEntityID()), ent.getUniqueID(),
+                       ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
+                       new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0});
+               player.sendPacket(spawnEntity);
             }
         }
         return ent;
@@ -163,7 +163,7 @@ public class World {
         Entity ent = new Entity(unusedEID, location, EntityType.ITEM);
         entities.add(ent);
         OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(ent.getEntityID()), ent.getUniqueID(),
-                new VarInt(ent.getType().getTypeID()), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
+                ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
                 new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0});
         NBTCompound itemmeta = new NBTCompound();
         OutboundPacket metaData = new OutboundPacket(PacketType.ENTITY_METADATA, new Object[]{

@@ -1,8 +1,12 @@
 package com.projectomega.main;
 
 import com.projectomega.main.debugging.DebuggingUtil;
+import com.projectomega.main.game.Omega;
+import com.projectomega.main.game.Player;
 import com.projectomega.main.packets.PacketHandler;
+import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
+import com.projectomega.main.versions.ProtocolManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -16,7 +20,12 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
         ByteBuf bytebuf = (ByteBuf) msg;
         int size = bytebuf.readByte();
         int packetid = bytebuf.readByte();
-        List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersByID(packetid);
+        Player player = Omega.getPlayerByChannel(ctx.channel());
+        int protocolversion = 0;
+        if(player != null){
+            protocolversion = player.getProtocolVersion();
+        }
+        List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersBy(ProtocolManager.getPacketByID(protocolversion,packetid,player==null, PacketType.PacketDirection.SERVERBOUND));
         if (packethandlers != null) {
             if(DebuggingUtil.DEBUG)
             System.out.println("Packet Handlers found for "+packetid+" : "+packethandlers.size());
@@ -24,7 +33,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
                 packetHandler.call(bytebuf, size - 1, ctx);
             }
         }else{
-            System.out.println("Failed to find packetHandler for packet "+packetid);
+            System.out.println("Failed to find packetHandler for packet "+packetid+":"+protocolversion);
         }
 
     }
