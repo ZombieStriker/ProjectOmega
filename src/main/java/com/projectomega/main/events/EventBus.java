@@ -2,6 +2,7 @@ package com.projectomega.main.events;
 
 
 import com.projectomega.main.game.Omega;
+import com.projectomega.main.plugin.*;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,36 +17,32 @@ public class EventBus {
 
     public static final EventBus INSTANCE = new EventBus();
 
-    private final Map<Class<? extends Event>, List<EventSubscription>> subscriptions = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Event>, EventHandler> handlerMap = new ConcurrentHashMap<>();
 
     public void register(@NotNull Object instance) {
         if (instance instanceof EventSubscription) {
             Class<?> eventType = ((Class<?>) ((ParameterizedType) instance.getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0]);
-            subscriptions.computeIfAbsent(eventType.asSubclass(Event.class), c -> new ArrayList<>()).add((EventSubscription<?>) instance);
+            handlerMap.computeIfAbsent(eventType.asSubclass(Event.class), key -> new EventHandler()).register((EventSubscription) instance);
             return;
         }
         EventSubscription.readSubscriptions(instance)
-                .forEach((type, listeners) -> subscriptions.computeIfAbsent(type.asSubclass(Event.class), c -> new ArrayList<>()).addAll(listeners));
+                .forEach((type, listeners) -> {
+                    EventHandler handler = handlerMap.computeIfAbsent(
+                            type.asSubclass(Event.class),
+                            key -> new EventHandler());
+                    listeners.forEach(listener -> handler.register(listener));
+                });
+    }
+
+    public void unregister(OmegaPlugin plugin) {
+        handlerMap.forEach((type, handler) -> handler.unregister(plugin));
     }
 
     public <T extends Event> T post(@NotNull T event) {
-        List<EventSubscription> subs = subscriptions.get(event.getClass());
-        if (subs == null || subs.isEmpty()) return event; // event has no subscriptions
-        subs.stream().sorted(Comparator.comparingInt(s -> s.getPriority().getPriority())).forEach(sub -> {
-            try {
-                sub.handle(event);
-            } catch (Throwable throwable) {
-                List<StackTraceElement> stackTrace = new ArrayList<>();
-                Collections.addAll(stackTrace, throwable.getStackTrace());
-                stackTrace.removeIf(c -> c.getClassName().contains(MethodHandle.class.getName()));
-                stackTrace.removeIf(c -> c.getClassName().contains(EventSubscription.class.getName()));
-                stackTrace.removeIf(c -> c.getClassName().contains(EventBus.class.getName()));
-                stackTrace.removeIf(c -> c.getClassName().contains(RuntimeEventSubscription.class.getName()));
-                stackTrace.removeIf(c -> c.getClassName().contains("java.util.stream"));
-                throwable.setStackTrace(stackTrace.toArray(new StackTraceElement[0]));
-                Omega.getLogger().log(Level.WARNING, sub.getListenerName() + " threw an exception while handling event", throwable);
-            }
-        });
+        EventHandler<T> handler = handlerMap.get(event.getClass());
+        if (handler != null) {
+            handler.fire(event);
+        }
         return event;
     }
 
@@ -65,6 +62,7 @@ public class EventBus {
         private final EventSubscription listener;
         private final String name;
         private final Priority priority;
+        private final OmegaPlugin plugin;
 
         @Override public void handle(@NotNull Event event) throws Throwable {
             listener.handle(event);

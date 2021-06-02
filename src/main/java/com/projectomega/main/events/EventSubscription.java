@@ -1,5 +1,6 @@
 package com.projectomega.main.events;
 
+import com.projectomega.main.plugin.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandle;
@@ -32,8 +33,13 @@ public interface EventSubscription<T extends Event> {
         return Priority.NORMAL;
     }
 
+    default OmegaPlugin getPlugin() {
+        return null;
+    }
+
     static @NotNull Map<Class<?>, List<EventSubscription<?>>> readSubscriptions(@NotNull Object instance) {
         Class<?> listenerClass = (instance instanceof Class ? ((Class<?>) instance) : instance.getClass());
+        OmegaPlugin plugin = OmegaPlugin.getPlugin(listenerClass);
         Map<Class<?>, List<EventSubscription<?>>> sub = new HashMap<>();
         for (Method method : listenerClass.getDeclaredMethods()) {
             if (method.getParameterCount() != 1) continue;
@@ -50,7 +56,7 @@ public interface EventSubscription<T extends Event> {
             }
             try {
                 MethodHandle handle = MethodHandles.lookup().unreflect(method).bindTo(instance);
-                sub.get(eventType).add(new EventBus.RuntimeEventSubscription(handle::invokeWithArguments, name, priority));
+                sub.get(eventType).add(new EventBus.RuntimeEventSubscription(handle::invokeWithArguments, name, priority, plugin));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -74,7 +80,7 @@ public interface EventSubscription<T extends Event> {
             }
             try {
                 EventSubscription<?> subscription = (EventSubscription<?>) field.get(instance);
-                sub.get(eventType).add(new EventBus.RuntimeEventSubscription(subscription, name, listener.priority()));
+                sub.get(eventType).add(new EventBus.RuntimeEventSubscription(subscription, name, listener.priority(), plugin));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

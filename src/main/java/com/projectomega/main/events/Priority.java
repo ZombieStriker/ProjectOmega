@@ -9,7 +9,8 @@ public enum Priority {
     LOW(4),
     NORMAL(3),
     HIGH(2),
-    HIGHEST(1);
+    HIGHEST(1),
+    MONITOR(0);
 
     private final int priority;
 
