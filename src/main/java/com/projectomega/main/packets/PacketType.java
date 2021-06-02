@@ -23,6 +23,7 @@ public enum PacketType {
     //Play packets
     SPAWN_ENTITY(0x00,PacketDirection.CLIENTBOUND),
     SPAWN_LIVING_ENTITY(0x02,PacketDirection.CLIENTBOUND),
+    BLOCK_CHANGE(0x0B, PacketDirection.CLIENTBOUND),
     BOSS_BAR(0x0C,PacketDirection.CLIENTBOUND),
     CHAT_CLIENTBOUND(0x0E,PacketDirection.CLIENTBOUND),
     WINDOW_ITEMS(0x13,PacketDirection.CLIENTBOUND),
