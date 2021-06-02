@@ -18,8 +18,8 @@ public class BossBar {
     private boolean dragonBar = false;
     private boolean createFog = false;
 
-    public BossBar(UUID uuid, String title, float health, BossBarColor color, BossBarDivisions divisions, boolean darkenSky, boolean dragonBar, boolean createFog){
-        bossbaruuid =  uuid;
+    public BossBar(UUID uuid, String title, float health, BossBarColor color, BossBarDivisions divisions, boolean darkenSky, boolean dragonBar, boolean createFog) {
+        bossbaruuid = uuid;
         this.title = title;
         this.health = health;
         this.color = color;
@@ -29,13 +29,14 @@ public class BossBar {
         this.createFog = createFog;
     }
 
-    public void sendBossbarPacketToPlayer(Player player){
-        String titleJson = new JsonChatBuilder().add(new JsonChatElement(title)).build();
-        OutboundPacket outboundPacket = new OutboundPacket(PacketType.BOSS_BAR, new Object[]{bossbaruuid,new VarInt(0),titleJson,health,new VarInt(color.getId()),new VarInt(divisions.getId()),(byte)0});
+    public void sendBossbarPacketToPlayer(Player player) {
+        String titleJson = TextMessage.text(title);
+        OutboundPacket outboundPacket = new OutboundPacket(PacketType.BOSS_BAR, bossbaruuid, new VarInt(0), titleJson, health, new VarInt(color.getId()), new VarInt(divisions.getId()), (byte) 0);
         player.sendPacket(outboundPacket);
     }
-    public void removeBossbarFromPlayer(Player player){
-        OutboundPacket outboundPacket = new OutboundPacket(PacketType.BOSS_BAR, new Object[]{bossbaruuid,new VarInt(1)});
+
+    public void removeBossbarFromPlayer(Player player) {
+        OutboundPacket outboundPacket = new OutboundPacket(PacketType.BOSS_BAR, bossbaruuid, new VarInt(1));
         player.sendPacket(outboundPacket);
     }
 

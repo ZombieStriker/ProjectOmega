@@ -39,10 +39,10 @@ public class TestCommandListener {
             byte headpitch = (byte) (256 * 0.0);
             int data = 0;
 
-            OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(12), UUID.randomUUID(), new VarInt(id), 5d, 0d, 0d, pitch, yaw, data, (short) 0, (short) 0, (short) 0});
+            OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new VarInt(12), UUID.randomUUID(), new VarInt(id), 5d, 0d, 0d, pitch, yaw, data, (short) 0, (short) 0, (short) 0);
             event.getPlayer().sendPacket(spawnentity);
 
-            OutboundPacket spawnLivingentity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new Object[]{new VarInt(13), UUID.randomUUID(), new VarInt(id), 5d, 0d, 0d, pitch, yaw, headpitch, (short) 0, (short) 0, (short) 0});
+            OutboundPacket spawnLivingentity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new VarInt(13), UUID.randomUUID(), new VarInt(id), 5d, 0d, 0d, pitch, yaw, headpitch, (short) 0, (short) 0, (short) 0);
             event.getPlayer().sendPacket(spawnLivingentity);
         }
     }

@@ -34,7 +34,7 @@ public class Inventory {
     }
 
     private void sendItemRemovePacket(int slot) {
-        OutboundPacket packet = new OutboundPacket(PacketType.WINDOW_ITEMS,new Object[]{new UnsignedByte(windowID),(short)1,false});
+        OutboundPacket packet = new OutboundPacket(PacketType.WINDOW_ITEMS, new UnsignedByte(windowID),(short)1,false);
         for(Player player: viewers){
             player.sendPacket(packet);
         }
@@ -42,7 +42,7 @@ public class Inventory {
 
     private void sendItemChangePacket(int slot) {
         ItemStack is = slots[slot];
-        OutboundPacket packet = new OutboundPacket(PacketType.WINDOW_ITEMS,new Object[]{new UnsignedByte(windowID),(short)1,true,new VarInt(is.getMaterial().getId()), (byte)is.getAmount(),(byte)0});
+        OutboundPacket packet = new OutboundPacket(PacketType.WINDOW_ITEMS, new UnsignedByte(windowID),(short)1,true,new VarInt(is.getMaterial().getId()), (byte)is.getAmount(),(byte)0);
         for(Player player: viewers){
             player.sendPacket(packet);
         }

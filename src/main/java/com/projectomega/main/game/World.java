@@ -1,7 +1,5 @@
 package com.projectomega.main.game;
 
-import com.projectomega.main.game.chat.JsonChatBuilder;
-import com.projectomega.main.game.chat.JsonChatElement;
 import com.projectomega.main.game.entity.Entity;
 import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.game.inventory.ItemStack;
@@ -10,11 +8,7 @@ import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.*;
 import com.projectomega.main.utils.ByteUtils;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import me.nullicorn.nedit.type.NBTCompound;
-import me.nullicorn.nedit.type.NBTList;
-import me.nullicorn.nedit.type.TagType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,12 +55,12 @@ public class World {
         }
 
         NBTCompound blockentities = new NBTCompound();
-      //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
+        //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
 
-        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,true,new VarInt(255),heightmap, new VarInt(biomes.length), biomes, new VarInt(length),b,new VarInt(0)}));
+        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(255), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
 
-        player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Object[]{new Position(1,2,1),new VarInt(1)}));
-       //player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x, z, false, new VarInt(255), heightmap, new VarInt(length), b, new VarInt(0)}));
+        player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Position(1, 2, 1), new VarInt(1)));
+        //player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x, z, false, new VarInt(255), heightmap, new VarInt(length), b, new VarInt(0)}));
 
     }
 
@@ -138,18 +132,18 @@ public class World {
         entities.add(ent);
         System.out.println(type.isLiving());
         if (type.isLiving()) {
-               for (Player player : getPlayers()) {
-                   OutboundPacket spawnLivingEntity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new Object[]{new VarInt(ent.getEntityID()), ent.getUniqueID(),
-                           ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
-                           new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), new Angle(ent.getLocation().getPitch()), (short) 0, (short) 0, (short) 0});
-                   player.sendPacket(spawnLivingEntity);
+            for (Player player : getPlayers()) {
+                OutboundPacket spawnLivingEntity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new VarInt(ent.getEntityID()), ent.getUniqueID(),
+                        ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
+                        new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), new Angle(ent.getLocation().getPitch()), (short) 0, (short) 0, (short) 0);
+                player.sendPacket(spawnLivingEntity);
             }
         } else {
-           for (Player player : getPlayers()) {
-               OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(ent.getEntityID()), ent.getUniqueID(),
-                       ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
-                       new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0});
-               player.sendPacket(spawnEntity);
+            for (Player player : getPlayers()) {
+                OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new VarInt(ent.getEntityID()), ent.getUniqueID(),
+                        ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
+                        new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0);
+                player.sendPacket(spawnEntity);
             }
         }
         return ent;
@@ -162,20 +156,17 @@ public class World {
     private Entity dropItem(int unusedEID, ItemStack is, Location location) {
         Entity ent = new Entity(unusedEID, location, EntityType.ITEM);
         entities.add(ent);
-        OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(ent.getEntityID()), ent.getUniqueID(),
+        OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new VarInt(ent.getEntityID()), ent.getUniqueID(),
                 ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
-                new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0});
+                new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0);
         NBTCompound itemmeta = new NBTCompound();
-        OutboundPacket metaData = new OutboundPacket(PacketType.ENTITY_METADATA, new Object[]{
-                new VarInt(ent.getEntityID()), new MetaData().add(6,new Slot((short)10, (byte) 2,(short)0,itemmeta))
-        });
+        OutboundPacket metaData = new OutboundPacket(PacketType.ENTITY_METADATA, new VarInt(ent.getEntityID()), new MetaData().add(6, new Slot((short) 10, (byte) 2, (short) 0, itemmeta)));
         for (Player player : getPlayers()) {
             player.sendPacket(spawnEntity);
             player.sendPacket(metaData);
         }
         return ent;
     }
-
 
     private List<Player> getPlayers() {
         List<Player> players = new ArrayList<>();
