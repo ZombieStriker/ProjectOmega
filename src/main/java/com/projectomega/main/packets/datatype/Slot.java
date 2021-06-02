@@ -4,13 +4,13 @@ import me.nullicorn.nedit.type.NBTCompound;
 
 public class Slot {
 
-    boolean isItem = true;
-    short id;
-    byte amount;
-    short damage;
-    NBTCompound tag;
+    final boolean isItem = true;
+    final short id;
+    final byte amount;
+    final short damage;
+    final NBTCompound tag;
 
-    public Slot(short id, byte amount, short damage, NBTCompound tag){
+    public Slot(short id, byte amount, short damage, NBTCompound tag) {
         this.id = id;
         this.amount = amount;
         this.tag = tag;

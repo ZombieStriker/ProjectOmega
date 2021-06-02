@@ -1,6 +1,5 @@
 package com.projectomega.main.packets.datatype;
 
-import com.projectomega.main.game.chat.TextComponent;
 import com.projectomega.main.game.chat.TextMessage;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.utils.ByteUtils;
@@ -16,7 +15,7 @@ import java.util.Map;
 
 public class MetaData {
 
-    HashMap<Integer, Object> metaData = new HashMap<>();
+    private final Map<Integer, Object> metaData = new HashMap<>();
 
     public MetaData() {
         /*metaData.put(0,(byte)0x00);

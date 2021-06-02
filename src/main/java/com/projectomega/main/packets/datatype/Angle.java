@@ -2,12 +2,13 @@ package com.projectomega.main.packets.datatype;
 
 public class Angle {
 
-    byte value;
+    private final byte value;
 
-    public Angle(float angle){
-        value = (byte) (angle * 256/360);
+    public Angle(float angle) {
+        value = (byte) (angle * 256 / 360);
     }
-    public byte getValue(){
+
+    public byte getValue() {
         return value;
     }
 }

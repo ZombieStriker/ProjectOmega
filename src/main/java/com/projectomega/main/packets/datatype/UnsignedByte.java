@@ -2,7 +2,7 @@ package com.projectomega.main.packets.datatype;
 
 public class UnsignedByte {
 
-    private byte unsignedByte;
+    private final byte unsignedByte;
 
     public UnsignedByte(byte unsignedByte){
         this.unsignedByte = (byte) (unsignedByte+(Byte.MIN_VALUE));

@@ -1,11 +1,14 @@
 package com.projectomega.main.packets.datatype;
 
 public class VarInt {
-    int integer;
-    public int getInteger(){
-        return integer;
+
+    private final int value;
+
+    public VarInt(int value) {
+        this.value = value;
     }
-    public VarInt(int i){
-        this.integer = i;
+
+    public int getInteger() {
+        return value;
     }
 }

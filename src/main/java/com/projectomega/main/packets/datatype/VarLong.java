@@ -1,11 +1,14 @@
 package com.projectomega.main.packets.datatype;
 
 public class VarLong {
-    long integer;
-    public long getLong(){
-        return integer;
+
+    private final long value;
+
+    public VarLong(long value) {
+        this.value = value;
     }
-    public VarLong(long i){
-        this.integer = i;
+
+    public long getLong() {
+        return value;
     }
 }
