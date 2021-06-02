@@ -118,12 +118,12 @@ public class Player extends  OfflinePlayer implements CommandSender{
         outgoingPackets.remove(packet);
     }
 
-    public Player(String name, UUID uuid, Channel connection, int protocolversion, World world){
+    public Player(String name, UUID uuid, Channel connection, int protocolversion, Location location){
         super(name,uuid);
         this.connection = connection;
         this.protocolVersion = protocolversion;
-        this.world = world;
-        playerEntity = new Entity(world.getUnusedEID(),Location.at(0, 0, 0, world), EntityType.PLAYER);
+        this.world = location.getWorld();
+        playerEntity = new Entity(world.getUnusedEID(),location, EntityType.PLAYER);
     }
 
     public void addPlayerToPlayerList(OfflinePlayer player){
@@ -252,5 +252,9 @@ public class Player extends  OfflinePlayer implements CommandSender{
 
     public int getEntityID() {
         return playerEntity.getEntityID();
+    }
+
+    public Entity getEntity() {
+        return playerEntity;
     }
 }

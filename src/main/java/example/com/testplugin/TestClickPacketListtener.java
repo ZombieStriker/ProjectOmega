@@ -26,8 +26,8 @@ public class TestClickPacketListtener implements PacketListener {
 
         World world = Omega.getWorlds().get(0);
         player.playSound(Sound.SOUND_TEST, SoundCategory.MASTER, Location.at(0, 0, 0, player.getWorld()), 1f, 1f);
-        player.sendTitle("Test", "Message", 20, 60, 20);
-       // world.sendChunkData(new ChunkPosition(0, 0), player);
+        player.sendTitle("Title", "Subtitle", 20, 60, 20);
+        world.sendChunkData(new ChunkPosition(0, 0), player);
        // world.sendChunkData(new ChunkPosition(-1,0),player);
        // world.sendChunkData(new ChunkPosition(0,-1),player);
       //  world.sendChunkData(new ChunkPosition(-1,-1),player);

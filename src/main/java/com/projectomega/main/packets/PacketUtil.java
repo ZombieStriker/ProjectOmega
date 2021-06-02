@@ -24,7 +24,7 @@ public class PacketUtil {
     public static void init(ServerThread serverThread) {
         handlers.put(PacketType.HANDSHAKE, new ArrayList<>(Arrays.asList(new PacketHandshake())));
         handlers.put(PacketType.HANDSHAKE_PING, new ArrayList<>(Arrays.asList(new PacketPing())));
-        handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND_OLD, new ArrayList<>(Arrays.asList(new PacketKeepAliveOld())));
+        handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketKeepAlive())));
         handlers.put(PacketType.CHAT_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketInboundChat())));
         handlers.put(PacketType.CLIENT_SETTINGS, new ArrayList<>(Arrays.asList(new PacketClientSettings())));
         handlers.put(PacketType.CLICK_WINDOW, new ArrayList<>(Arrays.asList(new PacketClickWindow())));
@@ -196,6 +196,10 @@ public class PacketUtil {
         }
         length = offset;
         byte[] varIntLength = new byte[3];
+        if(length >= 2097151){
+            System.out.println("Packet to long. Dumping data:");
+            System.out.println(DebuggingUtil.dumpBytes(bytes,length));
+        }
         int l = ByteUtils.addVarIntToByteArray(varIntLength, 0, length);
         ByteBuf bytebuf = Unpooled.buffer();
         for (int i = 0; i < l; i++) {

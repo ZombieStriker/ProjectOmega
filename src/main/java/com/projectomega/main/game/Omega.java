@@ -155,7 +155,11 @@ public class Omega extends Thread {
                     players.remove(player);
                     continue;
                 }
-                player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND_OLD, new Object[]{start}));
+                if(player.getProtocolVersion() < 754) {
+                    //player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND_OLD, new Object[]{start}));
+                }else{
+                    player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND, new Object[]{start}));
+                }
                 for (OutboundPacket packet : player.getOutgoingPackets()) {
                     try {
                         PacketUtil.writePacketToOutputStream(player.getConnection(), packet);
