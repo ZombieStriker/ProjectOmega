@@ -61,8 +61,11 @@ public class World {
         }
 
         NBTCompound blockentities = new NBTCompound();
-        
-        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(b.length),b,new VarInt(0),blockentities,(byte)0}));
+      //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
+
+        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,true,new VarInt(255),heightmap, new VarInt(biomes.length), biomes, new VarInt(length),b,new VarInt(0)}));
+
+        player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Object[]{new Position(1,2,1),new VarInt(1)}));
        //player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x, z, false, new VarInt(255), heightmap, new VarInt(length), b, new VarInt(0)}));
 
     }

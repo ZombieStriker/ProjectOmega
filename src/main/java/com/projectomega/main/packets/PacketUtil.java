@@ -2,9 +2,12 @@ package com.projectomega.main.packets;
 
 import com.projectomega.main.ServerThread;
 import com.projectomega.main.debugging.DebuggingUtil;
+import com.projectomega.main.game.Omega;
+import com.projectomega.main.game.Player;
 import com.projectomega.main.packets.datatype.*;
 import com.projectomega.main.packets.types.*;
 import com.projectomega.main.utils.ByteUtils;
+import com.projectomega.main.versions.ProtocolManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -140,7 +143,12 @@ public class PacketUtil {
         byte[] bytes = new byte[256 * 256 * 256];
         int length = 0;
         int offset = 0;
-        offset += ByteUtils.addVarIntToByteArray(bytes, offset, packet.getType().getId());
+        Player player = Omega.getPlayerByChannel(connection);
+        int protocolVersion = 0;
+        if(player!=null){
+            protocolVersion = player.getProtocolVersion();
+        }
+        offset += ByteUtils.addVarIntToByteArray(bytes, offset, ProtocolManager.getPacketIDForProtocol(protocolVersion,packet.getType()));
         for (int dataIndex = 0; dataIndex < packet.getDataLength(); dataIndex++) {
             Object data = packet.getData(dataIndex);
             if (DebuggingUtil.DEBUG)
@@ -155,6 +163,8 @@ public class PacketUtil {
                 offset += writeByte(bytes, offset, ((Angle) data).getValue());
             } else if (data instanceof byte[]) {
                 offset += writeBytes(bytes, offset, (byte[]) data);
+            } else if (data instanceof Position) {
+                offset += writeBytes(bytes, offset, ((Position) data).build());
             } else if (data instanceof VarInt[]) {
                 for (int i = 0; i < ((VarInt[]) data).length; i++)
                     offset += writeVarInt(bytes, offset, ((VarInt[]) data)[i].getInteger());
