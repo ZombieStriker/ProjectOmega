@@ -37,7 +37,7 @@ public class NBTTagUtil {
         tag.put("effects","minecraft:overworld");
         tag.put("has_raids",(byte)1);
         tag.put("logical_height",256);
-        tag.put("coordinate_scale",0f);
+        tag.put("coordinate_scale",1.0f);
         tag.put("ultrawarm",(byte)0);
         tag.put("has_ceiling",(byte)0);
         return tag;

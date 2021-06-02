@@ -1,8 +1,10 @@
 package com.projectomega.main.utils;
 
 import com.github.cliftonlabs.json_simple.JsonException;
+import com.github.cliftonlabs.json_simple.JsonKey;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
+import com.projectomega.main.game.player.GameProfile;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 
 import java.io.BufferedReader;
@@ -10,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +20,8 @@ public class MojangAPI {
 
     public static final String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
     private static final String NAME_URL = "https://api.mojang.com/users/profiles/minecraft/";
+
+    private static final HashMap<UUID, GameProfile> gameprofiles = new HashMap<>();
 
     public static String getUUIDFromName(String name) {
         try {
@@ -64,5 +69,16 @@ public class MojangAPI {
         JsonObject profile = new JsonObject();
         Jsoner.deserialize(profileJson, profile);
         return profile;
+    }
+
+    public static GameProfile getGameProfile(UUID uuid){
+        if(gameprofiles.containsKey(uuid))
+            gameprofiles.get(uuid);
+        JsonObject json = getProfileJson(uuid);
+        //GameProfile gameProfile = new GameProfile(json.getString(Jsoner.mintJsonKey("name",null)),json.getString(Jsoner.mintJsonKey("value",null)));
+        //gameprofiles.put(uuid,gameProfile);
+        //return gameProfile;
+        return null;
+        //TODO: Figure out how to get the keys from json
     }
 }

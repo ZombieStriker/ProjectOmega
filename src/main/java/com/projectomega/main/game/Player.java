@@ -4,13 +4,17 @@ import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerChatEvent;
 import com.projectomega.main.game.chat.JsonChatBuilder;
 import com.projectomega.main.game.chat.JsonChatElement;
+import com.projectomega.main.game.entity.Entity;
+import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.game.inventory.Inventory;
 import com.projectomega.main.game.inventory.PlayerInventory;
+import com.projectomega.main.game.player.GameProfile;
 import com.projectomega.main.game.sound.Sound;
 import com.projectomega.main.game.sound.SoundCategory;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.VarInt;
+import com.projectomega.main.utils.MojangAPI;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -20,6 +24,8 @@ import java.util.UUID;
 public class Player extends  OfflinePlayer implements CommandSender{
 
     private Channel connection;
+
+    private Entity playerEntity;
 
     private int protocolVersion;
 
@@ -112,12 +118,22 @@ public class Player extends  OfflinePlayer implements CommandSender{
         outgoingPackets.remove(packet);
     }
 
-    public Player(String name, UUID uuid, Channel connection, int protocolversion, World world){
+    public Player(String name, UUID uuid, Channel connection, int protocolversion, Location location){
         super(name,uuid);
         this.connection = connection;
         this.protocolVersion = protocolversion;
-        this.world = world;
+        this.world = location.getWorld();
+        playerEntity = new Entity(world.getUnusedEID(),location, EntityType.PLAYER);
     }
+
+    public void addPlayerToPlayerList(OfflinePlayer player){
+        GameProfile profile = MojangAPI.getGameProfile(player.getUuid());
+        OutboundPacket packet = new OutboundPacket(PacketType.PLAYER_INFO, new Object[]{new VarInt(0), new VarInt(1), player.getUuid(),player.getName(),
+       new VarInt(0),/* new VarInt(1), profile.getName(),profile.getValue(),profile.isSigned(),*/
+        new VarInt(0), new VarInt(0),true, new JsonChatBuilder().add(new JsonChatElement(player.getName())).build()});
+        sendPacket(packet);
+    }
+
     public Channel getConnection(){
         return connection;
     }
@@ -232,5 +248,13 @@ public class Player extends  OfflinePlayer implements CommandSender{
 
     public World getWorld() {
         return world;
+    }
+
+    public int getEntityID() {
+        return playerEntity.getEntityID();
+    }
+
+    public Entity getEntity() {
+        return playerEntity;
     }
 }

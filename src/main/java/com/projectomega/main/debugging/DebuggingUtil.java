@@ -43,4 +43,17 @@ public class DebuggingUtil {
                 return false;
         }
     }
+
+    public static String dumpBytes(byte[] bytes, int length) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < length; i++){
+            char c = (char)bytes[i];
+            if(isCharacter(c)){
+                sb.append(c);
+            }else{
+                sb.append(bytes[i]+" ");
+            }
+        }
+        return sb.toString();
+    }
 }

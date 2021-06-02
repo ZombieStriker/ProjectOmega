@@ -1,6 +1,8 @@
 package example.com.testplugin;
 
 import com.projectomega.main.game.*;
+import com.projectomega.main.game.entity.Entity;
+import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.game.inventory.ItemStack;
 import com.projectomega.main.game.sound.Sound;
 import com.projectomega.main.game.sound.SoundCategory;
@@ -24,9 +26,20 @@ public class TestClickPacketListtener implements PacketListener {
 
         World world = Omega.getWorlds().get(0);
         player.playSound(Sound.SOUND_TEST, SoundCategory.MASTER, Location.at(0, 0, 0, player.getWorld()), 1f, 1f);
-        player.sendTitle("Test", "Message", 20, 60, 20);
+        player.sendTitle("Title", "Subtitle", 20, 60, 20);
         world.sendChunkData(new ChunkPosition(0, 0), player);
-        //world.sendChunkData(new ChunkPosition(1,2),player);
+       // world.sendChunkData(new ChunkPosition(-1,0),player);
+       // world.sendChunkData(new ChunkPosition(0,-1),player);
+      //  world.sendChunkData(new ChunkPosition(-1,-1),player);
+
+       // Entity droppeditem = world.dropItem(new ItemStack(Material.STONE),Location.at(0,0,0,world));
+       // droppeditem.setCustomName("testing");
+       // droppeditem.setCustomNameVisable(true);
+         Entity creeper = world.spawnEntity(EntityType.PIG, Location.at(0,0,0,world));
+        creeper.setCustomName("Pig-le Rick");
+        creeper.setCustomNameVisable(true);
+
+        player.addPlayerToPlayerList(player);
 
         //OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(12), UUID.randomUUID(),new VarInt(EntityType.CREEPER.getTypeID()),5d,0d,0d,pitch,yaw,data,(short)0,(short)0,(short)0});
         //player.sendPacket(spawnentity);

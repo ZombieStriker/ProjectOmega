@@ -59,28 +59,6 @@ public class SendMOTDPacketLogic implements PacketListener {
                 object.put("favicon","data:image/png;base64,"+
                         Base64.getEncoder().encodeToString(data));
             }
-
-            /**
-             * "{\n" +
-             *                     "    \"version\": {\n" +
-             *                     "        \"name\": \"ProjectOmega V0.1\",\n" +
-             *                     "        \"protocol\": " + event.getVersionID() + "\n" +
-             *                     "    },\n" +
-             *                     "    \"players\": {\n" +
-             *                     "        \"max\": 100,\n" +
-             *                     "        \"online\": 5,\n" +
-             *                     "        \"sample\": [\n" +
-             *                     "            {\n" +
-             *                     "                \"name\": \"thinkofdeath\",\n" +
-             *                     "                \"id\": \"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"\n" +
-             *                     "            }\n" +
-             *                     "        ]\n" +
-             *                     "    },\n" +
-             *                     "    \"description\": {\n" +
-             *                     "        \"text\": \"" + event.getMOTD() + "\"\n" +
-             *                     "    }\n" +
-             *                     "}"
-             */
             OutboundPacket outboundPacket = new OutboundPacket(PacketType.STATUS_PING, new Object[]{object.toJson()});
             PacketUtil.writePacketToOutputStream(packet.getChannel(), outboundPacket);
         }
