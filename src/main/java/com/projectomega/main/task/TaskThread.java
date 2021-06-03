@@ -1,12 +1,15 @@
 package com.projectomega.main.task;
 
-import com.projectomega.main.plugin.*;
-import com.projectomega.main.plugin.loader.*;
+import com.projectomega.main.plugin.OmegaPlugin;
+import com.projectomega.main.plugin.loader.PluginClassLoader;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class TaskThread {
+
     private ScheduledExecutorService service;
     private Set<UncaughtExceptionHandler> exceptionHandlers = ConcurrentHashMap.newKeySet();
     private Set<Task> tasks = ConcurrentHashMap.newKeySet();
@@ -66,6 +69,10 @@ public class TaskThread {
         tasks.add(task);
     }
 
+    public void runTask(Runnable task) {
+        runTask(Task.wrap(task));
+    }
+
     public void runTaskLater(Task task, Duration delay) {
         task.register(this, service.schedule(
                 () -> {
@@ -78,6 +85,10 @@ public class TaskThread {
         tasks.add(task);
     }
 
+    public void runTaskLater(Runnable task, Duration delay) {
+        runTaskLater(Task.wrap(task), delay);
+    }
+
     public void runTaskRepeatedly(Task task, Duration delay, Duration interval) {
         if (task instanceof CallableTask) throw new UnsupportedOperationException();
         task.register(this, service.scheduleAtFixedRate(
@@ -86,6 +97,10 @@ public class TaskThread {
                 interval.getDurationInMillis(),
                 TimeUnit.MILLISECONDS));
         tasks.add(task);
+    }
+
+    public void runTaskRepeatedly(Runnable task, Duration delay, Duration interval) {
+        runTaskRepeatedly(Task.wrap(task), delay, interval);
     }
 
     public void cancelAllTasks() {

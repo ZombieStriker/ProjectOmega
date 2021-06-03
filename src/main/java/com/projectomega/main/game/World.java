@@ -201,7 +201,7 @@ public class World {
                     continue loop;
                 }
             }
-            break loop;
+            break;
         }
         return id;
     }
