@@ -12,5 +12,6 @@ public class PacketLogicManager {
         PacketManager.registerPacketListener(PacketType.CLIENT_SETTINGS,new SendClientSettingsPacketLogic());
         PacketManager.registerPacketListener(PacketType.CLIENT_STATUS,new SendRespawnPacketLogic());
         PacketManager.registerPacketListener(PacketType.HELD_ITEM_CHANGE_SERVERBOUND,new UpdateHeldItemSlot());
+        PacketManager.registerPacketListener(PacketType.PLAYER_POSITION,new UpdatePlayerPositionPacketLogic());
     }
 }

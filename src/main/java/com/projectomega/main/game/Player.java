@@ -1,5 +1,6 @@
 package com.projectomega.main.game;
 
+import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerChatEvent;
 import com.projectomega.main.game.chat.TextMessage;
@@ -11,9 +12,12 @@ import com.projectomega.main.game.player.GameProfile;
 import com.projectomega.main.game.sound.Sound;
 import com.projectomega.main.game.sound.SoundCategory;
 import com.projectomega.main.packets.OutboundPacket;
+import com.projectomega.main.packets.PacketHandler;
 import com.projectomega.main.packets.PacketType;
+import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.VarInt;
 import com.projectomega.main.utils.MojangAPI;
+import com.projectomega.main.versions.ProtocolManager;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -46,6 +50,9 @@ public class Player extends OfflinePlayer implements CommandSender {
     private Inventory playerInventory = new PlayerInventory();
     private int heldSlot = 0;
     private World world;
+    private int viewdistance=-1;
+    private boolean allowflight = false;
+    private Location bedlocation;
 
     public String getLocale() {
         return locale;
@@ -266,6 +273,12 @@ public class Player extends OfflinePlayer implements CommandSender {
         //sendPacket(settimesanddisplay);
     }
 
+    public void teleport(Location location){
+        OutboundPacket positionAndLook = new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, location.getX(),location.getY(),location.getZ(),location.getYaw(),location.getPitch(),(byte)0, new VarInt(1));
+        sendPacket(positionAndLook);
+        playerEntity.teleport(location);
+    }
+
     public World getWorld() {
         return world;
     }
@@ -276,5 +289,15 @@ public class Player extends OfflinePlayer implements CommandSender {
 
     public Entity getEntity() {
         return playerEntity;
+    }
+
+    public boolean allowFlight(){
+        return allowflight;
+    }
+    public Location getBedLocation(){
+        return bedlocation;
+    }
+    public int getClientViewDistance(){
+        return viewdistance;
     }
 }

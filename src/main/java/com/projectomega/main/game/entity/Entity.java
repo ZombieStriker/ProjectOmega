@@ -75,4 +75,8 @@ public class Entity {
             player.sendPacket(customnamepacket);
         }
     }
+
+    public void setLocation(Location at) {
+        location = at;
+    }
 }

@@ -3,7 +3,7 @@ package com.projectomega.main.packets.types;
 import com.projectomega.main.packets.PacketHandler;
 import com.projectomega.main.packets.PacketType;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 
 public class PacketClickWindowButton extends PacketHandler {
     public PacketClickWindowButton() {
@@ -11,7 +11,7 @@ public class PacketClickWindowButton extends PacketHandler {
     }
 
     @Override
-    public void call(ByteBuf bytebuf, int i, ChannelHandlerContext ctx) {
+    public void call(ByteBuf bytebuf, int i, Channel ctx) {
         byte windowid = bytebuf.readByte();
 
     }

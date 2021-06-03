@@ -5,10 +5,7 @@ import com.projectomega.main.packets.*;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.List;
 
 public class PacketHandshake extends PacketHandler {
@@ -19,14 +16,14 @@ public class PacketHandshake extends PacketHandler {
     }
 
     @Override
-    public void call(ByteBuf byteBuf, int packetsize, ChannelHandlerContext ctx) {
-        if(Omega.getPlayerByChannel(ctx.channel())==null) {
+    public void call(ByteBuf byteBuf, int packetsize, Channel ctx) {
+        if(Omega.getPlayerByChannel(ctx)==null) {
             int protocolVersion = PacketUtil.readVarInt(byteBuf);
             String ip = ByteUtils.buildString(byteBuf);
             int port = byteBuf.readShort();
             int status = byteBuf.readByte();
 
-            InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE, new Object[]{protocolVersion, ip, port, status}, ctx.channel());
+            InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE, new Object[]{protocolVersion, ip, port, status}, ctx);
             List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE);
             if (packetlisteners != null) {
                 for (PacketListener listener : packetlisteners) {

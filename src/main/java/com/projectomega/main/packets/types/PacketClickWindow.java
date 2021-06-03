@@ -3,7 +3,7 @@ package com.projectomega.main.packets.types;
 import com.projectomega.main.packets.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 import me.nullicorn.nedit.NBTReader;
 import me.nullicorn.nedit.type.NBTCompound;
 
@@ -16,7 +16,7 @@ public class PacketClickWindow extends PacketHandler {
     }
 
     @Override
-    public void call(ByteBuf bytebuf, int i, ChannelHandlerContext ctx) {
+    public void call(ByteBuf bytebuf, int i, Channel ctx) {
         byte windowid = bytebuf.readByte();
         short slot = bytebuf.readShort();
         byte button = bytebuf.readByte();
@@ -37,11 +37,10 @@ public class PacketClickWindow extends PacketHandler {
             }
         }
 
-
-
-        InboundPacket packet = new InboundPacket(PacketType.CLICK_WINDOW,new Object[]{windowid,slot,button,actionnumber,mode,present,itemid,itemcount,compound},ctx.channel());
+        InboundPacket packet = new InboundPacket(PacketType.CLICK_WINDOW,new Object[]{windowid,slot,button,actionnumber,mode,present,itemid,itemcount,compound},ctx);
         List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.CLICK_WINDOW);
         if(packetlisteners!=null){
+            System.out.println(packetlisteners.size());
             for(PacketListener listener : packetlisteners){
                 listener.onCall(packet);
             }

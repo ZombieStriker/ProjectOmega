@@ -3,7 +3,6 @@ package com.projectomega.main.debugging;
 public class DebuggingUtil {
 
     public static final boolean DEBUG = false;
-    public static boolean enableTestPlugin = true;
 
     public static boolean isCharacter(char c){
         switch(c){

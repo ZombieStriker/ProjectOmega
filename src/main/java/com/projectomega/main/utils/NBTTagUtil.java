@@ -19,7 +19,7 @@ public class NBTTagUtil {
         NBTCompound type_biome = new NBTCompound();
         type_biome.put("type","minecraft:worldgen/biome");
         NBTList list2 = new NBTList(TagType.COMPOUND);
-       // list2.add(generateBiomeRegisteryEntry("minecraft:ocean",0,true,0.5f,-1.0f,0.5f,0.1f,"ocean"));
+        list2.add(generateBiomeRegisteryEntry("minecraft:ocean",0,true,0.5f,-1.0f,0.5f,0.1f,"ocean"));
         list2.add(generateBiomeRegisteryEntry("minecraft:plains",1,true,0.4f,0.125f,0.8f,0.05f,"plains"));
         type_biome.put("value",list2);
         compound.put("minecraft:worldgen/biome",type_biome);

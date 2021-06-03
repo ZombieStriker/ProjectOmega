@@ -10,6 +10,7 @@ public class ProtocolHandler16 extends ProtocolHandler {
     public ProtocolHandler16() {
         packetIDs.put(PacketType.KEEP_ALIVE_SERVERBOUND, 0x10);
         packetIDs.put(PacketType.HELD_ITEM_CHANGE_SERVERBOUND, 0x25);
+        packetIDs.put(PacketType.HELD_ITEM_CHANGE, 0x3F);
         packetIDs.put(PacketType.CLIENT_STATUS, 0x04);
         packetIDs.put(PacketType.BLOCK_CHANGE, 0x08);
         packetIDs.put(PacketType.CLICK_WINDOW, 0x09);
@@ -39,6 +40,8 @@ public class ProtocolHandler16 extends ProtocolHandler {
         packetIDs.put(PacketType.TITLE, 0x4F);
         packetIDs.put(PacketType.UPDATE_HEALTH, 0x49);
         packetIDs.put(PacketType.WINDOW_ITEMS, 0x13);
+        packetIDs.put(PacketType.PLAYER_POSITION, 0x12);
+        packetIDs.put(PacketType.PLAYER_POSITION_AND_ROTATION, 0x13);
 
         entityIDs.put(EntityType.AREA_EFFECT_CLOUD, 0);
         entityIDs.put(EntityType.ARMOR_STAND, 1);

@@ -65,6 +65,8 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
                                     player.getEntity().getLocation().getYaw(),
                                     player.getEntity().getLocation().getPitch(),
                                     (byte) 0, new VarInt(1)}));
+
+
                         }
                     }, Duration.seconds(1));
 

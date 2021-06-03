@@ -14,6 +14,8 @@ public enum PacketType {
     CLICK_WINDOW(PacketDirection.SERVERBOUND),
     KEEP_ALIVE_SERVERBOUND(PacketDirection.SERVERBOUND),
     HELD_ITEM_CHANGE_SERVERBOUND(PacketDirection.SERVERBOUND),
+    PLAYER_POSITION(PacketDirection.SERVERBOUND),
+    PLAYER_POSITION_AND_ROTATION(PacketDirection.SERVERBOUND),
 
     //Handshake
     STATUS_PING( PacketDirection.CLIENTBOUND),

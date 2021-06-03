@@ -7,7 +7,7 @@ import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 
 public class PacketClientSettings extends PacketHandler {
     public PacketClientSettings() {
@@ -15,7 +15,7 @@ public class PacketClientSettings extends PacketHandler {
     }
 
     @Override
-    public void call(ByteBuf bytebuf, int i, ChannelHandlerContext ctx) {
+    public void call(ByteBuf bytebuf, int i, Channel channel) {
         String locale = ByteUtils.buildString(bytebuf);
         byte viewDistance = bytebuf.readByte();
         int chatEnabled = PacketUtil.readVarInt(bytebuf);
@@ -23,7 +23,7 @@ public class PacketClientSettings extends PacketHandler {
         byte displayedSkinParts = PacketUtil.readUnsignedByte(bytebuf);
         int mainhand = PacketUtil.readVarInt(bytebuf);
 
-        Player player = Omega.getPlayerByChannel(ctx.channel());
+        Player player = Omega.getPlayerByChannel(channel);
         if(player!=null){
             player.setLocale(locale);
             player.setRenderDistance(viewDistance);

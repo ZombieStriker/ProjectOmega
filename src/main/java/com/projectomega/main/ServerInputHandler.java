@@ -30,7 +30,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
             if(DebuggingUtil.DEBUG)
             System.out.println("Packet Handlers found for "+packetid+" : "+packethandlers.size());
             for (PacketHandler packetHandler : packethandlers) {
-                packetHandler.call(bytebuf, size - 1, ctx);
+                packetHandler.call(bytebuf, size - 1, ctx.channel());
             }
         }else{
             System.out.println("Failed to find packetHandler for packet "+packetid+":"+protocolversion);

@@ -57,9 +57,9 @@ public class World {
         NBTCompound blockentities = new NBTCompound();
         //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
 
-        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(255), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
+        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(127), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
 
-        player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Position(1, 2, 1), new VarInt(1)));
+        //player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Position(1, 2, 1), new VarInt(1)));
         //player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x, z, false, new VarInt(255), heightmap, new VarInt(length), b, new VarInt(0)}));
 
     }
@@ -82,7 +82,7 @@ public class World {
         int dataarraylength = 4096;
         long[] dataarray = new long[4096];
         for (int i = 0; i < dataarray.length; i++) {
-            dataarray[i] = i % 2;
+            dataarray[i] = i % palletelength;
         }
 
         byte[] blocklight = new byte[4096 / 2];

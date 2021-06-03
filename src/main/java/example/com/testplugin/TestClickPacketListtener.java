@@ -28,9 +28,9 @@ public class TestClickPacketListtener implements PacketListener {
         player.playSound(Sound.SOUND_TEST, SoundCategory.MASTER, Location.at(0, 0, 0, player.getWorld()), 1f, 1f);
         player.sendTitle("Title", "Subtitle", 20, 60, 20);
         world.sendChunkData(new ChunkPosition(0, 0), player);
-       // world.sendChunkData(new ChunkPosition(-1,0),player);
-       // world.sendChunkData(new ChunkPosition(0,-1),player);
-      //  world.sendChunkData(new ChunkPosition(-1,-1),player);
+        world.sendChunkData(new ChunkPosition(-1,0),player);
+        world.sendChunkData(new ChunkPosition(0,-1),player);
+        world.sendChunkData(new ChunkPosition(-1,-1),player);
 
        // Entity droppeditem = world.dropItem(new ItemStack(Material.STONE),Location.at(0,0,0,world));
        // droppeditem.setCustomName("testing");
@@ -39,7 +39,8 @@ public class TestClickPacketListtener implements PacketListener {
         creeper.setCustomName("Pig-le Rick");
         creeper.setCustomNameVisable(true);
 
-        player.addPlayerToPlayerList(player);
+        player.teleport(Location.at(8,8,8,world));
+        System.out.println("Teleporting player");
 
         //OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(12), UUID.randomUUID(),new VarInt(EntityType.CREEPER.getTypeID()),5d,0d,0d,pitch,yaw,data,(short)0,(short)0,(short)0});
         //player.sendPacket(spawnentity);

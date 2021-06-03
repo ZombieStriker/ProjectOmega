@@ -34,6 +34,8 @@ public class PacketUtil {
         handlers.put(PacketType.CLICK_WINDOW, new ArrayList<>(Arrays.asList(new PacketClickWindow())));
         handlers.put(PacketType.CLIENT_STATUS, new ArrayList<>(Arrays.asList(new PacketClientStatus())));
         handlers.put(PacketType.HELD_ITEM_CHANGE_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketHeldItemChange())));
+        handlers.put(PacketType.PLAYER_POSITION, new ArrayList<>(Arrays.asList(new PacketPlayerPosition())));
+        handlers.put(PacketType.PLAYER_POSITION_AND_ROTATION, new ArrayList<>(Arrays.asList(new PacketPlayerPositionAndRotation())));
         server = serverThread;
     }
 
@@ -226,6 +228,15 @@ public class PacketUtil {
         bytebuf.writeByte(0);
         bytebuf.writeByte(0);
         bytebuf.writeByte(0);
+
+        List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersBy(packet.getType());
+        if (packethandlers != null) {
+            for (PacketHandler packetHandler : packethandlers) {
+                packetHandler.call(bytebuf, length, connection);
+            }
+        }
+
+
         try {
             if (DebuggingUtil.DEBUG)
                 System.out.println("Writing " + length + " bytes for packetid: " + packetid+ "  || " + bytebuf.array().length);
