@@ -27,7 +27,7 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
             String name = "Notch";
             UUID uuid = UUID.randomUUID();
 
-            Player player = new Player(name,uuid,packet.getChannel(), (Integer) packet.getData(0), Location.at(8,8,8,Omega.getWorlds().get(0)));
+            Player player = new Player(name,uuid,packet.getChannel(), (Integer) packet.getData(0), Omega.getSpawnWorld().getSpawn());
             PlayerJoinEvent joinEvent = new PlayerJoinEvent(player);
             if (!EventBus.INSTANCE.post(joinEvent).isCancelled()) {
                 if (player.getProtocolVersion() < 750) {
@@ -58,6 +58,9 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
                             OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME, new Object[]{player.getEntityID(), true, new UnsignedByte((byte) 0), (byte) -1, new VarInt(1), "overworld", dimensionCodec, NBTTagUtil.generateDimensionType(), "overworld", 0l, new VarInt(32), new VarInt(10), false, true, false, false});
                             player.sendPacket(joingame);
 
+                            Omega.getTaskManager().getMainThread().runTaskLater(new Task() {
+                                @Override
+                                protected void run() {
                             player.sendPacket(new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, new Object[]{
                                     player.getEntity().getLocation().getX(),
                                     player.getEntity().getLocation().getY(),
@@ -65,10 +68,12 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
                                     player.getEntity().getLocation().getYaw(),
                                     player.getEntity().getLocation().getPitch(),
                                     (byte) 0, new VarInt(1)}));
+                        }
+                    }, Duration.ticks(50));
 
 
                         }
-                    }, Duration.seconds(1));
+                    }, Duration.ticks(1));
 
                 }
             }

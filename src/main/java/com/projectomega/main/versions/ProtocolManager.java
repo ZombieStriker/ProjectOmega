@@ -1,5 +1,6 @@
 package com.projectomega.main.versions;
 
+import com.projectomega.main.game.Material;
 import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.versions.handshake.ProtocolHandlerHandshake;
@@ -39,6 +40,18 @@ public class ProtocolManager {
             return handler16.getPacketTypeFromID(packetid,handshakePacket,direction);
         }else{
             return handler17.getPacketTypeFromID(packetid,handshakePacket,direction);
+        }
+
+    }
+
+    public static int getBlockIDByType(int protocolversion, Material type) {
+        if(protocolversion<=0) {
+            return handlerhandshake.getBlockIDByType(type);
+        }
+        if(protocolversion <= 754){
+            return handlerhandshake.getBlockIDByType(type);
+        }else{
+            return handlerhandshake.getBlockIDByType(type);
         }
 
     }

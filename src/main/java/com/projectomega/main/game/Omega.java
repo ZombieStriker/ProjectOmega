@@ -147,6 +147,10 @@ public class Omega extends Thread {
         return new ArrayList<>(players);
     }
 
+    public static World getSpawnWorld() {
+        return getWorlds().get(0);
+    }
+
     public void run() {
         System.out.println("Starting Server...");
         PacketLogicManager.init();

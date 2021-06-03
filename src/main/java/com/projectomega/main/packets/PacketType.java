@@ -44,6 +44,9 @@ public enum PacketType {
     TITLE(PacketDirection.CLIENTBOUND),
     SOUND_EFFECT(PacketDirection.CLIENTBOUND),
     ENTITY_TELEPORT(PacketDirection.CLIENTBOUND),
+    MULTI_BLOCK_CHANGE(PacketDirection.CLIENTBOUND),
+    UPDATE_VIEW_POSITION(PacketDirection.CLIENTBOUND),
+    UPDATE_VIEW_DISTANCE(PacketDirection.CLIENTBOUND),
     ;
 
     private PacketDirection direction;

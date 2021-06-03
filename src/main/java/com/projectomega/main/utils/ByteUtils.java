@@ -1,6 +1,10 @@
 package com.projectomega.main.utils;
 
+import com.projectomega.main.game.Block;
+import com.projectomega.main.game.Chunk;
 import com.projectomega.main.packets.PacketUtil;
+import com.projectomega.main.packets.datatype.VarLong;
+import com.projectomega.main.versions.ProtocolManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -47,7 +51,13 @@ public class ByteUtils {
     }
 
     public static int addIntToByteArray(byte[] bytes, int offset, Integer data) {
-        return PacketUtil.writeInt(bytes,offset,data);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeInt(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
     }
 
     public static int addFloatToByteArray(byte[] bytes, int offset, float data) {
@@ -58,6 +68,33 @@ public class ByteUtils {
         }
         buf.release();
         return buf.writerIndex();
+    }
+
+    public static long getChunkSectionPositionAsALong(Chunk chunk, int y){
+        return ((chunk.getX() & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((chunk.getZ() & 0x3FFFFF) << 20);
+    }
+    public static VarLong encodeBlockToBlocksArray(int protocolversion, Block block){
+        int x = block.getLocation().getBlockX();
+        int y = block.getLocation().getBlockY();
+        int z = block.getLocation().getBlockZ();
+        if(x < 0) {
+            x = -x;
+            x= 16-x;
+        }
+        if(y < 0) {
+            y = -y;
+            y= 16-y;
+        }
+        if(z < 0) {
+            z = -z;
+            z= 16-z;
+        }
+
+        long blockLocalX = x % 16;
+        long blockLocalY = y % 16;
+        long blockLocalZ = z % 16;
+
+        return new VarLong(((long)(x+(16*z))/*ProtocolManager.getBlockIDByType(protocolversion, block.getType())*/) << 12 | (blockLocalX << 8 | blockLocalZ << 4 | blockLocalY));
     }
 
     public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {

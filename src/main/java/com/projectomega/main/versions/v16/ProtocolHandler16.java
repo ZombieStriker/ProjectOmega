@@ -1,5 +1,6 @@
 package com.projectomega.main.versions.v16;
 
+import com.projectomega.main.game.Material;
 import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.versions.ProtocolHandler;
@@ -42,6 +43,9 @@ public class ProtocolHandler16 extends ProtocolHandler {
         packetIDs.put(PacketType.WINDOW_ITEMS, 0x13);
         packetIDs.put(PacketType.PLAYER_POSITION, 0x12);
         packetIDs.put(PacketType.PLAYER_POSITION_AND_ROTATION, 0x13);
+        packetIDs.put(PacketType.MULTI_BLOCK_CHANGE, 0x3B);
+        packetIDs.put(PacketType.UPDATE_VIEW_POSITION, 0x40);
+        packetIDs.put(PacketType.UPDATE_VIEW_DISTANCE, 0x41);
 
         entityIDs.put(EntityType.AREA_EFFECT_CLOUD, 0);
         entityIDs.put(EntityType.ARMOR_STAND, 1);
@@ -150,6 +154,8 @@ public class ProtocolHandler16 extends ProtocolHandler {
         entityIDs.put(EntityType.ZOMBIE_PIGMAN, 105);
         entityIDs.put(EntityType.PLAYER, 106);
         entityIDs.put(EntityType.FISHING_BOBBER, 107);
+
+        blockIDs.put(Material.STONE,1);
     }
 
 }

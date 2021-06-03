@@ -174,6 +174,9 @@ public class PacketUtil {
             } else if (data instanceof VarInt[]) {
                 for (int i = 0; i < ((VarInt[]) data).length; i++)
                     offset += writeVarInt(bytes, offset, ((VarInt[]) data)[i].getInteger());
+            } else if (data instanceof VarLong[]) {
+                for (int i = 0; i < ((VarLong[]) data).length; i++)
+                    offset += writeVarLong(bytes, offset, ((VarLong[]) data)[i].getLong());
             } else if (data instanceof int[]) {
                 for (int i = 0; i < ((int[]) data).length; i++)
                     offset += writeInt(bytes, offset, ((int[]) data)[i]);
