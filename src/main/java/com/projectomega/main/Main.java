@@ -32,7 +32,7 @@ public class Main {
         }
     }
 
-    public ServerThread getServerThread() {
+    public static ServerThread getServerThread() {
         return serverThread;
     }
 
