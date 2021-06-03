@@ -20,6 +20,7 @@ import com.projectomega.main.utils.MojangAPI;
 import com.projectomega.main.versions.ProtocolManager;
 import io.netty.channel.Channel;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +54,8 @@ public class Player extends OfflinePlayer implements CommandSender {
     private int viewdistance=-1;
     private boolean allowflight = false;
     private Location bedlocation;
+    private boolean sneaking = false;
+    private boolean sprinting = false;
 
     public String getLocale() {
         return locale;
@@ -300,4 +303,75 @@ public class Player extends OfflinePlayer implements CommandSender {
     public int getClientViewDistance(){
         return viewdistance;
     }
+    private void setSprinting(boolean spriting){
+        this.sprinting = spriting;
+    }
+    public void setSpectatorTarget(Entity e){
+        //TODO: Spectator Target
+    }
+    public void setSneaking(boolean sneaking){
+        this.sneaking = sneaking;
+    }
+    public void sendResourcepack(String url){
+        //TODO Send resourcepack
+    }
+    public void setPlayerTime(long time, boolean relative){
+        //TODO:
+    }
+    public void setPlayerListName(String name){
+
+    }
+    public void setPlayerListHeaderFooter(String header, String footer){
+
+    }
+    public void setHealthScale(double scale){
+
+    }
+    public void setFlySpeed(float speed){
+
+    }
+    public void setFlying(boolean flying){
+
+    }
+    public void setDisplayName(String name){
+
+    }
+    public void setCompassLocation(Location location){
+
+    }
+    public void setBedSpawnLocation(Location location){
+
+    }
+    public void setBedSpawnlocation(Location location, boolean force){
+
+    }
+    public void setAllowFlight(boolean allowFlight){
+        this.allowflight = allowFlight;
+    }
+    public void sendSignChange(Location location, String[] lines){
+
+    }
+    public void sendSignChange(Location location, String[] lines, DyeColor dyecolor){
+
+    }
+    public void sendRawMessage(String raw){
+
+    }
+    public void sendExperienceLevelChange(int level){
+
+    }
+    public void sendBlockChange(Location location, Material material){
+
+    }
+    public void sendBlockDamage(Location location,float progress) {
+
+    }
+
+    public boolean isSprinting(){
+        return sprinting;
+    }
+    public boolean isSneaking(){
+        return sneaking;
+    }
+
 }

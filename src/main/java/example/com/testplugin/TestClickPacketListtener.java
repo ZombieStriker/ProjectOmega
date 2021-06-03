@@ -35,12 +35,10 @@ public class TestClickPacketListtener implements PacketListener {
        // Entity droppeditem = world.dropItem(new ItemStack(Material.STONE),Location.at(0,0,0,world));
        // droppeditem.setCustomName("testing");
        // droppeditem.setCustomNameVisable(true);
-         Entity creeper = world.spawnEntity(EntityType.PIG, Location.at(0,0,0,world));
+        /* Entity creeper = world.spawnEntity(EntityType.PIG, Location.at(0,0,0,world));
         creeper.setCustomName("Pig-le Rick");
-        creeper.setCustomNameVisable(true);
+        creeper.setCustomNameVisable(true);*/
 
-        player.teleport(Location.at(8,8,8,world));
-        System.out.println("Teleporting player");
 
         //OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new Object[]{new VarInt(12), UUID.randomUUID(),new VarInt(EntityType.CREEPER.getTypeID()),5d,0d,0d,pitch,yaw,data,(short)0,(short)0,(short)0});
         //player.sendPacket(spawnentity);

@@ -1,11 +1,13 @@
 package com.projectomega.main.plugin.loader;
 
+import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.plugin.OmegaPlugin;
 import com.projectomega.main.plugin.PluginMeta;
 import com.projectomega.main.plugin.loader.dependency.Relocation;
 import com.projectomega.main.plugin.loader.dependency.RelocationHandler;
 import com.projectomega.main.plugin.loader.dependency.Repository;
+import example.com.testplugin.TestPlugin;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -93,6 +95,9 @@ public class PluginManager {
     }
 
     public void enablePlugins() {
+        if(DebuggingUtil.enableDebugPlugin){
+            plugins.put(new TestPlugin(), new PluginMeta("Test Plugin","example.com.testplugin.TestPlugin"));
+        }
         for (Entry<OmegaPlugin, PluginMeta> entry : plugins.entrySet()) {
             OmegaPlugin plugin = entry.getKey();
             PluginMeta meta = entry.getValue();
