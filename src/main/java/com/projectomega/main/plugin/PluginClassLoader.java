@@ -1,6 +1,5 @@
-package com.projectomega.main.plugin.loader;
+package com.projectomega.main.plugin;
 
-import com.projectomega.main.plugin.OmegaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;

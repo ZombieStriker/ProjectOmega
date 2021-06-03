@@ -1,5 +1,6 @@
 package com.projectomega.main.game;
 
+import com.projectomega.main.command.CommandException;
 import com.projectomega.main.command.permission.Permission;
 import com.projectomega.main.command.permission.PermissionState;
 import com.projectomega.main.command.permission.PermissionStore;
@@ -247,12 +248,15 @@ public class Player extends OfflinePlayer implements CommandSender {
 
     public void sendMessage(String s) {
         sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.text(s), (byte) 0, getUuid()));
-
     }
 
     @Override
     public void issueCommand(String command) {
-        //TODO: Issue Command
+        try {
+            Omega.getCommandHandler().execute(this, command.substring(1));
+        } catch (CommandException e) {
+            sendMessage(e.getMessage());
+        }
     }
 
     @Override

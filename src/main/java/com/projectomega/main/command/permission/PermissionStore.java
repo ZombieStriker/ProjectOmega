@@ -4,14 +4,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A basic implementation for {@link PermissionHolder}.
  */
 public class PermissionStore implements PermissionHolder {
 
-    private final Map<String, PermissionState> permissions = new HashMap<>();
-    private boolean opped;
+    protected static final char TREE_CHAR = '*';
+    protected final Map<String, PermissionState> permissions = new HashMap<>();
+    protected final Map<String, PermissionState> tree = new HashMap<>();
+    protected boolean opped;
 
     @Override public boolean isOp() {
         return opped;
@@ -23,18 +26,26 @@ public class PermissionStore implements PermissionHolder {
 
     @Override public void allowPermission(@NotNull String permission) {
         permissions.put(permission, PermissionState.ALLOW);
+        if (permission.indexOf(TREE_CHAR) != -1) {
+            checkTreePermission(permission);
+            tree.put(permission.substring(0, permission.indexOf(TREE_CHAR)), PermissionState.ALLOW);
+        }
     }
 
     @Override public void allowPermission(@NotNull Permission permission) {
-        permissions.put(permission.getNode(), PermissionState.ALLOW);
+        allowPermission(permission.getNode());
     }
 
     @Override public void denyPermission(@NotNull String permission) {
         permissions.put(permission, PermissionState.DENY);
+        if (permission.indexOf(TREE_CHAR) != -1) {
+            checkTreePermission(permission);
+            tree.put(permission.substring(0, permission.indexOf(TREE_CHAR)), PermissionState.DENY);
+        }
     }
 
     @Override public void denyPermission(@NotNull Permission permission) {
-        permissions.put(permission.getNode(), PermissionState.DENY);
+        denyPermission(permission.getNode());
     }
 
     @Override public PermissionState getState(@NotNull Permission permission) {
@@ -42,6 +53,10 @@ public class PermissionStore implements PermissionHolder {
     }
 
     @Override public PermissionState getState(@NotNull String permission) {
+        for (Entry<String, PermissionState> treePermissions : tree.entrySet()) {
+            if (permission.startsWith(treePermissions.getKey()))
+                return treePermissions.getValue();
+        }
         return permissions.getOrDefault(permission, PermissionState.UNSET);
     }
 
@@ -51,6 +66,11 @@ public class PermissionStore implements PermissionHolder {
 
     @Override public boolean hasPermission(@NotNull String permission) {
         return getState(permission).canAccess(isOp(), DefaultAccess.OP);
+    }
+
+    private void checkTreePermission(@NotNull String permission) {
+        if (permission.chars().filter(c -> c == TREE_CHAR).count() > 1)
+            throw new IllegalArgumentException("Cannot have more than one '*' in a permission node!");
     }
 
 }

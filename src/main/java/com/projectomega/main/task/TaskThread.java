@@ -1,7 +1,7 @@
 package com.projectomega.main.task;
 
 import com.projectomega.main.plugin.OmegaPlugin;
-import com.projectomega.main.plugin.loader.PluginClassLoader;
+import com.projectomega.main.plugin.PluginClassLoader;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

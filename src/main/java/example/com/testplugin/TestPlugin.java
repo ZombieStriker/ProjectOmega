@@ -12,6 +12,7 @@ public class TestPlugin extends OmegaPlugin {
         EventBus.INSTANCE.register(new TestCommandListener());
         EventBus.INSTANCE.register(new BlockDebugCommandListener());
         PacketManager.registerPacketListener(PacketType.CLICK_WINDOW, new TestClickPacketListtener());
+        registerCommand(new TestCommand());
     }
 
     @Override

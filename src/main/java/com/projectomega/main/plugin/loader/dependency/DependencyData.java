@@ -1,6 +1,6 @@
 package com.projectomega.main.plugin.loader.dependency;
 
-import com.projectomega.main.plugin.loader.PluginClassLoader;
+import com.projectomega.main.plugin.PluginClassLoader;
 import lombok.Getter;
 import lombok.NonNull;
 
