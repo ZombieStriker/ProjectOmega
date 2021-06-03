@@ -1,5 +1,7 @@
 package com.projectomega.main.command;
 
+import com.projectomega.main.events.EventBus;
+import com.projectomega.main.events.types.SendCommandEvent;
 import com.projectomega.main.game.CommandSender;
 import com.projectomega.main.plugin.OmegaPlugin;
 import lombok.NonNull;
@@ -21,12 +23,17 @@ public final class OmegaCommandHandler {
             cmd.setPlugin(plugin);
         String namespace = plugin.getPluginMeta().getName().toLowerCase();
         commands.put(namespace + ":" + cmd.getName(), cmd);
+
+        // if an alias is registered (presumably by another plugin) then give
+        // our command higher priority and override it.
         if (!commands.containsKey(cmd.getName()) && byAlias.containsKey(cmd.getName())) {
             commands.put(cmd.getName(), cmd);
         }
         for (String alias : cmd.getAliases()) {
             byAlias.put(namespace + ":" + alias, cmd);
             if (!commands.containsKey(alias)) {
+                // as long as we're not overriding a main command, we
+                // can override aliases.
                 byAlias.put(alias, cmd);
             }
         }
@@ -43,8 +50,10 @@ public final class OmegaCommandHandler {
         if (command == null) {
             throw new CommandException("Invalid command. Run /help for a list of commands.");
         }
-        // TODO: Post event and check for cancellation
-        command.getExecutor().execute(sender, new ArrayList<>(args), command.getPlugin());
+        SendCommandEvent event = new SendCommandEvent(sender, command, args, text);
+        if (!EventBus.INSTANCE.post(event).isCancelled()) {
+            command.getExecutor().execute(sender, new ArrayList<>(args), command.getPlugin());
+        }
     }
 
 }

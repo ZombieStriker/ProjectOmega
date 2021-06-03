@@ -9,4 +9,13 @@ public interface CommandSender extends PermissionHolder {
     void issueCommand(String command);
 
     void chat(String message);
+
+    default boolean isPlayer() {
+        return this instanceof Player;
+    }
+
+    default boolean isConsole() {
+        return this instanceof ConsoleSender;
+    }
+
 }

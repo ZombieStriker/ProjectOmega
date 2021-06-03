@@ -2,7 +2,6 @@ package com.projectomega.main.packets.types;
 
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerChatEvent;
-import com.projectomega.main.events.types.PlayerSendCommandEvent;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
 import com.projectomega.main.game.chat.TextMessage;
@@ -34,12 +33,8 @@ public class PacketInboundChat extends PacketHandler {
         }
 
         if (message.startsWith("/")) {
-            PlayerSendCommandEvent chatEvent = new PlayerSendCommandEvent(player, message);
-            if (!EventBus.INSTANCE.post(chatEvent).isCancelled()) {
-                //TODO: Issue Command
-            }
+            player.issueCommand(message.substring(1));
         } else {
-
             TranslatedComponent.Builder json = TextMessage.chat(player.getName(), ": " + message).asBuilder();
             PlayerChatEvent chatEvent = new PlayerChatEvent(player, message, json);
             if (!EventBus.INSTANCE.post(chatEvent).isCancelled()) {
