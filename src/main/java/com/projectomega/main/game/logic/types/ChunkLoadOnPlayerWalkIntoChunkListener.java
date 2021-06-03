@@ -20,15 +20,15 @@ public class ChunkLoadOnPlayerWalkIntoChunkListener {
         if(newLocationChunk.getX() != playerChunk.getX()
         || newLocationChunk.getZ() != playerChunk.getZ()
         ){
-            for(int x = -12; x <= 12; x++) {
-                for(int z = -12; z <= 12; z++) {
-                    event.getPlayer().getWorld().sendChunkData(new ChunkPosition(x,z), event.getPlayer());
+            for(int x = -5; x <= 5; x++) {
+                for(int z = -5; z <= 5; z++) {
+                    event.getPlayer().getWorld().sendChunkData(new ChunkPosition(newLocationChunk.getX()+x, newLocationChunk.getZ()+z), event.getPlayer());
                 }
             }
             Omega.getTaskManager().getMainThread().runTaskLater(new Task() {
                 @Override
                 protected void run() {
-                    event.getPlayer().sendPacket(new OutboundPacket(PacketType.UPDATE_VIEW_POSITION,new VarInt(event.getPlayer().getLocation().getChunk().getX()), new VarInt(event.getPlayer().getLocation().getChunk().getZ())));
+                    event.getPlayer().sendPacket(new OutboundPacket(PacketType.UPDATE_VIEW_POSITION,new VarInt(newLocationChunk.getX()), new VarInt(newLocationChunk.getZ())));
                 }
             }, Duration.ticks(20));
         }

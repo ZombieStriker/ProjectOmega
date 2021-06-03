@@ -24,6 +24,6 @@ public class Position {
     }
 
     public static long positionToLong(int x, int y, int z) {
-        return (((long) x & 0x3FFFFFF) << 38) | (((long) z & 0x3FFFFFF) << 12) | ((long) y & 0xFFF);
+        return ((((int) x) & 0x3FFFFFF) << 38) | ((((int) z) & 0x3FFFFFF) << 12) | (((int) y) & 0xFFF);
     }
 }

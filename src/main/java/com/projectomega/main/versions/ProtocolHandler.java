@@ -1,6 +1,7 @@
 package com.projectomega.main.versions;
 
 import com.projectomega.main.game.Material;
+import com.projectomega.main.game.block.BlockDataTag;
 import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.PacketType;
 
@@ -56,4 +57,6 @@ public abstract class ProtocolHandler {
     public Integer getBlockIDByType(Material type) {
         return blockIDs.get(type);
     }
+
+
 }

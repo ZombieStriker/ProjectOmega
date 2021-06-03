@@ -53,6 +53,5 @@ public class ProtocolManager {
         }else{
             return handlerhandshake.getBlockIDByType(type);
         }
-
     }
 }

@@ -179,7 +179,7 @@ public class Omega extends Thread {
                 player.clearPackets();
             }
             try {
-                if ((1000 / 20) - (System.currentTimeMillis() - start) > 0)
+                if ((1000 / 20) - (System.currentTimeMillis() - start) > 1)
                     Thread.sleep((1000 / 20) - (System.currentTimeMillis() - start));
             } catch (InterruptedException e) {
                 e.printStackTrace();
