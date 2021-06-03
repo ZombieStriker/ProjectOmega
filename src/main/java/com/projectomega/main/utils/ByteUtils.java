@@ -51,8 +51,13 @@ public class ByteUtils {
     }
 
     public static int addFloatToByteArray(byte[] bytes, int offset, float data) {
-        int floatingPointNumber = (int) (data * 32);
-        return addIntToByteArray(bytes,offset,floatingPointNumber);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeFloat(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
     }
 
     public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {

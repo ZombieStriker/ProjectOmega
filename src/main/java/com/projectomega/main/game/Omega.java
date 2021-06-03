@@ -4,6 +4,7 @@ import com.projectomega.main.game.chat.BossBar;
 import com.projectomega.main.game.chat.BossBarColor;
 import com.projectomega.main.game.chat.BossBarDivisions;
 import com.projectomega.main.game.chat.TextMessage;
+import com.projectomega.main.game.logic.GameLogic;
 import com.projectomega.main.game.packetlogic.PacketLogicManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
@@ -149,6 +150,7 @@ public class Omega extends Thread {
     public void run() {
         System.out.println("Starting Server...");
         PacketLogicManager.init();
+        GameLogic.init();
         pluginManager.searchPlugins();
         pluginManager.enablePlugins();
         while (true) {

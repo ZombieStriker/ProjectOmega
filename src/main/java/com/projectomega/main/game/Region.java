@@ -23,9 +23,16 @@ public class Region {
         return z;
     }
 
-    public Chunk getLoadedChunk(int i, int i1) {
+    public Chunk getOrLoadChunk(int x, int z){
+        Chunk chunk = getLoadedChunk(x,z);
+        if(chunk!=null)
+            return chunk;
+        return createChunk(x,z);
+    }
+
+    public Chunk getLoadedChunk(int x, int z) {
         for(Map.Entry<ChunkPosition, Chunk> c : chunks.entrySet()){
-            if(c.getKey().getX()==i&&c.getKey().getZ()==i1)
+            if(c.getKey().getX()==x&&c.getKey().getZ()==z)
                 return c.getValue();
         }
         return null;

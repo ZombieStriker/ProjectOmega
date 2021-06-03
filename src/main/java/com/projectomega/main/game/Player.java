@@ -374,4 +374,7 @@ public class Player extends OfflinePlayer implements CommandSender {
         return sneaking;
     }
 
+    public Location getLocation() {
+        return playerEntity.getLocation();
+    }
 }

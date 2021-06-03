@@ -24,6 +24,5 @@ public class PacketPlayerPosition extends PacketHandler {
                 listener.onCall(packet);
             }
         }
-
     }
 }

@@ -155,4 +155,19 @@ public class Location {
         return world;
     }
 
+    public Chunk getChunk() {
+        int chunkx = (getBlockX()/16);
+        if(chunkx<0)
+            chunkx--;
+        int chunkz = (getBlockZ()/16);
+        if(chunkz<0)
+            chunkz--;
+        int regionx = (getBlockX()/16)/32;
+        if(regionx<0)
+            regionx--;
+        int regionz = (getBlockZ()/16)/32;
+        if(regionz<0)
+            regionz--;
+        return world.getRegion(regionx,regionz).getOrLoadChunk(chunkx,chunkz);
+    }
 }

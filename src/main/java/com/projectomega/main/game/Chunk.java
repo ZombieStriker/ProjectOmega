@@ -4,9 +4,13 @@ public class Chunk {
 
     private Block[][][] blocks = new Block[16][256][16];
     private World world;
+    private int x;
+    private int z;
 
     public Chunk(World world, int x, int z) {
         this.world = world;
+        this.x=  x;
+        this.z = z;
         int xoff = x * 16;
         int zoff = z * 16;
         for (int x1 = 0; x1 < 16; x1++) {
@@ -35,4 +39,9 @@ public class Chunk {
             zmod = -zmod;
         return blocks[xmod][y][zmod];
     }
+
+    public int getX() {
+        return x;
+    }
+    public int getZ(){return z;}
 }

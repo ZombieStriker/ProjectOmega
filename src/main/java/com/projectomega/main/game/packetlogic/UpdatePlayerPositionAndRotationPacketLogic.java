@@ -8,7 +8,8 @@ import com.projectomega.main.game.Player;
 import com.projectomega.main.packets.InboundPacket;
 import com.projectomega.main.packets.PacketListener;
 
-public class UpdatePlayerPositionPacketLogic implements PacketListener {
+public class UpdatePlayerPositionAndRotationPacketLogic implements PacketListener {
+
 
     @Override
     public void onCall(InboundPacket packet) {

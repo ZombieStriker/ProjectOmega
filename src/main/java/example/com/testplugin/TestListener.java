@@ -11,7 +11,7 @@ public class TestListener {
 
     @EventListener
     public void onPlayerJoin(PlayerJoinEvent event) {
-        BossBar bossBar = Omega.createBossBar("Test", 1.0f, BossBarColor.BLUE, BossBarDivisions.NONE);
+        BossBar bossBar = Omega.createBossBar("Test", 1.0f, BossBarColor.PURPLE, BossBarDivisions.SIX_NOTCHES);
         System.out.println("Sending boss bar");
         bossBar.sendBossbarPacketToPlayer(event.getPlayer());
     }
