@@ -1131,6 +1131,47 @@ public enum Material {
         return name;
     }
 
-    public boolean isSolid
+    public boolean isSolid(){
+        return solid;
+    }
 
+    public boolean isInteractable() {
+        return interactable;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public boolean isOccluding() {
+        return occluding;
+    }
+
+    public boolean isBurnable() {
+        return burnable;
+    }
+
+    public boolean isFuel() {
+        return fuel;
+    }
+
+    public float getBlastresitstance() {
+        return blastresitstance;
+    }
+
+    public float getHardness() {
+        return hardness;
+    }
+
+    public int getMaxdurability() {
+        return maxdurability;
+    }
+
+    public int getMaxsize() {
+        return maxsize;
+    }
+
+    public String getKey() {
+        return key;
+    }
 }
