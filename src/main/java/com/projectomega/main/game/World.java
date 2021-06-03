@@ -40,7 +40,6 @@ public class World {
             motion_blocking[i] = 0l;
         }
         heightmap.put("MOTION_BLOCKING", motion_blocking);
-        System.out.println(heightmap.toString());
         VarInt[] biomes = new VarInt[1024];
         for (int i = 0; i < biomes.length; i++) {
             biomes[i] = new VarInt(0);
@@ -110,9 +109,9 @@ public class World {
         offset += ByteUtils.addByteToByteArray(data, offset, new UnsignedByte(bitsperblock).getUnsignedByte());
         offset += PacketUtil.writeVarInt(data, offset, palletelength);
         for (int i = 0; i < palletelength; i++) {
-            offset += ByteUtils.addVarIntToByteArray(data, offset, pallete.get(i));
+            offset += PacketUtil.writeVarInt(data, offset, pallete.get(i));
         }
-        offset += ByteUtils.addVarIntToByteArray(data, offset, dataarraylength);
+        offset += PacketUtil.writeVarInt(data, offset, dataarraylength);
         for (long d : dataarray) {
             offset += PacketUtil.writeLong(data, offset, d);
         }

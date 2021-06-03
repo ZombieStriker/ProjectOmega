@@ -148,19 +148,19 @@ public class PacketUtil {
         int offset = 0;
         Player player = Omega.getPlayerByChannel(connection);
         int protocolVersion = 0;
-        if(player!=null){
+        if (player != null) {
             protocolVersion = player.getProtocolVersion();
         }
-        int packetid = ProtocolManager.getPacketIDForProtocol(protocolVersion,packet.getType());
-        offset += ByteUtils.addVarIntToByteArray(bytes, offset, packetid);
+        int packetid = ProtocolManager.getPacketIDForProtocol(protocolVersion, packet.getType());
+        offset += writeVarInt(bytes, offset, packetid);
         for (int dataIndex = 0; dataIndex < packet.getDataLength(); dataIndex++) {
             Object data = packet.getData(dataIndex);
             if (DebuggingUtil.DEBUG)
                 System.out.println("Writing " + data + " to index " + offset);
             if (data instanceof VarInt) {
-                offset += ByteUtils.addVarIntToByteArray(bytes, offset, ((VarInt) data).getInteger());
-            }else if (data instanceof EntityType) {
-                    offset += ByteUtils.addVarIntToByteArray(bytes, offset, new VarInt(ProtocolManager.getEntityIDForProtocol(protocolVersion,(EntityType) data)).getInteger());
+                offset += writeVarInt(bytes, offset, ((VarInt) data).getInteger());
+            } else if (data instanceof EntityType) {
+                offset += writeVarInt(bytes, offset, new VarInt(ProtocolManager.getEntityIDForProtocol(protocolVersion, (EntityType) data)).getInteger());
             } else if (data instanceof Integer) {
                 offset += ByteUtils.addIntToByteArray(bytes, offset, (Integer) data);
             } else if (data instanceof VarLong) {
@@ -194,12 +194,11 @@ public class PacketUtil {
                 offset += writeBytes(bytes, offset, ((MetaData) data).build());
             } else if (data instanceof NBTCompound) {
                 try {
-                    //byte[] byteArray = NBTWriter.writeToBase64((NBTCompound) data,false);
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     NBTWriter.write((NBTCompound) data, out, false);
                     byte[] byteArray = out.toByteArray();
                     offset += writeBytes(bytes, offset, byteArray);
-                    offset += writeByte(bytes,offset, (byte) 0);
+                    offset += writeByte(bytes, offset, (byte) 0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -215,11 +214,11 @@ public class PacketUtil {
         }
         length = offset;
         byte[] varIntLength = new byte[3];
-        if(length >= 2097151){
+        if (length >= 2097151) {
             System.out.println("Packet to long. Dumping data:");
-            System.out.println(DebuggingUtil.dumpBytes(bytes,length));
+            System.out.println(DebuggingUtil.dumpBytes(bytes, length));
         }
-        int l = ByteUtils.addVarIntToByteArray(varIntLength, 0, length);
+        int l = writeVarInt(varIntLength, 0, length);
         ByteBuf bytebuf = Unpooled.buffer();
         for (int i = 0; i < l; i++) {
             bytebuf.writeByte(varIntLength[i]);
@@ -242,7 +241,7 @@ public class PacketUtil {
 
         try {
             if (DebuggingUtil.DEBUG)
-                System.out.println("Writing " + length + " bytes for packetid: " + packetid+ "  || " + bytebuf.array().length);
+                System.out.println("Writing " + length + " bytes for packetid: " + packetid + "  || " + bytebuf.array().length);
             connection.writeAndFlush(bytebuf).awaitUninterruptibly().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -272,7 +271,7 @@ public class PacketUtil {
 
     private static int writeString(byte[] bytes, int offset, String data) {
         int offset2 = 0;
-        offset2 += ByteUtils.addVarIntToByteArray(bytes, offset, data.getBytes().length);
+        offset2 += writeVarInt(bytes, offset, data.getBytes().length);
         offset2 += ByteUtils.addStringToByteArray(bytes, offset + offset2, data);
         return offset2;
     }
@@ -287,22 +286,7 @@ public class PacketUtil {
     }
 
     public static long readLong(ByteBuf byteBuf) {
-        int numRead = 0;
-        long result = 0;
-        byte read;
-        do {
-            read = byteBuf.readByte();
-            long value = (read & 0b01111111);
-            result |= (value << (7 * numRead));
-
-            numRead++;
-            System.out.println(numRead + "||" + result);
-            if (numRead > 10) {
-                throw new RuntimeException("VarLong is too big");
-            }
-        } while (numRead != 8);
-
-        return result;
+        return byteBuf.readLong();
     }
 
     public static int writeUUID(byte[] bytes, int offset, UUID uuid) {

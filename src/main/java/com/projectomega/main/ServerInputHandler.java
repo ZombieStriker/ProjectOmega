@@ -19,21 +19,23 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf bytebuf = (ByteBuf) msg;
         int size = bytebuf.readByte();
-        int packetid = bytebuf.readByte();
-        Player player = Omega.getPlayerByChannel(ctx.channel());
-        int protocolversion = 0;
-        if(player != null){
-            protocolversion = player.getProtocolVersion();
-        }
-        List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersBy(ProtocolManager.getPacketByID(protocolversion,packetid,player==null, PacketType.PacketDirection.SERVERBOUND));
-        if (packethandlers != null) {
-            if(DebuggingUtil.DEBUG)
-            System.out.println("Packet Handlers found for "+packetid+" : "+packethandlers.size());
-            for (PacketHandler packetHandler : packethandlers) {
-                packetHandler.call(bytebuf, size - 1, ctx.channel());
+        if(size > 1) {
+            int packetid = bytebuf.readByte();
+            Player player = Omega.getPlayerByChannel(ctx.channel());
+            int protocolversion = 0;
+            if (player != null) {
+                protocolversion = player.getProtocolVersion();
             }
-        }else{
-            System.out.println("Failed to find packetHandler for packet "+packetid+":"+protocolversion);
+            List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersBy(ProtocolManager.getPacketByID(protocolversion, packetid, player == null, PacketType.PacketDirection.SERVERBOUND));
+            if (packethandlers != null) {
+                if (DebuggingUtil.DEBUG)
+                    System.out.println("Packet Handlers found for " + packetid + " : " + packethandlers.size());
+                for (PacketHandler packetHandler : packethandlers) {
+                    packetHandler.call(bytebuf, size - 1, ctx.channel());
+                }
+            } else {
+                System.out.println("Failed to find packetHandler for packet " + packetid + ":" + protocolversion);
+            }
         }
 
     }

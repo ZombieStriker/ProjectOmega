@@ -15,9 +15,8 @@ public class LoadChunksOnJoinListener {
 
     @EventListener
     public void onJoin(PlayerJoinEvent event) {
-        int count = 0;
-        for (int x = -6; x <= 6; x++) {
-            for (int z = -6; z <= 6; z++) {
+        for (int x = -4; x <= 4; x++) {
+            for (int z = -4; z <= 4; z++) {
                 int finalX = x;
                 int finalZ = z;
                 Omega.getTaskManager().getMainThread().runTaskLater(new Task() {
@@ -25,8 +24,7 @@ public class LoadChunksOnJoinListener {
                     protected void run() {
                         event.getPlayer().getWorld().sendChunkData(new ChunkPosition(finalX, finalZ), event.getPlayer());
                     }
-                }, Duration.ticks(20+count));
-                count++;
+                }, Duration.ticks(20));
             }
         }
         Omega.getTaskManager().getMainThread().runTaskLater(new Task() {
@@ -34,7 +32,7 @@ public class LoadChunksOnJoinListener {
             protected void run() {
                 event.getPlayer().sendPacket(new OutboundPacket(PacketType.UPDATE_VIEW_POSITION,new VarInt(event.getPlayer().getLocation().getChunk().getX()), new VarInt(event.getPlayer().getLocation().getChunk().getZ())));
             }
-        }, Duration.ticks(20+count+2));
+        }, Duration.ticks(20));
 
     }
 }
