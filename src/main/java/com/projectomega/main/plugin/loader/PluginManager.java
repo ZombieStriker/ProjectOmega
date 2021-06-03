@@ -4,7 +4,6 @@ import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.plugin.OmegaPlugin;
 import com.projectomega.main.plugin.PluginMeta;
-import com.projectomega.main.plugin.loader.dependency.Relocation;
 import com.projectomega.main.plugin.loader.dependency.RelocationHandler;
 import com.projectomega.main.plugin.loader.dependency.Repository;
 import example.com.testplugin.TestPlugin;
@@ -42,7 +41,7 @@ public class PluginManager {
         librariesFolder.mkdirs();
         pluginsFolder = new File(serverDir, "plugins");
         pluginsFolder.mkdirs();
-        Repository.MAVEN_CENTRAL.downloadFile(Relocation.RELOCATOR, librariesFolder);
+        Repository.MAVEN_CENTRAL.downloadFile(RelocationHandler.RELOCATOR, librariesFolder);
 
         // load libs
         File[] libraryFiles = requireNonNull(librariesFolder.listFiles());
@@ -95,8 +94,8 @@ public class PluginManager {
     }
 
     public void enablePlugins() {
-        if(DebuggingUtil.enableDebugPlugin){
-            plugins.put(new TestPlugin(), new PluginMeta("Test Plugin","example.com.testplugin.TestPlugin"));
+        if (DebuggingUtil.enableDebugPlugin) {
+            plugins.put(new TestPlugin(), new PluginMeta("Test Plugin", "example.com.testplugin.TestPlugin"));
         }
         for (Entry<OmegaPlugin, PluginMeta> entry : plugins.entrySet()) {
             OmegaPlugin plugin = entry.getKey();

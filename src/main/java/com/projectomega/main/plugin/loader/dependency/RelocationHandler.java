@@ -12,6 +12,12 @@ import java.util.Map;
  */
 public class RelocationHandler {
 
+    public static final Dependency RELOCATOR = new Dependency(
+            "me.lucko",
+            "jar-relocator",
+            "1.4"
+    );
+
     private static final String JAR_RELOCATOR_CLASS = "me.lucko.jarrelocator.JarRelocator";
     private static final String JAR_RELOCATOR_RUN_METHOD = "run";
 
@@ -39,7 +45,7 @@ public class RelocationHandler {
         jarRelocatorRunMethod.invoke(relocator);
     }
 
-    public static class IsolatedClassLoader extends URLClassLoader {
+    private static class IsolatedClassLoader extends URLClassLoader {
 
         static {
             ClassLoader.registerAsParallelCapable();
