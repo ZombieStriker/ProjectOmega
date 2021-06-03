@@ -1085,7 +1085,7 @@ public enum Material {
     private final float blastResistance;
     private final float hardness;
     private final String key;
-    private final int maxsize;
+    private final int maxSize;
     private final int maxdurability;
     private final boolean editable;
     private final boolean occluding;
@@ -1104,7 +1104,7 @@ public enum Material {
              double blastResistance,
              double hardness,
              String key,
-             int maxsize,
+             int maxSize,
              int maxdurability,
              boolean editable,
              boolean occluding,
@@ -1118,7 +1118,7 @@ public enum Material {
         this.blastResistance = (float) blastResistance;
         this.hardness = (float) hardness;
         this.key = key;
-        this.maxsize = maxsize;
+        this.maxSize = maxSize;
         this.maxdurability = maxdurability;
         this.editable = editable;
         this.occluding = occluding;
@@ -1174,8 +1174,8 @@ public enum Material {
         return maxdurability;
     }
 
-    public int getMaxsize() {
-        return maxsize;
+    public int getMaxSize() {
+        return maxSize;
     }
 
     public String getKey() {
