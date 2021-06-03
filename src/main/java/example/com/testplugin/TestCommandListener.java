@@ -4,9 +4,13 @@ import com.projectomega.main.events.*;
 import com.projectomega.main.events.types.*;
 import com.projectomega.main.game.ChunkPosition;
 import com.projectomega.main.game.Location;
+import com.projectomega.main.game.Material;
+import com.projectomega.main.game.inventory.ItemStack;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
+import com.projectomega.main.packets.datatype.Slot;
 import com.projectomega.main.packets.datatype.VarInt;
+import me.nullicorn.nedit.type.NBTCompound;
 
 import java.util.UUID;
 
@@ -38,22 +42,14 @@ public class TestCommandListener {
             return;
         }
         if (event.getCommand().equalsIgnoreCase("/spawnentity")) {
+            ItemStack is = new ItemStack(Material.STONE);
+            event.getPlayer().sendPacket(new OutboundPacket(PacketType.SET_SLOT,(byte)0,(short)18,new Slot((short)1,(byte)1,(short)1,new NBTCompound())));
             if (event.getArgumentsLength() < 1) {
                 event.getPlayer().sendMessage("Usage: /spawn <entityID>");
                 return;
             }
-            int id = Integer.parseInt(event.getArgument(0));
-
-            byte pitch = (byte) (256 * 0.0);
-            byte yaw = (byte) (256 * 0.0);
-            byte headpitch = (byte) (256 * 0.0);
-            int data = 0;
-
-            OutboundPacket spawnentity = new OutboundPacket(PacketType.SPAWN_ENTITY, new VarInt(12), UUID.randomUUID(), new VarInt(id), 5d, 0d, 0d, pitch, yaw, data, (short) 0, (short) 0, (short) 0);
-            event.getPlayer().sendPacket(spawnentity);
-
-            OutboundPacket spawnLivingentity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new VarInt(13), UUID.randomUUID(), new VarInt(id), 5d, 0d, 0d, pitch, yaw, headpitch, (short) 0, (short) 0, (short) 0);
-            event.getPlayer().sendPacket(spawnLivingentity);
+            System.out.println("event args length "+event.getArgumentsLength());
+            event.getPlayer().getWorld().dropItem(is,Location.at(8,17,8,event.getPlayer().getWorld()));
         }
     }
 }

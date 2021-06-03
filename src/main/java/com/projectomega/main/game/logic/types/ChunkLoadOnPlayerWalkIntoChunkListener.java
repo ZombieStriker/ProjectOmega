@@ -5,6 +5,7 @@ import com.projectomega.main.events.types.PlayerMoveEvent;
 import com.projectomega.main.game.Chunk;
 import com.projectomega.main.game.ChunkPosition;
 import com.projectomega.main.game.Omega;
+import com.projectomega.main.game.chunk.ChunkManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.VarInt;
@@ -22,7 +23,7 @@ public class ChunkLoadOnPlayerWalkIntoChunkListener {
         ){
             for(int x = -5; x <= 5; x++) {
                 for(int z = -5; z <= 5; z++) {
-                    event.getPlayer().getWorld().sendChunkData(new ChunkPosition(newLocationChunk.getX()+x, newLocationChunk.getZ()+z), event.getPlayer());
+                    ChunkManager.loadChunk(playerChunk.getWorld().getChunkAt(newLocationChunk.getX()+x,newLocationChunk.getZ()+z),event.getPlayer());
                 }
             }
             Omega.getTaskManager().getMainThread().runTaskLater(new Task() {

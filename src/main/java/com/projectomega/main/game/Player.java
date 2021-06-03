@@ -246,7 +246,7 @@ public class Player extends OfflinePlayer implements CommandSender {
     }
 
     public void sendMessage(String s) {
-        sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.text(s), (byte) 0));
+        sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.text(s), (byte) 0, getUuid()));
 
     }
 

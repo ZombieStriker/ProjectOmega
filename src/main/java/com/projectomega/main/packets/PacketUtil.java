@@ -186,6 +186,21 @@ public class PacketUtil {
                 offset += writeUUID(bytes, offset, (UUID) data);
             } else if (data instanceof MetaData) {
                 offset += writeBytes(bytes, offset, ((MetaData) data).build());
+            } else if (data instanceof Slot) {
+                offset += ByteUtils.addByteToByteArray(bytes, offset, (byte) (((Slot) data).isItem() ? 0x01 : 0x00));
+                if (((Slot) data).isItem()) {
+                    offset+= writeVarInt(bytes,offset,((Slot) data).getId());
+                    offset += writeByte(bytes,offset,((Slot) data).getAmount());
+                    try {
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        NBTWriter.write(((Slot) data).getNBT(), out, false);
+                        byte[] byteArray = out.toByteArray();
+                        offset += writeBytes(bytes, offset, byteArray);
+                        offset += writeByte(bytes, offset, (byte) 0);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             } else if (data instanceof NBTCompound) {
                 try {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();

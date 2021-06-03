@@ -35,6 +35,7 @@ public class ProtocolHandler16 extends ProtocolHandler {
         packetIDs.put(PacketType.SET_EXPERIENCE, 0x48);
         packetIDs.put(PacketType.SOUND_EFFECT, 0x51);
         packetIDs.put(PacketType.SPAWN_ENTITY, 0x00);
+        packetIDs.put(PacketType.SET_SLOT, 0x15);
         packetIDs.put(PacketType.SPAWN_LIVING_ENTITY, 0x02);
         packetIDs.put(PacketType.STATUS_PING, 0);
         packetIDs.put(PacketType.TIME_UPDATE, 0x4E);

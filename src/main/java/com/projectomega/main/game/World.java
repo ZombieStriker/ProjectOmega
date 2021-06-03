@@ -56,6 +56,7 @@ public class World {
 
         player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(127), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
 
+        if(x==0)
         sendBlocks(chunk,player);
 
 
@@ -207,5 +208,15 @@ public class World {
 
     public Location getSpawn() {
         return spawn;
+    }
+
+    public Chunk getChunkAt(int x, int z) {
+        int regionx = x/32;
+        if (regionx<0)
+            regionx-=1;
+        int regionz = z/32;
+        if (regionz<0)
+            regionz-=1;
+        return getRegion(regionx,regionz).getOrLoadChunk(x,z);
     }
 }
