@@ -2,6 +2,7 @@ package com.projectomega.main.utils;
 
 import com.projectomega.main.packets.PacketUtil;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -55,8 +56,13 @@ public class ByteUtils {
     }
 
     public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {
-        long doubleFloatingPointNumber = (long) (data*(0x34));
-        return PacketUtil.writeLong(bytes,offset,doubleFloatingPointNumber);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeDouble(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
     }
 
     public static String buildString(ByteBuf bytebuf) {

@@ -2,6 +2,8 @@ package example.com.testplugin;
 
 import com.projectomega.main.events.*;
 import com.projectomega.main.events.types.*;
+import com.projectomega.main.game.ChunkPosition;
+import com.projectomega.main.game.Location;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.VarInt;
@@ -27,7 +29,15 @@ public class TestCommandListener {
 
     @EventListener
     public void onPlayerSendCommand(PlayerSendCommandEvent event) {
-        if (event.getCommand().equals("/spawn")) {
+        if(event.getCommand().equalsIgnoreCase("/spawn")){
+            event.getPlayer().getWorld().sendChunkData(new ChunkPosition(0, 0), event.getPlayer());
+            event.getPlayer().getWorld().sendChunkData(new ChunkPosition(-1,0),event.getPlayer());
+            event.getPlayer().getWorld().sendChunkData(new ChunkPosition(0,-1),event.getPlayer());
+            event.getPlayer().getWorld().sendChunkData(new ChunkPosition(-1,-1),event.getPlayer());
+            event.getPlayer().teleport(Location.at(8,32,8,event.getPlayer().getWorld()));
+            return;
+        }
+        if (event.getCommand().equalsIgnoreCase("/spawnentity")) {
             if (event.getArgumentsLength() < 1) {
                 event.getPlayer().sendMessage("Usage: /spawn <entityID>");
                 return;

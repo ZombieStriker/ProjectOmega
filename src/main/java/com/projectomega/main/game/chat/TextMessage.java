@@ -31,7 +31,9 @@ public abstract class TextMessage {
     }
 
     public static String text(@NonNull String text) {
-        return text(TextComponent.simple(text));
+        JsonObject o = new JsonObject();
+        o.addProperty("text", text);
+        return o.toString();
     }
 
     public static String text(@NonNull TextComponent text) {

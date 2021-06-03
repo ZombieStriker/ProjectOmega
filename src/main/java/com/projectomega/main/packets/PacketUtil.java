@@ -130,12 +130,12 @@ public class PacketUtil {
     public static int writeLong(byte[] bytes, int offset, long value) {
         int i = 0;
         do {
-            byte temp = (byte) (value & 0b01111111);
+            byte temp = (byte) (value & 0b11111111);
             // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
             value >>>= 7;
-            if (value != 0) {
+            /*if (value != 0) {
                 temp |= 0b10000000;
-            }
+            }*/
             bytes[offset + i] = temp;
             i++;
         } while (i != 8);

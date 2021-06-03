@@ -269,7 +269,7 @@ public class Player extends OfflinePlayer implements CommandSender {
 
     public void sendTitle(String title, String subtitle, int fadein, int stay, int fadeout) {
         OutboundPacket settile = new OutboundPacket(PacketType.TITLE, new VarInt(0), TextMessage.text(title));
-        OutboundPacket setsubtitle = new OutboundPacket(PacketType.TITLE, new VarInt(1), TextMessage.text(title));
+        OutboundPacket setsubtitle = new OutboundPacket(PacketType.TITLE, new VarInt(1), TextMessage.text(subtitle));
         OutboundPacket settimesanddisplay = new OutboundPacket(PacketType.TITLE, new VarInt(2), fadein, stay, fadeout);
         sendPacket(settile);
         sendPacket(setsubtitle);
@@ -277,9 +277,9 @@ public class Player extends OfflinePlayer implements CommandSender {
     }
 
     public void teleport(Location location){
-        OutboundPacket positionAndLook = new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, location.getX(),location.getY(),location.getZ(),location.getYaw(),location.getPitch(),(byte)0, new VarInt(1));
+        OutboundPacket positionAndLook = new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, location.getX(),location.getY(),location.getZ(),location.getYaw(),location.getPitch(),(byte)(0), new VarInt(1));
         sendPacket(positionAndLook);
-        playerEntity.teleport(location);
+        //playerEntity.teleport(location);
     }
 
     public World getWorld() {

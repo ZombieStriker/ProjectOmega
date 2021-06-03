@@ -106,7 +106,7 @@ public class Omega extends Thread {
     private static void broadcastMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0));
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0,player.getUuid()));
             }
         }
     }
@@ -114,7 +114,7 @@ public class Omega extends Thread {
     public static void broadcastJSONMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, s, (byte) 0));
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, s, (byte) 0,player.getUuid()));
             }
         }
     }
