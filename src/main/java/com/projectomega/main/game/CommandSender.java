@@ -1,6 +1,8 @@
 package com.projectomega.main.game;
 
-public interface CommandSender {
+import com.projectomega.main.command.permission.PermissionHolder;
+
+public interface CommandSender extends PermissionHolder {
 
     void sendMessage(String message);
 

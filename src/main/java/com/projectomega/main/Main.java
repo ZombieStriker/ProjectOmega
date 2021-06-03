@@ -12,7 +12,6 @@ public class Main {
     public static void main(String... args) throws ClassNotFoundException {
         Omega.init();
         try {
-            System.out.println(Omega.class.getClassLoader());
             serverThread = new ServerThread();
         } catch (IOException e) {
             e.printStackTrace();
