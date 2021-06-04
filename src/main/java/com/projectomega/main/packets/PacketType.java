@@ -48,6 +48,7 @@ public enum PacketType {
     UPDATE_VIEW_POSITION(PacketDirection.CLIENTBOUND),
     UPDATE_VIEW_DISTANCE(PacketDirection.CLIENTBOUND),
     SET_SLOT(PacketDirection.CLIENTBOUND),
+    DISCONNECT(PacketDirection.CLIENTBOUND),
     ;
 
     private PacketDirection direction;

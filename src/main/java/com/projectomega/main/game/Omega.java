@@ -1,6 +1,8 @@
 package com.projectomega.main.game;
 
 import com.projectomega.main.command.OmegaCommandHandler;
+import com.projectomega.main.events.EventBus;
+import com.projectomega.main.events.types.PlayerQuitEvent;
 import com.projectomega.main.game.chat.BossBar;
 import com.projectomega.main.game.chat.BossBarColor;
 import com.projectomega.main.game.chat.BossBarDivisions;
@@ -168,6 +170,8 @@ public class Omega extends Thread {
             for (Player player : new ArrayList<>(players)) {
                 if (!player.getConnection().isActive() || !player.getConnection().isOpen()) {
                     players.remove(player);
+                    PlayerQuitEvent quitEvent = new PlayerQuitEvent(player);
+                    EventBus.INSTANCE.post(quitEvent);
                     continue;
                 }
                 if (player.getProtocolVersion() < 754) {
