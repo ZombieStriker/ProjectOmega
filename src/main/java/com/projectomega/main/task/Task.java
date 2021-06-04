@@ -1,16 +1,14 @@
 package com.projectomega.main.task;
 
-import com.projectomega.main.game.Omega;
-import lombok.NonNull;
+import com.projectomega.main.game.*;
+import com.projectomega.main.plugin.*;
 
-import java.util.concurrent.Future;
-import java.util.function.Supplier;
+import java.util.concurrent.*;
 
 /**
  * A task that can run in one thread. A task cannot be run in multiple thread!
  */
 public abstract class Task {
-
     private TaskState state = TaskState.IDLE;
 
     private Future<?> future;
@@ -23,7 +21,6 @@ public abstract class Task {
 
     /**
      * Claim this task as the thread's registered task
-     *
      * @param thread
      * @param future
      */
@@ -35,7 +32,6 @@ public abstract class Task {
 
     /**
      * Get the current registered TaskThread
-     *
      * @return
      */
     protected TaskThread getThread() {
@@ -44,7 +40,6 @@ public abstract class Task {
 
     /**
      * Unclaim this task from the specified thread
-     *
      * @param thread
      */
     protected void unregister(TaskThread thread) {
@@ -56,7 +51,6 @@ public abstract class Task {
 
     /**
      * Force to set the state of this task
-     *
      * @param state
      */
     protected void setState(TaskState state) {
@@ -81,18 +75,24 @@ public abstract class Task {
 
     /**
      * Get the current state of this task
-     *
      * @return the current state of this task
      */
     public TaskState getState() {
         return state;
     }
 
+    /**
+     * Get the plugin that initiated this task
+     * @return
+     */
+    public OmegaPlugin getPlugin() {
+        return OmegaPlugin.getPlugin(getClass());
+    }
+
     // DELEGATED API
 
     /**
      * Cancel this task
-     *
      * @return true if the task is cancelled successfully
      */
     public boolean cancel() {
@@ -104,7 +104,6 @@ public abstract class Task {
 
     /**
      * Run a task in main thread
-     *
      * @see TaskManager#getMainThread()
      * @see TaskThread#runTask(Task)
      */
@@ -114,10 +113,9 @@ public abstract class Task {
 
     /**
      * Run a delayed task in main thread
-     *
-     * @param delay the delay before the execution
      * @see TaskManager#getMainThread()
      * @see TaskThread#runTaskLater(Task, Duration)
+     * @param delay the delay before the execution
      */
     public void runTaskLater(Duration delay) {
         Omega.getTaskManager().getMainThread().runTaskLater(this, delay);
@@ -125,11 +123,10 @@ public abstract class Task {
 
     /**
      * Run task repeatedly in main thread
-     *
-     * @param delay  the delay before the execution
-     * @param period the interval of the execution
      * @see TaskManager#getMainThread()
      * @see TaskThread#runTaskRepeatedly(Task, Duration, Duration)
+     * @param delay the delay before the execution
+     * @param period the interval of the execution
      */
     public void runTaskRepeatedly(Duration delay, Duration period) {
         Omega.getTaskManager().getMainThread().runTaskRepeatedly(this, delay, period);
@@ -137,7 +134,6 @@ public abstract class Task {
 
     /**
      * Run a task in async thread
-     *
      * @see TaskManager#getAsynchronousThread()
      * @see TaskThread#runTask(Task)
      */
@@ -147,10 +143,9 @@ public abstract class Task {
 
     /**
      * Run a delayed task in async thread
-     *
-     * @param delay the delay before the execution
      * @see TaskManager#getAsynchronousThread()
      * @see TaskThread#runTaskLater(Task, Duration)
+     * @param delay the delay before the execution
      */
     public void runTaskLaterAsynchronously(Duration delay) {
         Omega.getTaskManager().getAsynchronousThread().runTaskLater(this, delay);
@@ -158,42 +153,12 @@ public abstract class Task {
 
     /**
      * Run task repeatedly in async thread
-     *
-     * @param delay  the delay before the execution
-     * @param period the interval of the execution
      * @see TaskManager#getAsynchronousThread()
      * @see TaskThread#runTaskRepeatedly(Task, Duration, Duration)
+     * @param delay the delay before the execution
+     * @param period the interval of the execution
      */
     public void runTaskRepeatedlyAsynchronously(Duration delay, Duration period) {
         Omega.getTaskManager().getAsynchronousThread().runTaskRepeatedly(this, delay, period);
     }
-
-    /**
-     * A simple utility method for converting a {@link Runnable} into
-     * a {@link Task}.
-     *
-     * @param runnable Runnable to run
-     * @return The {@link Task} instance
-     */
-    public static Task wrap(@NonNull Runnable runnable) {
-        return new Task() {
-            @Override protected void run() { runnable.run(); }
-        };
-    }
-
-    /**
-     * A simple utility method for converting a {@link Supplier} into
-     * a {@link CallableTask}.
-     *
-     * @param supplier Supplier to use
-     * @return The {@link Task} instance
-     */
-    public static <T> CallableTask<T> wrap(@NonNull Supplier<T> supplier) {
-        return new CallableTask<T>() {
-            @Override protected T call() {
-                return supplier.get();
-            }
-        };
-    }
-
 }
