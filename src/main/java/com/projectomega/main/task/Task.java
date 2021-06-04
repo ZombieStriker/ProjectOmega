@@ -12,20 +12,6 @@ import java.util.function.Supplier;
  */
 public abstract class Task {
 
-    public static Task wrap(Runnable runnable) {
-        return new Task() {
-            @Override
-            protected void run() {
-                runnable.run();
-            }
-
-            @Override
-            public OmegaPlugin getPlugin() {
-                return OmegaPlugin.getPlugin(runnable.getClass());
-            }
-        };
-    }
-
     private TaskState state = TaskState.IDLE;
 
     private Future<?> future;
@@ -189,6 +175,10 @@ public abstract class Task {
     public static Task wrap(@NonNull Runnable runnable) {
         return new Task() {
             @Override protected void run() { runnable.run(); }
+            @Override
+            public OmegaPlugin getPlugin() {
+                return OmegaPlugin.getPlugin(runnable.getClass());
+            }
         };
     }
     /**
@@ -202,6 +192,10 @@ public abstract class Task {
         return new CallableTask<T>() {
             @Override protected T call() {
                 return supplier.get();
+            }
+            @Override
+            public OmegaPlugin getPlugin() {
+                return OmegaPlugin.getPlugin(supplier.getClass());
             }
         };
     }
