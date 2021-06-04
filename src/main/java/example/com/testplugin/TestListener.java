@@ -2,6 +2,7 @@ package example.com.testplugin;
 
 import com.projectomega.main.events.EventListener;
 import com.projectomega.main.events.types.PlayerJoinEvent;
+import com.projectomega.main.game.Location;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.chat.BossBar;
 import com.projectomega.main.game.chat.BossBarColor;
@@ -14,5 +15,6 @@ public class TestListener {
         BossBar bossBar = Omega.createBossBar("Test", 1.0f, BossBarColor.PURPLE, BossBarDivisions.SIX_NOTCHES);
         System.out.println("Sending boss bar");
         bossBar.sendBossbarPacketToPlayer(event.getPlayer());
+        event.getPlayer().teleport(Location.at(-5,32,-5,event.getPlayer().getWorld()));
     }
 }
