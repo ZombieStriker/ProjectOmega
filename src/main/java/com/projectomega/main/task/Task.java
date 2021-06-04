@@ -1,6 +1,7 @@
 package com.projectomega.main.task;
 
 import com.projectomega.main.game.*;
+import com.projectomega.main.plugin.*;
 
 import java.util.concurrent.*;
 
@@ -78,6 +79,14 @@ public abstract class Task {
      */
     public TaskState getState() {
         return state;
+    }
+
+    /**
+     * Get the plugin that initiated this task
+     * @return
+     */
+    public OmegaPlugin getPlugin() {
+        return OmegaPlugin.getPlugin(getClass());
     }
 
     // DELEGATED API
