@@ -90,7 +90,7 @@ public class ByteUtils {
         byte blockLocalX =(byte)(x % 16);
         byte blockLocalY = (byte)(y % 16);
         byte blockLocalZ = (byte)(z % 16);
-        return new VarLong(((long)(x+(16*z)+(16*16*(6*1)))/*ProtocolManager.getBlockIDByType(protocolversion, block.getType())*/) << 12 | (blockLocalX << 8 | blockLocalZ << 4 | blockLocalY));
+        return new VarLong(((long)(x+(16*z)+(16*16*(63)))/*ProtocolManager.getBlockIDByType(protocolversion, block.getType())*/) << 12 | (blockLocalX << 8 | blockLocalZ << 4 | blockLocalY));
     }
 
     public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {

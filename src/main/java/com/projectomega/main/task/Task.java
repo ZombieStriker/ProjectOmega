@@ -2,8 +2,10 @@ package com.projectomega.main.task;
 
 import com.projectomega.main.game.*;
 import com.projectomega.main.plugin.*;
+import lombok.NonNull;
 
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 /**
  * A task that can run in one thread. A task cannot be run in multiple thread!
@@ -161,4 +163,32 @@ public abstract class Task {
     public void runTaskRepeatedlyAsynchronously(Duration delay, Duration period) {
         Omega.getTaskManager().getAsynchronousThread().runTaskRepeatedly(this, delay, period);
     }
+
+    /**
+     * A simple utility method for converting a {@link Runnable} into
+     * a {@link Task}.
+     *
+     * @param runnable Runnable to run
+     * @return The {@link Task} instance
+     */
+    public static Task wrap(@NonNull Runnable runnable) {
+        return new Task() {
+            @Override protected void run() { runnable.run(); }
+        };
+    }
+    /**
+     * A simple utility method for converting a {@link Supplier} into
+     * a {@link CallableTask}.
+     *
+     * @param supplier Supplier to use
+     * @return The {@link Task} instance
+     */
+    public static <T> CallableTask<T> wrap(@NonNull Supplier<T> supplier) {
+        return new CallableTask<T>() {
+            @Override protected T call() {
+                return supplier.get();
+            }
+        };
+    }
+
 }

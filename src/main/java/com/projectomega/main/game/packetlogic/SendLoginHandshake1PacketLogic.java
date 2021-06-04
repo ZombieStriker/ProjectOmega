@@ -52,16 +52,20 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
                         NBTCompound dimensionCodec = NBTTagUtil.generateDimensionCodec();
                         OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME, player.getEntityID(), true, new UnsignedByte((byte) 0), (byte) -1, new VarInt(1), "overworld", dimensionCodec, NBTTagUtil.generateDimensionType(), "overworld", 0l, new VarInt(32), new VarInt(10), false, true, false, false);
                         player.sendPacket(joingame);
+
                         Chunk playerchunk = player.getLocation().getChunk();
-                        for (int x = -4; x <= 4; x++) {
-                            for (int z = -4; z <= 4; z++) {
-                                player.getWorld().sendChunkData(new ChunkPosition(playerchunk.getX()+x, playerchunk.getZ()+z), player);
+
+                        Omega.getTaskManager().getMainThread().runTaskLater(() -> {
+                            for (int x = -4; x <= 4; x++) {
+                                for (int z = -4; z <= 4; z++) {
+                                    player.getWorld().sendChunkData(new ChunkPosition(playerchunk.getX() + x, playerchunk.getZ() + z), player);
+                                }
                             }
-                        }
+                        }, Duration.ticks(2));
 
                         Omega.getTaskManager().getMainThread().runTaskLater(() -> {
                             player.sendPacket(new OutboundPacket(PacketType.UPDATE_VIEW_POSITION, new VarInt(playerchunk.getX()), new VarInt(playerchunk.getZ())));
-                        }, Duration.ticks(20));
+                        }, Duration.ticks(3));
 
                         Omega.getTaskManager().getMainThread().runTaskLater(() -> {
                             player.sendPacket(new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK,

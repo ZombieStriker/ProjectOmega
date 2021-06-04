@@ -19,9 +19,11 @@ public class ChunkLoadOnPlayerWalkIntoChunkListener {
         if (newLocationChunk.getX() != playerChunk.getX()
                 || newLocationChunk.getZ() != playerChunk.getZ()
         ) {
+            System.out.println("Chunk different");
             for (int x = -5; x <= 5; x++) {
                 for (int z = -5; z <= 5; z++) {
                     ChunkManager.loadChunk(playerChunk.getWorld().getChunkAt(newLocationChunk.getX() + x, newLocationChunk.getZ() + z), event.getPlayer());
+                    System.out.println("Loading Chunk "+x+" "+z);
                 }
             }
             Omega.getTaskManager().getMainThread().runTaskLater(() -> {
