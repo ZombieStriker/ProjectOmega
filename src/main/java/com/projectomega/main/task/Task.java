@@ -9,6 +9,21 @@ import java.util.concurrent.*;
  * A task that can run in one thread. A task cannot be run in multiple thread!
  */
 public abstract class Task {
+
+    public static Task wrap(Runnable runnable) {
+        return new Task() {
+            @Override
+            protected void run() {
+                runnable.run();
+            }
+
+            @Override
+            public OmegaPlugin getPlugin() {
+                return OmegaPlugin.getPlugin(runnable.getClass());
+            }
+        };
+    }
+
     private TaskState state = TaskState.IDLE;
 
     private Future<?> future;
