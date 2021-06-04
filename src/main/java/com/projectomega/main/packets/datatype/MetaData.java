@@ -65,7 +65,7 @@ public class MetaData {
 
                 String json = ((TextMessage) object.getValue()).getAsJson();
                 byte[] string = new byte[3];
-                int stringlength = ByteUtils.addVarIntToByteArray(string, 0, json.length());
+                int stringlength = PacketUtil.writeVarInt(string, 0, json.length());
                 for (int i = 0; i < stringlength; i++)
                     buf.writeByte(string[i]);
                 length += stringlength;

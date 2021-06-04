@@ -1,14 +1,16 @@
 package com.projectomega.main.game;
 
+import com.projectomega.main.command.OmegaCommandHandler;
 import com.projectomega.main.game.chat.BossBar;
 import com.projectomega.main.game.chat.BossBarColor;
 import com.projectomega.main.game.chat.BossBarDivisions;
 import com.projectomega.main.game.chat.TextMessage;
+import com.projectomega.main.game.logic.GameLogic;
 import com.projectomega.main.game.packetlogic.PacketLogicManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
-import com.projectomega.main.plugin.loader.PluginManager;
+import com.projectomega.main.plugin.PluginManager;
 import com.projectomega.main.task.TaskManager;
 import io.netty.channel.Channel;
 
@@ -38,6 +40,7 @@ public class Omega extends Thread {
 
     private final PluginManager pluginManager = new PluginManager();
     private final TaskManager taskManager = new TaskManager();
+    private final OmegaCommandHandler commandHandler = new OmegaCommandHandler();
 
     public static ConsoleSender getConsoleSender() {
         return consoleSender;
@@ -59,6 +62,10 @@ public class Omega extends Thread {
 
     public static TaskManager getTaskManager() {
         return getInstance().taskManager;
+    }
+
+    public static OmegaCommandHandler getCommandHandler() {
+        return getInstance().commandHandler;
     }
 
     public static BossBar createBossBar(String title, float health, BossBarColor color, BossBarDivisions divisions) {
@@ -106,7 +113,7 @@ public class Omega extends Thread {
     private static void broadcastMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0));
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0, player.getUuid()));
             }
         }
     }
@@ -114,7 +121,7 @@ public class Omega extends Thread {
     public static void broadcastJSONMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, s, (byte) 0));
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, s, (byte) 0, player.getUuid()));
             }
         }
     }
@@ -146,9 +153,14 @@ public class Omega extends Thread {
         return new ArrayList<>(players);
     }
 
+    public static World getSpawnWorld() {
+        return getWorlds().get(0);
+    }
+
     public void run() {
         System.out.println("Starting Server...");
         PacketLogicManager.init();
+        GameLogic.init();
         pluginManager.searchPlugins();
         pluginManager.enablePlugins();
         while (true) {
@@ -173,7 +185,7 @@ public class Omega extends Thread {
                 player.clearPackets();
             }
             try {
-                if ((1000 / 20) - (System.currentTimeMillis() - start) > 0)
+                if ((1000 / 20) - (System.currentTimeMillis() - start) > 1)
                     Thread.sleep((1000 / 20) - (System.currentTimeMillis() - start));
             } catch (InterruptedException e) {
                 e.printStackTrace();

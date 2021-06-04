@@ -1,10 +1,21 @@
 package com.projectomega.main.game;
 
-public interface CommandSender {
+import com.projectomega.main.command.permission.PermissionHolder;
+
+public interface CommandSender extends PermissionHolder {
 
     void sendMessage(String message);
 
     void issueCommand(String command);
 
     void chat(String message);
+
+    default boolean isPlayer() {
+        return this instanceof Player;
+    }
+
+    default boolean isConsole() {
+        return this instanceof ConsoleSender;
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.projectomega.main.versions;
 
+import com.projectomega.main.game.Material;
+import com.projectomega.main.game.block.BlockDataTag;
 import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.PacketType;
 
@@ -13,6 +15,8 @@ public abstract class ProtocolHandler {
     protected List<PacketType> handshakePackets = new ArrayList<>();
     protected HashMap<PacketType, Integer> packetIDs = new HashMap<>();
     protected HashMap<EntityType, Integer> entityIDs = new HashMap<>();
+    protected HashMap<Material, Integer> materialIDs = new HashMap<>();
+    protected HashMap<Material, Integer> blockIDs = new HashMap<>();
 
     public int getPacketIDFromType(PacketType type) {
         if (packetIDs.containsKey(type))
@@ -49,4 +53,10 @@ public abstract class ProtocolHandler {
         }
         return null;
     }
+
+    public Integer getBlockIDByType(Material type) {
+        return blockIDs.get(type);
+    }
+
+
 }

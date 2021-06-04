@@ -1,7 +1,8 @@
 package com.projectomega.main.task;
 
 public class Duration {
-    private long ticks;
+
+    private final long ticks;
 
     private Duration(long ticks) {
         this.ticks = ticks;

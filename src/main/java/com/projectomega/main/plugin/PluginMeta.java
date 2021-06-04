@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -22,6 +23,8 @@ import static java.util.Objects.requireNonNull;
  */
 @Getter
 public final class PluginMeta {
+
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]*$");
 
     private final String name;
     private final String mainClass;
@@ -35,6 +38,8 @@ public final class PluginMeta {
     }
 
     public PluginMeta(String name, String mainClass, @Nullable String author, @Nullable String description, @Nullable String version) {
+        if (!NAME_PATTERN.matcher(name).matches())
+            throw new IllegalArgumentException("Illegal plugin name: " + name + ". Make sure it does not contain any spaces or non-alphanumeric characters (hyphens and dashes allowed).");
         this.name = name;
         this.mainClass = mainClass;
         this.author = author;

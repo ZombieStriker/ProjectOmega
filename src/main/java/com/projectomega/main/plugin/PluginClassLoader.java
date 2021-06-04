@@ -1,6 +1,5 @@
-package com.projectomega.main.plugin.loader;
+package com.projectomega.main.plugin;
 
-import com.projectomega.main.plugin.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
@@ -29,4 +28,5 @@ public final class PluginClassLoader extends URLClassLoader {
     public OmegaPlugin getPlugin() {
         return plugin;
     }
+
 }

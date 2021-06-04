@@ -36,7 +36,7 @@ public class Click {
         return new Click(text, "suggest_command");
     }
 
-    public static Click of(@NotNull String value, @NotNull String action) {
+    public static Click of(@NotNull String action, @NotNull String value) {
         return new Click(value, action);
     }
 

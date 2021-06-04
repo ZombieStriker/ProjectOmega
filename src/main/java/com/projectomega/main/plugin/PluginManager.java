@@ -1,10 +1,9 @@
-package com.projectomega.main.plugin.loader;
+package com.projectomega.main.plugin;
 
 import com.projectomega.main.debugging.DebuggingUtil;
 import com.projectomega.main.game.Omega;
-import com.projectomega.main.plugin.OmegaPlugin;
-import com.projectomega.main.plugin.PluginMeta;
-import com.projectomega.main.plugin.loader.dependency.Relocation;
+import com.projectomega.main.plugin.loader.PluginInstanceProvider;
+import com.projectomega.main.plugin.loader.PluginProvider;
 import com.projectomega.main.plugin.loader.dependency.RelocationHandler;
 import com.projectomega.main.plugin.loader.dependency.Repository;
 import example.com.testplugin.TestPlugin;
@@ -30,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 
 public class PluginManager {
 
-    private final Map<OmegaPlugin, PluginMeta> plugins = new HashMap<>();
+    private final Map<String, OmegaPlugin> plugins = new HashMap<>();
     private final RelocationHandler relocationHandler;
     private final File librariesFolder;
     private final File pluginsFolder;
@@ -42,7 +41,7 @@ public class PluginManager {
         librariesFolder.mkdirs();
         pluginsFolder = new File(serverDir, "plugins");
         pluginsFolder.mkdirs();
-        Repository.MAVEN_CENTRAL.downloadFile(Relocation.RELOCATOR, librariesFolder);
+        Repository.MAVEN_CENTRAL.downloadFile(RelocationHandler.RELOCATOR, librariesFolder);
 
         // load libs
         File[] libraryFiles = requireNonNull(librariesFolder.listFiles());
@@ -67,12 +66,16 @@ public class PluginManager {
             }
             try (InputStream stream = jar.getInputStream(entry)) {
                 PluginMeta meta = PluginMeta.read(stream);
+                if (plugins.containsKey(meta.getName())) {
+                    throw new IllegalStateException("Plugin with name '" + meta.getName() + "' already exists!");
+                }
+                File dataFolder = new File(pluginsFolder, meta.getName());
                 PluginClassLoader classLoader = new PluginClassLoader(
                         new URL[]{pluginFile.toURI().toURL()},
                         getClass().getClassLoader()
                 );
                 if (meta.getDependencies() != null) {
-                    File directory = new File(pluginsFolder, meta.getName() + File.separator + "libraries");
+                    File directory = new File(dataFolder, "libraries");
                     meta.getDependencies().load(directory, relocationHandler, classLoader);
                 }
                 Class<? extends OmegaPlugin> mainClass = Class
@@ -81,8 +84,9 @@ public class PluginManager {
                 try {
                     OmegaPlugin plugin = provideInstance(mainClass);
                     classLoader.initialize(plugin);
+                    plugin.initialize(meta, dataFolder, classLoader);
                     Omega.getLogger().info("Registering plugin class: " + mainClass.getName());
-                    plugins.put(plugin, meta);
+                    plugins.put(meta.getName(), plugin);
 
                     plugin.onLoad();
                 } catch (Throwable t) {
@@ -95,19 +99,23 @@ public class PluginManager {
     }
 
     public void enablePlugins() {
-        if(DebuggingUtil.enableDebugPlugin){
-            plugins.put(new TestPlugin(), new PluginMeta("Test Plugin","example.com.testplugin.TestPlugin"));
+        if (DebuggingUtil.enableDebugPlugin) {
+            OmegaPlugin plugin = new TestPlugin();
+            PluginMeta meta = new PluginMeta("TestPlugin", TestPlugin.class.getName());
+            plugin.initialize(meta, new File(pluginsFolder, meta.getName()), null);
+
+            plugins.put(meta.getName(), plugin);
         }
-        for (Entry<OmegaPlugin, PluginMeta> entry : plugins.entrySet()) {
-            OmegaPlugin plugin = entry.getKey();
-            PluginMeta meta = entry.getValue();
-            Omega.getLogger().log(Level.INFO, "Enabling " + meta.getName() + ": " + meta.getVersion());
+        for (Entry<String, OmegaPlugin> entry : plugins.entrySet()) {
+            String name = entry.getKey();
+            OmegaPlugin plugin = entry.getValue();
+            Omega.getLogger().log(Level.INFO, "Enabling " + name + ": " + plugin.getPluginMeta().getVersion());
             plugin.onEnable();
         }
     }
 
     public void disablePlugins() {
-        for (OmegaPlugin plugin : plugins.keySet()) {
+        for (OmegaPlugin plugin : plugins.values()) {
             plugin.onDisable();
         }
     }

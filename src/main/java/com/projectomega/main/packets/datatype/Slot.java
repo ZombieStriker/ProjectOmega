@@ -16,4 +16,17 @@ public class Slot {
         this.tag = tag;
         this.damage = damage;
     }
+
+    public boolean isItem(){
+        return isItem;
+    }
+    public short getId(){
+        return id;
+    }
+    public byte getAmount(){
+        return amount;
+    }
+    public NBTCompound getNBT(){
+        return tag;
+    }
 }

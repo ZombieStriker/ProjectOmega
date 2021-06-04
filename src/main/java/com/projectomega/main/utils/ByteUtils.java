@@ -1,19 +1,18 @@
 package com.projectomega.main.utils;
 
+import com.projectomega.main.game.Block;
+import com.projectomega.main.game.Chunk;
 import com.projectomega.main.packets.PacketUtil;
+import com.projectomega.main.packets.datatype.VarLong;
+import com.projectomega.main.versions.ProtocolManager;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class ByteUtils {
 
-    public static int addVarIntToByteArray(byte[] bytes, int offset, int number){
-        return  PacketUtil.writeVarInt(bytes,offset,number);
-    }
-    public static int addVarLongToByteArray(byte[] bytes, int offset, long number){
-        return  PacketUtil.writeVarLong(bytes,offset,number);
-    }
     public static int addShortToByteArray(byte[] bytes,int offset, short number){
         ByteBuffer buffer = ByteBuffer.allocate(2);
         buffer.putShort(number);
@@ -32,12 +31,14 @@ public class ByteUtils {
     public static String buildString(ByteBuf buf, int size){
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < size; i++){
-            sb.append((char)buf.readByte());
+            try {
+                sb.append((char) buf.readByte());
+            }catch (IndexOutOfBoundsException e4){
+                e4.printStackTrace();
+                break;
+            }
         }
         return sb.toString();
-    }
-    public static int buildInt(ByteBuf buf){
-      return buf.readByte()|buf.readByte()|buf.readByte();
     }
 
     public static int addByteToByteArray(byte[] bytes, int offset, byte length) {
@@ -46,17 +47,60 @@ public class ByteUtils {
     }
 
     public static int addIntToByteArray(byte[] bytes, int offset, Integer data) {
-        return PacketUtil.writeInt(bytes,offset,data);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeInt(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
     }
 
     public static int addFloatToByteArray(byte[] bytes, int offset, float data) {
-        int floatingPointNumber = (int) (data * 32);
-        return addIntToByteArray(bytes,offset,floatingPointNumber);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeFloat(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
+    }
+
+    public static long getChunkSectionPositionAsALong(Chunk chunk, int y){
+        System.out.println(((((long)chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long)chunk.getZ()) & 0x3FFFFF) << 20));
+        return ((((long)chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long)chunk.getZ()) & 0x3FFFFF) << 20);
+    }
+    public static VarLong encodeBlockToBlocksArray(int protocolversion, Block block){
+        int x = block.getLocation().getBlockX();
+        int y = block.getLocation().getBlockY();
+        int z = block.getLocation().getBlockZ();
+        if(x < 0) {
+            x = -x;
+            x= 16-x;
+        }
+        if(y < 0) {
+            y = -y;
+            y= 16-y;
+        }
+        if(z < 0) {
+            z = -z;
+            z= 16-z;
+        }
+
+        byte blockLocalX =(byte)(x % 16);
+        byte blockLocalY = (byte)(y % 16);
+        byte blockLocalZ = (byte)(z % 16);
+        return new VarLong(((long)(x+(16*z))/*ProtocolManager.getBlockIDByType(protocolversion, block.getType())*/) << 12 | (blockLocalX << 8 | blockLocalZ << 4 | blockLocalY));
     }
 
     public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {
-        long doubleFloatingPointNumber = (long) (data*(0x34));
-        return PacketUtil.writeLong(bytes,offset,doubleFloatingPointNumber);
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeDouble(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
     }
 
     public static String buildString(ByteBuf bytebuf) {

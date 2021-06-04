@@ -1,5 +1,6 @@
 package com.projectomega.main.plugin.loader.dependency;
 
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @ToString
+@EqualsAndHashCode
 public final class Repository {
 
     public static final Repository MAVEN_CENTRAL = new Repository("https://repo1.maven.org/maven2/");

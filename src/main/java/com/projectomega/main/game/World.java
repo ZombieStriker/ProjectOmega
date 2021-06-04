@@ -18,6 +18,7 @@ public class World {
     private final List<Region> regions = new ArrayList<>();
     private final String name;
     private final List<Entity> entities = new ArrayList<>();
+    private Location spawn = Location.at(0,16,0,this);
 
     public World(String name) {
         this.name = name;
@@ -31,10 +32,7 @@ public class World {
         Region region = getRegion(position.getRegionX(), position.getRegionZ());
         int x = position.getX();
         int z = position.getZ();
-        Chunk chunk = region.getLoadedChunk(x, z);
-        if (chunk == null) {
-            chunk = region.createChunk(x, z);
-        }
+        Chunk chunk = region.getOrLoadChunk(x,z);
         NBTCompound heightmap = new NBTCompound();
         //NBTList motion_blocking = new NBTList(TagType.LONG);
         long[] motion_blocking = new long[36];
@@ -42,7 +40,6 @@ public class World {
             motion_blocking[i] = 0l;
         }
         heightmap.put("MOTION_BLOCKING", motion_blocking);
-        System.out.println(heightmap.toString());
         VarInt[] biomes = new VarInt[1024];
         for (int i = 0; i < biomes.length; i++) {
             biomes[i] = new VarInt(0);
@@ -59,9 +56,26 @@ public class World {
 
         player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(127), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
 
+        if(x==0)
+        sendBlocks(chunk,player);
+
+
         //player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Position(1, 2, 1), new VarInt(1)));
         //player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x, z, false, new VarInt(255), heightmap, new VarInt(length), b, new VarInt(0)}));
 
+    }
+
+    private void sendBlocks(Chunk chunk, Player player) {
+        List<VarLong> varLongs = new ArrayList<>();
+        for(int x = 0; x < 16; x++){
+            for(int y = 0; y < 16; y++){
+                for(int z = 0; z < 16; z++){
+                    varLongs.add(ByteUtils.encodeBlockToBlocksArray(player.getProtocolVersion(), chunk.getBlockAtChunkRelative(x,y,z)));
+                }
+            }
+        }
+        OutboundPacket multiblockChange = new OutboundPacket(PacketType.MULTI_BLOCK_CHANGE, ByteUtils.getChunkSectionPositionAsALong(chunk,0),false,new VarInt(varLongs.size()),varLongs.toArray(new VarLong[varLongs.size()]));
+        player.sendPacket(multiblockChange);
     }
 
     private int createChunkSectionStructure(byte[] data) {
@@ -96,9 +110,9 @@ public class World {
         offset += ByteUtils.addByteToByteArray(data, offset, new UnsignedByte(bitsperblock).getUnsignedByte());
         offset += PacketUtil.writeVarInt(data, offset, palletelength);
         for (int i = 0; i < palletelength; i++) {
-            offset += ByteUtils.addVarIntToByteArray(data, offset, pallete.get(i));
+            offset += PacketUtil.writeVarInt(data, offset, pallete.get(i));
         }
-        offset += ByteUtils.addVarIntToByteArray(data, offset, dataarraylength);
+        offset += PacketUtil.writeVarInt(data, offset, dataarraylength);
         for (long d : dataarray) {
             offset += PacketUtil.writeLong(data, offset, d);
         }
@@ -187,8 +201,22 @@ public class World {
                     continue loop;
                 }
             }
-            break loop;
+            break;
         }
         return id;
+    }
+
+    public Location getSpawn() {
+        return spawn;
+    }
+
+    public Chunk getChunkAt(int x, int z) {
+        int regionx = x/32;
+        if (regionx<0)
+            regionx-=1;
+        int regionz = z/32;
+        if (regionz<0)
+            regionz-=1;
+        return getRegion(regionx,regionz).getOrLoadChunk(x,z);
     }
 }

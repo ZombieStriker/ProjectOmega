@@ -1,6 +1,9 @@
 package com.projectomega.main.game;
 
-import com.projectomega.main.debugging.DebuggingUtil;
+import com.projectomega.main.command.CommandException;
+import com.projectomega.main.command.permission.Permission;
+import com.projectomega.main.command.permission.PermissionState;
+import com.projectomega.main.command.permission.PermissionStore;
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerChatEvent;
 import com.projectomega.main.game.chat.TextMessage;
@@ -12,20 +15,19 @@ import com.projectomega.main.game.player.GameProfile;
 import com.projectomega.main.game.sound.Sound;
 import com.projectomega.main.game.sound.SoundCategory;
 import com.projectomega.main.packets.OutboundPacket;
-import com.projectomega.main.packets.PacketHandler;
 import com.projectomega.main.packets.PacketType;
-import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.VarInt;
 import com.projectomega.main.utils.MojangAPI;
-import com.projectomega.main.versions.ProtocolManager;
 import io.netty.channel.Channel;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Player extends OfflinePlayer implements CommandSender {
+
+    private final PermissionStore permissionStore = new PermissionStore();
 
     private Channel connection;
 
@@ -51,7 +53,7 @@ public class Player extends OfflinePlayer implements CommandSender {
     private Inventory playerInventory = new PlayerInventory();
     private int heldSlot = 0;
     private World world;
-    private int viewdistance=-1;
+    private int viewdistance = -1;
     private boolean allowflight = false;
     private Location bedlocation;
     private boolean sneaking = false;
@@ -245,13 +247,16 @@ public class Player extends OfflinePlayer implements CommandSender {
     }
 
     public void sendMessage(String s) {
-        sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.text(s), (byte) 0));
-
+        sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.text(s), (byte) 0, getUuid()));
     }
 
     @Override
     public void issueCommand(String command) {
-        //TODO: Issue Command
+        try {
+            Omega.getCommandHandler().execute(this, command.substring(1));
+        } catch (CommandException e) {
+            sendMessage(e.getMessage());
+        }
     }
 
     @Override
@@ -269,17 +274,17 @@ public class Player extends OfflinePlayer implements CommandSender {
 
     public void sendTitle(String title, String subtitle, int fadein, int stay, int fadeout) {
         OutboundPacket settile = new OutboundPacket(PacketType.TITLE, new VarInt(0), TextMessage.text(title));
-        OutboundPacket setsubtitle = new OutboundPacket(PacketType.TITLE, new VarInt(1), TextMessage.text(title));
+        OutboundPacket setsubtitle = new OutboundPacket(PacketType.TITLE, new VarInt(1), TextMessage.text(subtitle));
         OutboundPacket settimesanddisplay = new OutboundPacket(PacketType.TITLE, new VarInt(2), fadein, stay, fadeout);
         sendPacket(settile);
         sendPacket(setsubtitle);
         //sendPacket(settimesanddisplay);
     }
 
-    public void teleport(Location location){
-        OutboundPacket positionAndLook = new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, location.getX(),location.getY(),location.getZ(),location.getYaw(),location.getPitch(),(byte)0, new VarInt(1));
+    public void teleport(Location location) {
+        OutboundPacket positionAndLook = new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch(), (byte) (0), new VarInt(1));
         sendPacket(positionAndLook);
-        playerEntity.teleport(location);
+        //playerEntity.teleport(location);
     }
 
     public World getWorld() {
@@ -294,84 +299,131 @@ public class Player extends OfflinePlayer implements CommandSender {
         return playerEntity;
     }
 
-    public boolean allowFlight(){
+    public boolean allowFlight() {
         return allowflight;
     }
-    public Location getBedLocation(){
+
+    public Location getBedLocation() {
         return bedlocation;
     }
-    public int getClientViewDistance(){
+
+    public int getClientViewDistance() {
         return viewdistance;
     }
-    private void setSprinting(boolean spriting){
+
+    private void setSprinting(boolean spriting) {
         this.sprinting = spriting;
     }
-    public void setSpectatorTarget(Entity e){
+
+    public void setSpectatorTarget(Entity e) {
         //TODO: Spectator Target
     }
-    public void setSneaking(boolean sneaking){
+
+    public void setSneaking(boolean sneaking) {
         this.sneaking = sneaking;
     }
-    public void sendResourcepack(String url){
+
+    public void sendResourcepack(String url) {
         //TODO Send resourcepack
     }
-    public void setPlayerTime(long time, boolean relative){
+
+    public void setPlayerTime(long time, boolean relative) {
         //TODO:
     }
-    public void setPlayerListName(String name){
+
+    public void setPlayerListName(String name) {
 
     }
-    public void setPlayerListHeaderFooter(String header, String footer){
+
+    public void setPlayerListHeaderFooter(String header, String footer) {
 
     }
-    public void setHealthScale(double scale){
+
+    public void setHealthScale(double scale) {
 
     }
-    public void setFlySpeed(float speed){
+
+    public void setFlySpeed(float speed) {
 
     }
-    public void setFlying(boolean flying){
+
+    public void setFlying(boolean flying) {
 
     }
-    public void setDisplayName(String name){
+
+    public void setDisplayName(String name) {
 
     }
-    public void setCompassLocation(Location location){
+
+    public void setCompassLocation(Location location) {
 
     }
-    public void setBedSpawnLocation(Location location){
+
+    public void setBedSpawnLocation(Location location) {
 
     }
-    public void setBedSpawnlocation(Location location, boolean force){
+
+    public void setBedSpawnlocation(Location location, boolean force) {
 
     }
-    public void setAllowFlight(boolean allowFlight){
+
+    public void setAllowFlight(boolean allowFlight) {
         this.allowflight = allowFlight;
     }
-    public void sendSignChange(Location location, String[] lines){
 
-    }
-    public void sendSignChange(Location location, String[] lines, DyeColor dyecolor){
-
-    }
-    public void sendRawMessage(String raw){
-
-    }
-    public void sendExperienceLevelChange(int level){
-
-    }
-    public void sendBlockChange(Location location, Material material){
-
-    }
-    public void sendBlockDamage(Location location,float progress) {
+    public void sendSignChange(Location location, String[] lines) {
 
     }
 
-    public boolean isSprinting(){
+    public void sendSignChange(Location location, String[] lines, DyeColor dyecolor) {
+
+    }
+
+    public void sendRawMessage(String raw) {
+
+    }
+
+    public void sendExperienceLevelChange(int level) {
+
+    }
+
+    public void sendBlockChange(Location location, Material material) {
+
+    }
+
+    public void sendBlockDamage(Location location, float progress) {
+
+    }
+
+    public boolean isSprinting() {
         return sprinting;
     }
-    public boolean isSneaking(){
+
+    public boolean isSneaking() {
         return sneaking;
     }
 
+    public Location getLocation() {
+        return playerEntity.getLocation();
+    }
+
+    @Override public boolean isOp() {return permissionStore.isOp();}
+
+    @Override public void setOp(boolean op) {permissionStore.setOp(op);}
+
+    @Override public void allowPermission(@NotNull String permission) {permissionStore.allowPermission(permission);}
+
+    @Override public void allowPermission(@NotNull Permission permission) {permissionStore.allowPermission(permission);}
+
+    @Override public void denyPermission(@NotNull String permission) {permissionStore.denyPermission(permission);}
+
+    @Override public void denyPermission(@NotNull Permission permission) {permissionStore.denyPermission(permission);}
+
+    @Override public PermissionState getState(@NotNull Permission permission) {return permissionStore.getState(permission);}
+
+    @Override public PermissionState getState(@NotNull String permission) {return permissionStore.getState(permission);}
+
+    @Override public boolean hasPermission(@NotNull Permission permission) {return permissionStore.hasPermission(permission);}
+
+    @Override public boolean hasPermission(@NotNull String permission) {return permissionStore.hasPermission(permission);}
 }

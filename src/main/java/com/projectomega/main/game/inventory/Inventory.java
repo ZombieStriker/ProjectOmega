@@ -42,7 +42,7 @@ public class Inventory {
 
     private void sendItemChangePacket(int slot) {
         ItemStack is = slots[slot];
-        OutboundPacket packet = new OutboundPacket(PacketType.WINDOW_ITEMS, new UnsignedByte(windowID),(short)1,true,new VarInt(is.getMaterial().getId()), (byte)is.getAmount(),(byte)0);
+        OutboundPacket packet = new OutboundPacket(PacketType.WINDOW_ITEMS, new UnsignedByte(windowID),(short)1,true,new VarInt(1), (byte)is.getAmount(),(byte)0);
         for(Player player: viewers){
             player.sendPacket(packet);
         }
