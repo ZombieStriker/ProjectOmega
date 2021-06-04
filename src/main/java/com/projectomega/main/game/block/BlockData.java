@@ -7,18 +7,30 @@ import java.util.HashMap;
 public class BlockData {
 
     private int id;
+    private int dataValues=1;
     private Material materialType;
-    private HashMap<BlockDataTag, Object> blockDataTags = new HashMap<>();
 
     public BlockData(int id, Material type){
         this.id = id;
         this.materialType = type;
     }
-
-    public void setBlockDataTag(BlockDataTag tag, Object value){
-        blockDataTags.put(tag,value);
+    public BlockData(int id, Material type, BlockDataTag... tags){
+        this.id = id;
+        this.materialType = type;
+        for(BlockDataTag tag : tags){
+            dataValues*=tag.getStateCount();
+        }
     }
-    public Object getBlockDataTagValue(BlockDataTag tag){
-        return blockDataTags.get(tag);
+
+    public int getId() {
+        return id;
+    }
+
+    public Material getMaterial() {
+        return materialType;
+    }
+
+    public int getDataValues() {
+        return dataValues;
     }
 }

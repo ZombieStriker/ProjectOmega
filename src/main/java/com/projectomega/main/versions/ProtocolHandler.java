@@ -1,27 +1,25 @@
 package com.projectomega.main.versions;
 
 import com.projectomega.main.game.Material;
+import com.projectomega.main.game.block.BlockData;
 import com.projectomega.main.game.block.BlockDataTag;
 import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.PacketType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class ProtocolHandler {
 
     protected List<PacketType> handshakePackets = new ArrayList<>();
     protected HashMap<PacketType, Integer> packetIDs = new HashMap<>();
     protected HashMap<EntityType, Integer> entityIDs = new HashMap<>();
-    protected HashMap<Material, Integer> materialIDs = new HashMap<>();
-    protected HashMap<Material, Integer> blockIDs = new HashMap<>();
+    protected Material[] materialIDs = new Material[Material.values().length];
+    protected LinkedList<BlockData> blockIDs = new LinkedList<>();
 
     public int getPacketIDFromType(PacketType type) {
         if (packetIDs.containsKey(type))
             return packetIDs.get(type);
-        System.out.println("Failed to find packet type "+type.name()+"  || "+this.getClass().getName());
+        System.out.println("Failed to find packet type " + type.name() + "  || " + this.getClass().getName());
         return -1;
     }
 
@@ -54,8 +52,33 @@ public abstract class ProtocolHandler {
         return null;
     }
 
+    public void registerBlockData(Material material, BlockDataTag... tags){
+        int currentID = 0;
+        for(BlockData data : blockIDs){
+            currentID+=data.getDataValues();
+        }
+        BlockData data = new BlockData(currentID, material, tags);
+        blockIDs.add(data);
+    }
+
+
     public Integer getBlockIDByType(Material type) {
-        return blockIDs.get(type);
+        int id = 0;
+        for (BlockData data: blockIDs) {
+            if(data.getMaterial()==type) {
+                return id;
+            }
+            id+= data.getDataValues();
+        }
+        return -1;
+    }
+
+    public Integer getItemIDFromType(Material type) {
+        for (int i = 0; i < materialIDs.length; i++) {
+            if (materialIDs[i] == type)
+                return i;
+        }
+        return -1;
     }
 
 

@@ -2,6 +2,7 @@ package com.projectomega.main.game.packetlogic;
 
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerJoinEvent;
+import com.projectomega.main.game.Chunk;
 import com.projectomega.main.game.ChunkPosition;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
@@ -51,14 +52,15 @@ public class SendLoginHandshake1PacketLogic implements PacketListener {
                         NBTCompound dimensionCodec = NBTTagUtil.generateDimensionCodec();
                         OutboundPacket joingame = new OutboundPacket(PacketType.JOIN_GAME, player.getEntityID(), true, new UnsignedByte((byte) 0), (byte) -1, new VarInt(1), "overworld", dimensionCodec, NBTTagUtil.generateDimensionType(), "overworld", 0l, new VarInt(32), new VarInt(10), false, true, false, false);
                         player.sendPacket(joingame);
+                        Chunk playerchunk = player.getLocation().getChunk();
                         for (int x = -4; x <= 4; x++) {
                             for (int z = -4; z <= 4; z++) {
-                                player.getWorld().sendChunkData(new ChunkPosition(x, z), player);
+                                player.getWorld().sendChunkData(new ChunkPosition(playerchunk.getX()+x, playerchunk.getZ()+z), player);
                             }
                         }
 
                         Omega.getTaskManager().getMainThread().runTaskLater(() -> {
-                            player.sendPacket(new OutboundPacket(PacketType.UPDATE_VIEW_POSITION, new VarInt(player.getLocation().getChunk().getX()), new VarInt(player.getLocation().getChunk().getZ())));
+                            player.sendPacket(new OutboundPacket(PacketType.UPDATE_VIEW_POSITION, new VarInt(playerchunk.getX()), new VarInt(playerchunk.getZ())));
                         }, Duration.ticks(20));
 
                         Omega.getTaskManager().getMainThread().runTaskLater(() -> {

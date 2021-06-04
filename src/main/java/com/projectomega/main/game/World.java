@@ -18,7 +18,7 @@ public class World {
     private final List<Region> regions = new ArrayList<>();
     private final String name;
     private final List<Entity> entities = new ArrayList<>();
-    private Location spawn = Location.at(0,16,0,this);
+    private Location spawn = Location.at(-5,16,-5,this);
 
     public World(String name) {
         this.name = name;
