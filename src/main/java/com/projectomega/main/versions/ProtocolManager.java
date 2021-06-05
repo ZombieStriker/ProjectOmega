@@ -49,9 +49,9 @@ public class ProtocolManager {
             return handlerhandshake.getBlockIDByType(type);
         }
         if(protocolversion <= 754){
-            return handlerhandshake.getBlockIDByType(type);
+            return handler16.getBlockIDByType(type);
         }else{
-            return handlerhandshake.getBlockIDByType(type);
+            return handler17.getBlockIDByType(type);
         }
     }
 }

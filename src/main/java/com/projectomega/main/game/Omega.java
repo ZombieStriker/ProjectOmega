@@ -7,6 +7,7 @@ import com.projectomega.main.game.chat.BossBar;
 import com.projectomega.main.game.chat.BossBarColor;
 import com.projectomega.main.game.chat.BossBarDivisions;
 import com.projectomega.main.game.chat.TextMessage;
+import com.projectomega.main.game.chunk.ChunkManager;
 import com.projectomega.main.game.logic.GameLogic;
 import com.projectomega.main.game.packetlogic.PacketLogicManager;
 import com.projectomega.main.packets.OutboundPacket;
@@ -157,6 +158,11 @@ public class Omega extends Thread {
 
     public static World getSpawnWorld() {
         return getWorlds().get(0);
+    }
+
+    public static void removePlayer(Player player) {
+        ChunkManager.removePlayer(player);
+        players.remove(player);
     }
 
     public void run() {

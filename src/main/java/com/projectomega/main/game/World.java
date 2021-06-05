@@ -55,12 +55,9 @@ public class World {
         //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
 
         player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(127), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
-
-        if(x==0)
         sendBlocks(chunk,player);
 
 
-        //player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Position(1, 2, 1), new VarInt(1)));
         //player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x, z, false, new VarInt(255), heightmap, new VarInt(length), b, new VarInt(0)}));
 
     }

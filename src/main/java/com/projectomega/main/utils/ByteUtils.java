@@ -74,23 +74,22 @@ public class ByteUtils {
         int x = block.getLocation().getBlockX();
         int y = block.getLocation().getBlockY();
         int z = block.getLocation().getBlockZ();
-        if(x < 0) {
+        /*if(x < 0) {
             x = -x;
-            x= 16-x;
         }
         if(y < 0) {
             y = -y;
-            y= 16-y;
         }
         if(z < 0) {
             z = -z;
-            z= 16-z;
-        }
-
-        byte blockLocalX =(byte)(x % 16);
-        byte blockLocalY = (byte)(y % 16);
-        byte blockLocalZ = (byte)(z % 16);
-        return new VarLong(((long)(x+(16*z)+(16*16*(63)))/*ProtocolManager.getBlockIDByType(protocolversion, block.getType())*/) << 12 | (blockLocalX << 8 | blockLocalZ << 4 | blockLocalY));
+        }*/
+        byte blockLocalX =(byte)(x & 0x0F);
+        byte blockLocalY = (byte)(y & 0x0F);
+        byte blockLocalZ = (byte)(z & 0x0F);
+        long blockid = (ProtocolManager.getBlockIDByType(protocolversion, block.getType()));
+        if(blockid==-1)
+            blockid=1;
+        return new VarLong(blockid << 12 | (blockLocalX << 8 | blockLocalZ << 4 | blockLocalY));
     }
 
     public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {

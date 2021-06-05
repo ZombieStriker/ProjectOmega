@@ -6,6 +6,7 @@ import com.projectomega.main.command.permission.PermissionState;
 import com.projectomega.main.command.permission.PermissionStore;
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerChatEvent;
+import com.projectomega.main.events.types.PlayerKickEvent;
 import com.projectomega.main.game.chat.TextMessage;
 import com.projectomega.main.game.entity.Entity;
 import com.projectomega.main.game.entity.EntityType;
@@ -16,6 +17,7 @@ import com.projectomega.main.game.sound.Sound;
 import com.projectomega.main.game.sound.SoundCategory;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
+import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.VarInt;
 import com.projectomega.main.utils.MojangAPI;
 import io.netty.channel.Channel;
@@ -41,7 +43,7 @@ public class Player extends OfflinePlayer implements CommandSender {
     private boolean chatColors = true;
     private byte displayedSkinParts = 127;
     private int mainHand = 1;
-    private String displayname = "Notch";
+    private String displayname;
 
     private int xp = 0;
     private float health = 20.0f;
@@ -58,6 +60,7 @@ public class Player extends OfflinePlayer implements CommandSender {
     private Location bedlocation;
     private boolean sneaking = false;
     private boolean sprinting = false;
+    private boolean connected = true;
 
     public String getLocale() {
         return locale;
@@ -143,6 +146,7 @@ public class Player extends OfflinePlayer implements CommandSender {
 
     public Player(String name, UUID uuid, Channel connection, int protocolversion, Location location) {
         super(name, uuid);
+        this.displayname=name;
         this.connection = connection;
         this.protocolVersion = protocolversion;
         this.world = location.getWorld();
@@ -319,6 +323,16 @@ public class Player extends OfflinePlayer implements CommandSender {
         //TODO: Spectator Target
     }
 
+    public void kick(String message){
+        PlayerKickEvent kickEvent = new PlayerKickEvent(this,message,this.getName()+" has been kicked");
+        EventBus.INSTANCE.post(kickEvent);
+        if(!kickEvent.isCancelled()){
+            OutboundPacket disconnectPacket = new OutboundPacket(PacketType.DISCONNECT,kickEvent.getReason());
+            PacketUtil.writePacketToOutputStream(getConnection(), disconnectPacket);
+            Omega.removePlayer(this);
+        }
+    }
+
     public void setSneaking(boolean sneaking) {
         this.sneaking = sneaking;
     }
@@ -426,4 +440,8 @@ public class Player extends OfflinePlayer implements CommandSender {
     @Override public boolean hasPermission(@NotNull Permission permission) {return permissionStore.hasPermission(permission);}
 
     @Override public boolean hasPermission(@NotNull String permission) {return permissionStore.hasPermission(permission);}
+
+    public boolean isKicked() {
+        return connected;
+    }
 }

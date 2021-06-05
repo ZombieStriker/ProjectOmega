@@ -2,9 +2,14 @@ package com.projectomega.main.packets;
 
 public enum PacketType {
 
-    //Play handshake
+    //Handshake
     HANDSHAKE(PacketDirection.SERVERBOUND),
     HANDSHAKE_PING(PacketDirection.SERVERBOUND),
+
+
+    //Login packets
+    LOGIN_START(PacketDirection.SERVERBOUND),
+
 
     //Play serverbound
     CHAT_SERVERBOUND(PacketDirection.SERVERBOUND),
@@ -49,6 +54,7 @@ public enum PacketType {
     UPDATE_VIEW_DISTANCE(PacketDirection.CLIENTBOUND),
     SET_SLOT(PacketDirection.CLIENTBOUND),
     DISCONNECT(PacketDirection.CLIENTBOUND),
+    UNLOAD_CHUNK(PacketDirection.CLIENTBOUND),
     ;
 
     private PacketDirection direction;

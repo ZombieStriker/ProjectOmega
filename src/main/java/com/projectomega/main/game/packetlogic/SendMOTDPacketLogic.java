@@ -17,7 +17,7 @@ public class SendMOTDPacketLogic implements PacketListener {
 
     @Override
     public void onCall(InboundPacket packet) {
-        System.out.println(packet.getChannel() + "|" + packet.getData(0) + "|" + packet.getData(1) + "|" + packet.getData(2));
+        System.out.println(packet.getChannel() + "|" + packet.getData(0) + "|" + packet.getData(1) + "|" + packet.getData(2)+" | "+packet.getData(3));
         if (((int) packet.getData(3)) == 1) {
             PingServerEvent event = new PingServerEvent(packet.getChannel(), "DEFAULT MESSAGE", 754, Omega.getServerIcon());
             EventBus.INSTANCE.post(event);
