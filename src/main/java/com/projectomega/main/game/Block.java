@@ -5,10 +5,6 @@ public class Block {
     private final Location location;
     private Material type;
 
-    protected Block(Location location){
-        this.location = location;
-        this.type=Material.AIR;
-    }
     protected Block(Location location,Material material){
     this.location=location;
     this.type=material;

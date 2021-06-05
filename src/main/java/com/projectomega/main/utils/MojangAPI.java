@@ -1,5 +1,6 @@
 package com.projectomega.main.utils;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.projectomega.main.game.player.GameProfile;
@@ -31,8 +32,19 @@ public class MojangAPI {
 
             for (String s : list) {
                 System.out.println(s);
-                return s.split(",")[0].split("id\":")[1].replaceAll("\"", "")
-                        .trim();
+                for(String k : s.split(","))
+                    if(k.startsWith("\"id\"")) {
+                        String temp = k.split("\"id\":\"")[1].replaceAll("\"", "")
+                                .trim().replaceAll("\\}", "").replaceAll("\\{", "");
+                        StringBuilder sb = new StringBuilder();
+                        for(int i = 0; i < temp.length();i++){
+                            sb.append(temp.charAt(i));
+                            if(i==7||i==11||i==15||i==19)
+                                sb.append("-");
+                        }
+                        System.out.println(sb.toString());
+                        return sb.toString();
+                    }
 
             }
         } catch (IOException e) {

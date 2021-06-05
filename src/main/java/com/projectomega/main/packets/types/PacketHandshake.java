@@ -17,13 +17,19 @@ public class PacketHandshake extends PacketHandler {
 
     @Override
     public void call(ByteBuf byteBuf, int packetsize, Channel ctx) {
-        if(Omega.getPlayerByChannel(ctx)==null) {
+        if (Omega.getPlayerByChannel(ctx) == null) {
+            System.out.println("HANDSHAKE");
             int protocolVersion = PacketUtil.readVarInt(byteBuf);
             String ip = ByteUtils.buildString(byteBuf);
             int port = byteBuf.readShort();
             int status = byteBuf.readByte();
 
-            InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE, new Object[]{protocolVersion, ip, port, status}, ctx);
+            //TODO: This should be a seperate packet, so lets see if this works
+            String s = ByteUtils.buildString(byteBuf);
+            if(s.length() > 2)
+            s= s.substring(2);
+
+            InboundPacket packet = new InboundPacket(PacketType.HANDSHAKE, new Object[]{protocolVersion, ip, port, status, s}, ctx);
             List<PacketListener> packetlisteners = PacketManager.getListeners(PacketType.HANDSHAKE);
             if (packetlisteners != null) {
                 for (PacketListener listener : packetlisteners) {

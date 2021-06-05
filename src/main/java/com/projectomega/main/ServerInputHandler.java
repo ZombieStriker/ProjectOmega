@@ -28,7 +28,7 @@ public class ServerInputHandler extends ChannelInboundHandlerAdapter {
             }
             List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersBy(ProtocolManager.getPacketByID(protocolversion, packetid, player == null, PacketType.PacketDirection.SERVERBOUND));
             if (packethandlers != null) {
-                if (DebuggingUtil.DEBUG)
+                if(DebuggingUtil.DEBUG)
                     System.out.println("Packet Handlers found for " + packetid + " : " + packethandlers.size());
                 for (PacketHandler packetHandler : packethandlers) {
                     packetHandler.call(bytebuf, size - 1, ctx.channel());

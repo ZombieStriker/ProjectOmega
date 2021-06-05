@@ -56,7 +56,7 @@ public class Location {
 
     @NotNull
     public Block asBlock() {
-        return new Block(this);
+        return new Block(this, Material.AIR);
     }
 
     @NotNull

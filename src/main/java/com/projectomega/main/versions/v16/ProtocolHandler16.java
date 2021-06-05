@@ -19,7 +19,8 @@ public class ProtocolHandler16 extends ProtocolHandler {
         packetIDs.put(PacketType.PLAYER_POSITION, 0x12);
         packetIDs.put(PacketType.WINDOW_ITEMS, 0x13);
         packetIDs.put(PacketType.SET_SLOT, 0x15);
-        packetIDs.put(PacketType.DISCONNECT,0x1B);
+        packetIDs.put(PacketType.DISCONNECT,0x19);
+        packetIDs.put(PacketType.UNLOAD_CHUNK,0x1C);
         packetIDs.put(PacketType.KEEP_ALIVE_CLIENTBOUND, 0x1F);
         packetIDs.put(PacketType.CHUNK_DATA, 0x20);
         packetIDs.put(PacketType.JOIN_GAME, 0x24);
