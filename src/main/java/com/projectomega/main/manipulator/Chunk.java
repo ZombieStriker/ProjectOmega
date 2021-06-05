@@ -5,6 +5,8 @@ import me.nullicorn.nedit.type.NBTCompound;
 import java.util.Date;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 public final class Chunk {
 
     private final Date lastModified;
@@ -14,15 +16,17 @@ public final class Chunk {
     public Chunk(Date lastModified, NBTCompound compound) {
         this.lastModified = lastModified;
         this.compound = compound;
-        this.position = new ChunkPos(compound.getInt("xPos", 0), compound.getInt("zPos", 0));
+        int x = requireNonNull((Integer) compound.get("xPos"), "'xPos' property is missing");
+        int z = requireNonNull((Integer) compound.get("zPos"), "'zPos' property is missing");
+        this.position = new ChunkPos(x, z);
     }
 
     public int getDataVersion() {
-        return compound.getInt("DataVersion", 0);
+        return requireNonNull((Integer) compound.get("DataVersion"), "'DataVersion' property is missing");
     }
 
     public int getLevel() {
-        return compound.getInt("Level", 0);
+        return requireNonNull((Integer) compound.get("Level"), "'Level' property is missing");
     }
 
     public Date getLastModified() {
