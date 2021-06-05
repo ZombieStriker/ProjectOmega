@@ -123,4 +123,13 @@ public enum EntityType {
     public boolean isLiving() {
         return living;
     }
+
+    public static EntityType getEntityType(String params) {
+        for(EntityType entityType : EntityType.values()) {
+            if(entityType.equals(params)) {
+                return entityType;
+            }
+        }
+        return null;
+    }
 }
