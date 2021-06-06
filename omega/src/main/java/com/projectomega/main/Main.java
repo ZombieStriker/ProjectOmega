@@ -9,7 +9,6 @@ public class Main {
     private static ServerThread serverThread;
 
     public static void main(String... args) throws Throwable {
-        System.out.println("Hello");
         Omega.init();
         serverThread = new ServerThread();
         Scanner scanner = new Scanner(System.in);
