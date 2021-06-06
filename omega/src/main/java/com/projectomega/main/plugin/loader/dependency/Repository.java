@@ -1,5 +1,6 @@
 package com.projectomega.main.plugin.loader.dependency;
 
+import com.projectomega.main.plugin.loader.dependency.Dependency.URLDependency;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.ToString;
@@ -41,6 +42,9 @@ public final class Repository {
 
     @SneakyThrows
     public URL getJAR(@NotNull Dependency dependency) {
+        if (dependency instanceof URLDependency) {
+            return ((URLDependency) dependency).getUrl();
+        }
         return new URL(url + dependency.getMavenPath() + ".jar");
     }
 

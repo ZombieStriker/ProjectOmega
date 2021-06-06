@@ -1,6 +1,7 @@
 package com.projectomega.main.plugin.loader.dependency;
 
 import com.projectomega.main.bootstrap.ClassPathAppender;
+import com.projectomega.main.plugin.loader.dependency.Dependency.URLDependency;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -61,6 +62,11 @@ public class DependencyData {
 
         public Builder dependency(@NonNull Dependency dependency) {
             dependencies.add(dependency);
+            return this;
+        }
+
+        public Builder dependencyFromURL(@NonNull String url, @NonNull String artifactId, @NonNull String version) {
+            dependencies.add(new URLDependency(url, artifactId, version));
             return this;
         }
 

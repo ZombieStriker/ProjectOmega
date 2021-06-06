@@ -1,6 +1,8 @@
 package com.projectomega.main.plugin.loader.dependency;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -9,14 +11,11 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -98,4 +97,20 @@ public class Dependency {
         }
         return dependencies;
     }
+
+    @Getter
+    public static class URLDependency extends Dependency {
+
+        private final URL url;
+
+        @SneakyThrows public URLDependency(String url, String artifactId, String version) {
+            super(artifactId, artifactId, version);
+            this.url = new URL(url);
+        }
+
+        @Override public List<Dependency> getTransitiveDependencies(Repository repository) {
+            return Collections.emptyList();
+        }
+    }
+
 }
