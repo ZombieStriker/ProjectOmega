@@ -42,8 +42,4 @@ public class LoaderBootstrap implements OmegaBootstrap {
             throwable.printStackTrace();
         }
     }
-
-    @Override public void stop() {
-
-    }
 }

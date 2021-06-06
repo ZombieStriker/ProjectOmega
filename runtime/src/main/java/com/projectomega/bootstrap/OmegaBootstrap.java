@@ -4,6 +4,4 @@ public interface OmegaBootstrap {
 
     void start();
 
-    void stop();
-
 }

@@ -11,6 +11,5 @@ rootProject.name = 'ProjectOmega'
 
 include(
         'omega',
-        'runtime',
-        'runtime-utils'
+        'runtime'
 )

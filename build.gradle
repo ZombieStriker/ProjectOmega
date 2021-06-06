@@ -51,21 +51,7 @@ subprojects {
 
 task assembleJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
     for (subproject in subprojects) {
-        from subproject.configurations.archives.allArtifacts.files.collect {
-            String path = it.absolutePath/*.replace(archiveVersion, archiveVersion + "-all")*/
-            switch (subproject.name) {
-                case 'omega':
-                    path = it.absolutePath.replace(".jar", ".isolated-jar")
-                    break
-                case 'runtime':
-                case 'runtime-utils':
-                    path = it.absolutePath
-                    break
-                default:
-                    path = it.absolutePath.replace("-" + ver, "-all")
-                    break
-            }
-        }
+        from subproject.configurations.archives.allArtifacts.files.collect {}
     }
 }
 
