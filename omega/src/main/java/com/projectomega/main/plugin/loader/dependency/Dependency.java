@@ -9,8 +9,13 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,13 +77,16 @@ public class Dependency {
                         Element dependency = (Element) n;
                         String groupId = dependency.getElementsByTagName("groupId").item(0).getTextContent();
                         String artifactId = dependency.getElementsByTagName("artifactId").item(0).getTextContent();
-                        String version = dependency.getElementsByTagName("version").item(0).getTextContent();
+                        String version = "";
                         String scope = "";
                         try {
+                            version = dependency.getElementsByTagName("version").item(0).getTextContent();
                             scope = dependency.getElementsByTagName("scope").item(0).getTextContent();
                         } catch (NullPointerException ignored) {
                         }
-                        if (scope.equals("compile")) {
+                        if (groupId.equals("${project.groupId}")) groupId = this.groupId;
+                        if (version.equals("${project.version}")) version = this.version;
+                        if (scope.equals("compile") && !version.isEmpty()) {
                             dependencies.add(new Dependency(groupId, artifactId, version));
                         }
                     }

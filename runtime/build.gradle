@@ -1,0 +1,37 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
+plugins {
+    id 'com.github.johnrengelman.shadow'
+}
+
+apply plugin: 'java'
+
+repositories {
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+}
+
+dependencies {
+    implementation project(':runtime-utils')
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        expand 'pluginVersion': project.version
+        include 'plugin.yml'
+    }
+}
+
+shadowJar.from { project(':omega').tasks.shadowJar.archiveFile }
+artifacts.archives shadowJar
+jar.manifest.attributes 'Main-Class': 'com.projectomega.bootstrap.Bootstrap'
+
+task moveJar() {
+    doLast {
+        File original = new File(projectDir, "build" + File.separator + "libs" + File.separator + "runtime-all.jar")
+        File newLoc = new File(projectDir.parentFile, "build" + File.separator + "libs" + File.separator + "ProjectOmega-1.0-SNAPSHOT.jar")
+        Files.move(original.toPath(), newLoc.toPath(), StandardCopyOption.REPLACE_EXISTING)
+    }
+}
+
+tasks.build.finalizedBy(moveJar)

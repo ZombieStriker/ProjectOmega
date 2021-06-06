@@ -2,20 +2,16 @@ package com.projectomega.main;
 
 import com.projectomega.main.game.Omega;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
 
     private static ServerThread serverThread;
 
-    public static void main(String... args) throws ClassNotFoundException {
+    public static void main(String... args) throws Throwable {
+        System.out.println("Hello");
         Omega.init();
-        try {
-            serverThread = new ServerThread();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        serverThread = new ServerThread();
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String message = scanner.nextLine();
@@ -29,10 +25,6 @@ public class Main {
                 Omega.getConsoleSender().chat(message);
             }
         }
-    }
-
-    public static ServerThread getServerThread() {
-        return serverThread;
     }
 
 }

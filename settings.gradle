@@ -1,0 +1,16 @@
+// Fabric Needs this
+pluginManagement {
+    repositories {
+        jcenter()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'ProjectOmega'
+
+include(
+        'omega',
+        'runtime',
+        'runtime-utils'
+)

@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2' }
+    }
+}
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+def ver = '1.0-SNAPSHOT'
+
+subprojects {
+    buildscript {
+        repositories {
+            maven { url 'https://plugins.gradle.org/m2' }
+        }
+    }
+
+    apply plugin: 'java'
+//    apply plugin: 'maven'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    group = 'com.projectomega'
+
+    sourceCompatibility = 16
+    targetCompatibility = 16
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+        maven { url 'https://jitpack.io/' }
+        maven { url 'https://repo.codemc.io/repository/maven-public/' }
+    }
+
+    dependencies {
+        compileOnly 'org.jetbrains:annotations:20.1.0'
+        compileOnly 'org.projectlombok:lombok:1.18.20'
+        annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    }
+}
+
+task assembleJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+    for (subproject in subprojects) {
+        from subproject.configurations.archives.allArtifacts.files.collect {
+            String path = it.absolutePath/*.replace(archiveVersion, archiveVersion + "-all")*/
+            switch (subproject.name) {
+                case 'omega':
+                    path = it.absolutePath.replace(".jar", ".isolated-jar")
+                    break
+                case 'runtime':
+                case 'runtime-utils':
+                    path = it.absolutePath
+                    break
+                default:
+                    path = it.absolutePath.replace("-" + ver, "-all")
+                    break
+            }
+        }
+    }
+}
+
+shadowJar {
+    dependencies {}
+    getArchiveClassifier().set('')
+}
+
+tasks.assembleJar.dependsOn tasks.shadowJar
+
+artifacts {
+    archives(assembleJar)
+}

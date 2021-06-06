@@ -1,6 +1,6 @@
 package com.projectomega.main.plugin.loader.dependency;
 
-import com.projectomega.main.plugin.PluginClassLoader;
+import com.projectomega.main.bootstrap.ClassPathAppender;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -8,7 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static java.util.Collections.*;
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableMap;
 
 @Getter
 public class DependencyData {
@@ -23,20 +24,20 @@ public class DependencyData {
         this.relocations = unmodifiableMap(relocations);
     }
 
-    public void load(File directory, RelocationHandler relocationHandler, PluginClassLoader classLoader) throws IOException {
+    public void load(File directory, RelocationHandler relocationHandler, ClassPathAppender classLoader) throws IOException {
         directory.mkdirs();
         for (Dependency dependency : getDependencies()) {
             boolean downloaded = false;
             for (Repository repository : getRepositories()) {
                 File f = repository.downloadFile(dependency, directory, this, relocationHandler);
                 if (f != null) {
-                    classLoader.load(f.toURI().toURL());
+                    classLoader.appendURL(f.toURI().toURL());
                     downloaded = true;
                     break;
                 }
             }
             if (!downloaded) {
-                StringJoiner repositories = new StringJoiner("\n-", "\n-", "").setEmptyValue("[None]");
+                StringJoiner repositories = new StringJoiner("\n- ", "\n- ", "").setEmptyValue("[None]");
                 getRepositories().forEach(r -> repositories.add(r.getURL().toString()));
                 throw new IllegalArgumentException("Could not download dependency " + dependency.getArtifactId() + " from the specified repositories: " + repositories);
             }
@@ -65,6 +66,11 @@ public class DependencyData {
 
         public Builder dependency(@NonNull String groupId, @NonNull String artifactId, @NonNull String version) {
             return dependency(new Dependency(groupId, artifactId, version));
+        }
+
+        public Builder dependency(@NonNull String gradleFormat) {
+            String[] parts = gradleFormat.split(":");
+            return dependency(parts[0], parts[1], parts[2]);
         }
 
         public Builder relocate(@NonNull String pattern, @NonNull String relocatedPattern) {

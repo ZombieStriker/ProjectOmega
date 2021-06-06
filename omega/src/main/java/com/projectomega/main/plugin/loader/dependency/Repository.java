@@ -52,6 +52,15 @@ public final class Repository {
         }
     }
 
+
+    @SneakyThrows
+    public static void download(URL url, File file) {
+        if (file.exists()) return;
+        try (InputStream is = url.openStream()) {
+            Files.copy(is, file.toPath(), REPLACE_EXISTING);
+        }
+    }
+
     public void downloadFile(@NotNull Dependency dependency, @NotNull File directory) {
         try {
             for (Dependency transitive : dependency.getTransitiveDependencies(this)) {
