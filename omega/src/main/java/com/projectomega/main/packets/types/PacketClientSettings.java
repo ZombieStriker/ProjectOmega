@@ -5,7 +5,6 @@ import com.projectomega.main.game.Player;
 import com.projectomega.main.packets.PacketHandler;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
-import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
@@ -16,7 +15,7 @@ public class PacketClientSettings extends PacketHandler {
 
     @Override
     public void call(ByteBuf bytebuf, int i, Channel channel) {
-        String locale = ByteUtils.buildString(bytebuf);
+        String locale = PacketUtil.buildString(bytebuf);
         byte viewDistance = bytebuf.readByte();
         int chatEnabled = PacketUtil.readVarInt(bytebuf);
         boolean chatColors = PacketUtil.readBoolean(bytebuf);

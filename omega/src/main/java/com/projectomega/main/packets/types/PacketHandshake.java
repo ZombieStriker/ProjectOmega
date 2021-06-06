@@ -2,7 +2,6 @@ package com.projectomega.main.packets.types;
 
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.packets.*;
-import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
@@ -18,14 +17,13 @@ public class PacketHandshake extends PacketHandler {
     @Override
     public void call(ByteBuf byteBuf, int packetsize, Channel ctx) {
         if (Omega.getPlayerByChannel(ctx) == null) {
-            System.out.println("HANDSHAKE");
             int protocolVersion = PacketUtil.readVarInt(byteBuf);
-            String ip = ByteUtils.buildString(byteBuf);
+            String ip = PacketUtil.buildString(byteBuf);
             int port = byteBuf.readShort();
             int status = byteBuf.readByte();
 
             //TODO: This should be a seperate packet, so lets see if this works
-            String s = ByteUtils.buildString(byteBuf);
+            String s = PacketUtil.buildString(byteBuf);
             if(s.length() > 2)
             s= s.substring(2);
 

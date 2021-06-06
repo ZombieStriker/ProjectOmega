@@ -7,7 +7,6 @@ import com.projectomega.main.game.Player;
 import com.projectomega.main.game.chat.TextMessage;
 import com.projectomega.main.game.chat.TranslatedComponent;
 import com.projectomega.main.packets.*;
-import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
@@ -21,7 +20,7 @@ public class PacketInboundChat extends PacketHandler {
 
     @Override
     public void call(ByteBuf bytebuf, int i, Channel ctx) {
-        String message = ByteUtils.buildString(bytebuf);
+        String message = PacketUtil.buildString(bytebuf);
         Player player = Omega.getPlayerByChannel(ctx);
 
         InboundPacket packet = new InboundPacket(PacketType.CHAT_SERVERBOUND, new Object[]{message}, ctx);

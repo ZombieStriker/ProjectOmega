@@ -2,7 +2,6 @@ package com.projectomega.main.packets.datatype;
 
 import com.projectomega.main.game.chat.TextMessage;
 import com.projectomega.main.packets.PacketUtil;
-import com.projectomega.main.utils.ByteUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import me.nullicorn.nedit.NBTWriter;
@@ -70,7 +69,7 @@ public class MetaData {
                     buf.writeByte(string[i]);
                 length += stringlength;
                 byte[] jsonbytes = new byte[json.length()];
-                int jsonlength = ByteUtils.addStringToByteArray(jsonbytes, 0, json);
+                int jsonlength = PacketUtil.addStringToByteArray(jsonbytes, 0, json);
                 for (int i = 0; i < jsonlength; i++)
                     buf.writeByte(jsonbytes[i]);
                 length += jsonlength;

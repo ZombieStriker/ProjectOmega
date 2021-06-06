@@ -157,17 +157,26 @@ public class Location {
 
     public Chunk getChunk() {
         int chunkx = (getBlockX()/16);
-        if(chunkx<0)
-            chunkx--;
-        int chunkz = (getBlockZ()/16);
-        if(chunkz<0)
-            chunkz--;
         int regionx = (getBlockX()/16)/32;
-        if(regionx<0)
-            regionx--;
+        int chunkz = (getBlockZ()/16);
         int regionz = (getBlockZ()/16)/32;
-        if(regionz<0)
+        if(getX()<0) {
+            chunkx--;
+            regionx--;
+        }
+        if(getZ()<0) {
+            chunkz--;
             regionz--;
+        }
         return world.getRegion(regionx,regionz).getOrLoadChunk(chunkx,chunkz);
+    }
+
+    public Block getBlock() {
+        Chunk chunk = getChunk();
+        int chuckRelX = chunk.getX()*16;
+        int chunlRelZ = chunk.getZ()*16;
+        int relx = Math.abs(chuckRelX - getBlockX());
+        int relz = Math.abs(chunlRelZ - getBlockZ());
+        return chunk.getBlockAt(relx,getBlockY(),relz);
     }
 }

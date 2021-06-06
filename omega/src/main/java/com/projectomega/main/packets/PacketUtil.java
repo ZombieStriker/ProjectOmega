@@ -2,12 +2,13 @@ package com.projectomega.main.packets;
 
 import com.projectomega.main.ServerThread;
 import com.projectomega.main.debugging.DebuggingUtil;
+import com.projectomega.main.game.Block;
+import com.projectomega.main.game.Chunk;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
 import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.datatype.*;
 import com.projectomega.main.packets.types.*;
-import com.projectomega.main.utils.ByteUtils;
 import com.projectomega.main.versions.ProtocolManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -18,6 +19,7 @@ import me.nullicorn.nedit.type.NBTCompound;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PacketUtil {
@@ -156,7 +158,7 @@ public class PacketUtil {
             } else if (data instanceof EntityType) {
                 offset += writeVarInt(bytes, offset, new VarInt(ProtocolManager.getEntityIDForProtocol(protocolVersion, (EntityType) data)).getInteger());
             } else if (data instanceof Integer) {
-                offset += ByteUtils.addIntToByteArray(bytes, offset, (Integer) data);
+                offset += addIntToByteArray(bytes, offset, (Integer) data);
             } else if (data instanceof VarLong) {
                 offset += writeVarLong(bytes, offset, ((VarLong) data).getLong());
             } else if (data instanceof Angle) {
@@ -177,17 +179,17 @@ public class PacketUtil {
             } else if (data instanceof Long) {
                 offset += writeLong(bytes, offset, (Long) data);
             } else if (data instanceof Short) {
-                offset += ByteUtils.addShortToByteArray(bytes, offset, (Short) data);
+                offset += addShortToByteArray(bytes, offset, (Short) data);
             } else if (data instanceof Double) {
-                offset += ByteUtils.addDoubleToByteArray(bytes, offset, (Double) data);
+                offset += addDoubleToByteArray(bytes, offset, (Double) data);
             } else if (data instanceof Float) {
-                offset += ByteUtils.addFloatToByteArray(bytes, offset, (Float) data);
+                offset += addFloatToByteArray(bytes, offset, (Float) data);
             } else if (data instanceof UUID) {
                 offset += writeUUID(bytes, offset, (UUID) data);
             } else if (data instanceof MetaData) {
                 offset += writeBytes(bytes, offset, ((MetaData) data).build());
             } else if (data instanceof Slot) {
-                offset += ByteUtils.addByteToByteArray(bytes, offset, (byte) (((Slot) data).isItem() ? 0x01 : 0x00));
+                offset += addByteToByteArray(bytes, offset, (byte) (((Slot) data).isItem() ? 0x01 : 0x00));
                 if (((Slot) data).isItem()) {
                     offset+= writeVarInt(bytes,offset,((Slot) data).getId());
                     offset += writeByte(bytes,offset,((Slot) data).getAmount());
@@ -212,11 +214,11 @@ public class PacketUtil {
                     e.printStackTrace();
                 }
             } else if (data instanceof Byte) {
-                offset += ByteUtils.addByteToByteArray(bytes, offset, (Byte) data);
+                offset += addByteToByteArray(bytes, offset, (Byte) data);
             } else if (data instanceof UnsignedByte) {
-                offset += ByteUtils.addByteToByteArray(bytes, offset, ((UnsignedByte) data).getUnsignedByte());
+                offset += addByteToByteArray(bytes, offset, ((UnsignedByte) data).getUnsignedByte());
             } else if (data instanceof Boolean) {
-                offset += ByteUtils.addByteToByteArray(bytes, offset, (byte) (((Boolean) data) ? 0x01 : 0x00));
+                offset += addByteToByteArray(bytes, offset, (byte) (((Boolean) data) ? 0x01 : 0x00));
             } else if (data instanceof String) {
                 offset += writeString(bytes, offset, (String) data);
             }
@@ -281,7 +283,7 @@ public class PacketUtil {
     private static int writeString(byte[] bytes, int offset, String data) {
         int offset2 = 0;
         offset2 += writeVarInt(bytes, offset, data.getBytes().length);
-        offset2 += ByteUtils.addStringToByteArray(bytes, offset + offset2, data);
+        offset2 += addStringToByteArray(bytes, offset + offset2, data);
         return offset2;
     }
 
@@ -332,5 +334,100 @@ public class PacketUtil {
 
     public static byte readUnsignedByte(ByteBuf bytebuf) {
         return bytebuf.readByte();
+    }
+
+
+
+    public static int addShortToByteArray(byte[] bytes,int offset, short number){
+        ByteBuffer buffer = ByteBuffer.allocate(2);
+        buffer.putShort(number);
+        for(int i = 0; i < 2 ; i++) {
+            bytes[offset+i] = buffer.get(i);
+        }
+        return 2;
+    }
+    public static int addStringToByteArray(byte[] bytes,int offset, String message){
+        byte[] chars = message.getBytes(StandardCharsets.UTF_8);
+        for(int i = 0; i < chars.length ; i++) {
+            bytes[offset+i] = chars[i];
+        }
+        return chars.length;
+    }
+    public static String buildString(ByteBuf buf, int size){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < size; i++){
+            try {
+                sb.append((char) buf.readByte());
+            }catch (IndexOutOfBoundsException e4){
+                e4.printStackTrace();
+                break;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static int addByteToByteArray(byte[] bytes, int offset, byte length) {
+        bytes[offset]=length;
+        return 1;
+    }
+
+    public static int addIntToByteArray(byte[] bytes, int offset, Integer data) {
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeInt(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
+    }
+
+    public static int addFloatToByteArray(byte[] bytes, int offset, float data) {
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeFloat(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
+    }
+
+    public static long getChunkSectionPositionAsALong(Chunk chunk, int y){
+        System.out.println(((((long)chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long)chunk.getZ()) & 0x3FFFFF) << 20));
+        return ((((long)chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long)chunk.getZ()) & 0x3FFFFF) << 20);
+    }
+    public static VarLong encodeBlockToBlocksArray(int protocolversion, Block block){
+        int x = block.getLocation().getBlockX();
+        int y = block.getLocation().getBlockY();
+        int z = block.getLocation().getBlockZ();
+        /*if(x < 0) {
+            x = -x;
+        }
+        if(y < 0) {
+            y = -y;
+        }
+        if(z < 0) {
+            z = -z;
+        }*/
+        byte blockLocalX =(byte)(x & 0x0F);
+        byte blockLocalY = (byte)(y & 0x0F);
+        byte blockLocalZ = (byte)(z & 0x0F);
+        long blockid = (ProtocolManager.getBlockIDByType(protocolversion, block.getType()));
+        if(blockid==-1)
+            blockid=1;
+        return new VarLong(blockid << 12 | (blockLocalX << 8 | blockLocalZ << 4 | blockLocalY));
+    }
+
+    public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeDouble(data);
+        for(int i = 0; i < buf.writerIndex();i++){
+            bytes[offset+i] = buf.readByte();
+        }
+        buf.release();
+        return buf.writerIndex();
+    }
+
+    public static String buildString(ByteBuf bytebuf) {
+        return buildString(bytebuf,PacketUtil.readVarInt(bytebuf));
     }
 }

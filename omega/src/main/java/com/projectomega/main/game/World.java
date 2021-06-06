@@ -7,7 +7,6 @@ import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.*;
-import com.projectomega.main.utils.ByteUtils;
 import me.nullicorn.nedit.type.NBTCompound;
 
 import java.util.ArrayList;
@@ -67,11 +66,11 @@ public class World {
         for(int x = 0; x < 16; x++){
             for(int y = 0; y < 16; y++){
                 for(int z = 0; z < 16; z++){
-                    varLongs.add(ByteUtils.encodeBlockToBlocksArray(player.getProtocolVersion(), chunk.getBlockAtChunkRelative(x,y,z)));
+                    varLongs.add(PacketUtil.encodeBlockToBlocksArray(player.getProtocolVersion(), chunk.getBlockAtChunkRelative(x,y,z)));
                 }
             }
         }
-        OutboundPacket multiblockChange = new OutboundPacket(PacketType.MULTI_BLOCK_CHANGE, ByteUtils.getChunkSectionPositionAsALong(chunk,0),false,new VarInt(varLongs.size()),varLongs.toArray(new VarLong[varLongs.size()]));
+        OutboundPacket multiblockChange = new OutboundPacket(PacketType.MULTI_BLOCK_CHANGE, PacketUtil.getChunkSectionPositionAsALong(chunk,0),false,new VarInt(varLongs.size()),varLongs.toArray(new VarLong[varLongs.size()]));
         player.sendPacket(multiblockChange);
     }
 
@@ -104,7 +103,7 @@ public class World {
         }
 
         int offset = 0;
-        offset += ByteUtils.addByteToByteArray(data, offset, new UnsignedByte(bitsperblock).getUnsignedByte());
+        offset += PacketUtil.addByteToByteArray(data, offset, new UnsignedByte(bitsperblock).getUnsignedByte());
         offset += PacketUtil.writeVarInt(data, offset, palletelength);
         for (int i = 0; i < palletelength; i++) {
             offset += PacketUtil.writeVarInt(data, offset, pallete.get(i));
@@ -114,10 +113,10 @@ public class World {
             offset += PacketUtil.writeLong(data, offset, d);
         }
         for (int i = 0; i < blocklight.length; i++) {
-            offset += ByteUtils.addByteToByteArray(data, offset, blocklight[i]);
+            offset += PacketUtil.addByteToByteArray(data, offset, blocklight[i]);
         }
         for (int i = 0; i < skylight.length; i++) {
-            offset += ByteUtils.addByteToByteArray(data, offset, skylight[i]);
+            offset += PacketUtil.addByteToByteArray(data, offset, skylight[i]);
         }
 
 
