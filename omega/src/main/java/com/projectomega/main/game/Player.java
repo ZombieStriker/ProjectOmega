@@ -52,7 +52,7 @@ public class Player extends OfflinePlayer implements CommandSender {
 
 
     private Inventory viewedInventory = null;
-    private Inventory playerInventory = new PlayerInventory();
+    private Inventory playerInventory = new PlayerInventory(this);
     private int heldSlot = 0;
     private World world;
     private int viewdistance = -1;

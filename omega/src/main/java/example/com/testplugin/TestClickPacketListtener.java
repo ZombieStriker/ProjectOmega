@@ -29,6 +29,15 @@ public class TestClickPacketListtener implements PacketListener {
         player.teleport(Location.at(-5,200,-5,world));
         player.sendTitle("Title", "Subtitle", 20, 60, 20);
 
+        player.getInventory().setItem(10, new ItemStack(Material.STONE));
+        player.getInventory().setItem(11, new ItemStack(Material.IRON_BARS));
+        player.getInventory().setItem(12, new ItemStack(Material.DROPPER));
+        player.getInventory().setItem(13, new ItemStack(Material.LILAC));
+        player.getInventory().setItem(14, new ItemStack(Material.LILY_PAD));
+        player.getInventory().setItem(15, new ItemStack(Material.DIAMOND_AXE));
+        player.getInventory().setItem(16, new ItemStack(Material.MAP));
+        player.getInventory().setItem(17, new ItemStack(Material.GILDED_BLACKSTONE));
+
        // Entity droppeditem = world.dropItem(new ItemStack(Material.STONE),Location.at(0,0,0,world));
        // droppeditem.setCustomName("testing");
        // droppeditem.setCustomNameVisable(true);

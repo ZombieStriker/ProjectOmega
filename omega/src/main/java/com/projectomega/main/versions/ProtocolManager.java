@@ -54,4 +54,15 @@ public class ProtocolManager {
             return handler17.getBlockIDByType(type);
         }
     }
+
+    public static Object getMaterialIDFromType(int protocolVersion, Material type) {
+        if(protocolVersion<=0) {
+            return 1;
+        }
+        if(protocolVersion <= 754){
+            return handler16.getMaterialIDFromType(type);
+        }else{
+            return handler17.getMaterialIDFromType(type);
+        }
+    }
 }

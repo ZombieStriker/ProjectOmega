@@ -16,6 +16,14 @@ public abstract class ProtocolHandler {
     protected Material[] materialIDs = new Material[Material.values().length];
     protected LinkedList<BlockData> blockIDs = new LinkedList<>();
 
+    public int getMaterialIDFromType(Material material){
+        for(int i = 0; i < materialIDs.length; i++){
+            if(materialIDs[i]==material)
+                return i;
+        }
+        return -1;
+    }
+
     public int getPacketIDFromType(PacketType type) {
         if (packetIDs.containsKey(type))
             return packetIDs.get(type);
