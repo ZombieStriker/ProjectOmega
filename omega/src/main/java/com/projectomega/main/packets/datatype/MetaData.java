@@ -46,55 +46,29 @@ public class MetaData {
             buf.writeByte((byte) (int) object.getKey());
             length += 1;
             if (object.getValue() instanceof Byte) {
-                byte[] varint = new byte[4];
-                int varintlength = PacketUtil.writeVarInt(varint, 0, 0);
-                for (int i = 0; i < varintlength; i++)
-                    buf.writeByte(varint[i]);
+                int varintlength = PacketUtil.writeVarInt(buf, 0, 0);
                 length += varintlength;
                 buf.writeByte((byte) object.getValue());
                 length += 1;
             } else if (object.getValue() instanceof TextMessage) {
-                byte[] varint = new byte[4];
-                int varintlength = PacketUtil.writeVarInt(varint, 0, 5);
-                for (int i = 0; i < varintlength; i++)
-                    buf.writeByte(varint[i]);
+                int varintlength = PacketUtil.writeVarInt(buf, 0, 5);
                 length += varintlength;
                 buf.writeByte(1);
                 length += 1;
 
                 String json = ((TextMessage) object.getValue()).getAsJson();
-                byte[] string = new byte[3];
-                int stringlength = PacketUtil.writeVarInt(string, 0, json.length());
-                for (int i = 0; i < stringlength; i++)
-                    buf.writeByte(string[i]);
+                int stringlength = PacketUtil.writeVarInt(buf, 0, json.length());
                 length += stringlength;
-                byte[] jsonbytes = new byte[json.length()];
-                int jsonlength = PacketUtil.addStringToByteArray(jsonbytes, 0, json);
-                for (int i = 0; i < jsonlength; i++)
-                    buf.writeByte(jsonbytes[i]);
+                int jsonlength = PacketUtil.addStringToByteArray(buf, 0, json);
                 length += jsonlength;
-               /* String value = (String) object.getValue();
-                buf.writeByte(0);
-                length += 1;
-                buf.writeByte(0);
-                length += 1;*/
             } else if (object.getValue() instanceof VarInt) {
-                byte[] varint = new byte[4];
-                int varintlength = PacketUtil.writeVarInt(varint, 0, 1);
-                for (int i = 0; i < varintlength; i++)
-                    buf.writeByte(varint[i]);
+                int varintlength = PacketUtil.writeVarInt(buf, 0, 1);
                 length += varintlength;
-                byte[] value = new byte[4];
-                int varintlength2 = PacketUtil.writeVarInt(value, 0, ((VarInt) object.getValue()).getInteger());
-                for (int i = 0; i < varintlength2; i++)
-                    buf.writeByte(value[i]);
+                int varintlength2 = PacketUtil.writeVarInt(buf, 0, ((VarInt) object.getValue()).getInteger());
                 length += varintlength2;
             }
             if (object.getValue() instanceof Boolean) {
-                byte[] varint = new byte[4];
-                int varintlength = PacketUtil.writeVarInt(varint, 0, 7);
-                for (int i = 0; i < varintlength; i++)
-                    buf.writeByte(varint[i]);
+                int varintlength = PacketUtil.writeVarInt(buf, 0, 7);
                 length += varintlength;
                 if ((boolean) object.getValue()) {
                     buf.writeByte(0x01);
@@ -104,11 +78,7 @@ public class MetaData {
                 length += 1;
             }
             if (object.getValue() instanceof Slot) {
-
-                byte[] varint = new byte[4];
-                int varintlength = PacketUtil.writeVarInt(varint, 0, 6);
-                for (int i = 0; i < varintlength; i++)
-                    buf.writeByte(varint[i]);
+                int varintlength = PacketUtil.writeVarInt(buf, 0, 6);
                 length += varintlength;
 
                 Slot slot = (Slot) object.getValue();
@@ -127,10 +97,7 @@ public class MetaData {
                 buf.writeByte(0x01);
                 length += 1;
 
-                byte[] value = new byte[4];
-                int varintlength2 = PacketUtil.writeVarInt(value, 0, slot.id);
-                for (int i = 0; i < varintlength2; i++)
-                    buf.writeByte(value[i]);
+                int varintlength2 = PacketUtil.writeVarInt(buf, 0, slot.id);
                 length += varintlength2;
 
                 buf.writeByte(slot.amount);
@@ -179,10 +146,7 @@ public class MetaData {
 
             }
             if (object.getValue() instanceof NBTCompound) {
-                byte[] varint = new byte[4];
-                int varintlength = PacketUtil.writeVarInt(varint, 0, 14);
-                for (int i = 0; i < varintlength; i++)
-                    buf.writeByte(varint[i]);
+                int varintlength = PacketUtil.writeVarInt(buf, 0, 14);
                 length += varintlength;
                 try {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();

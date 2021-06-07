@@ -7,6 +7,8 @@ import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import me.nullicorn.nedit.type.NBTCompound;
 
 import java.util.ArrayList;
@@ -43,18 +45,18 @@ public class World {
         for (int i = 0; i < biomes.length; i++) {
             biomes[i] = new VarInt(0);
         }
-        byte[] data = new byte[128 * 128 * 128];
+        ByteBuf data = Unpooled.buffer();
         int length = createChunkSectionStructure(data);
         byte[] b = new byte[length];
         for (int i = 0; i < length; i++) {
-            b[i] = data[i];
+            b[i] = data.getByte(i);
         }
 
         NBTCompound blockentities = new NBTCompound();
         //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
 
         player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(127), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
-        sendBlocks(chunk,player);
+        //sendBlocks(chunk,player);
 
 
         //player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x, z, false, new VarInt(255), heightmap, new VarInt(length), b, new VarInt(0)}));
@@ -74,7 +76,7 @@ public class World {
         player.sendPacket(multiblockChange);
     }
 
-    private int createChunkSectionStructure(byte[] data) {
+    private int createChunkSectionStructure(ByteBuf data) {
         byte bitsperblock = 8;
 
         int palletelength = 0;

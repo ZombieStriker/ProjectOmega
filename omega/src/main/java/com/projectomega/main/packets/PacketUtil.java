@@ -77,29 +77,16 @@ public class PacketUtil {
         return result;
     }
 
-    public static int writeInt(byte[] bytes, int offset, int value) {
+    public static int writeInt(ByteBuf bytes, int offset, int value) {
         return writeInt(bytes, offset, value, false);
     }
 
-    public static int writeInt(byte[] bytes, int offset, int value, boolean invert) {
-        int i = 0;
-        do {
-            byte temp = (byte) (value & 0b01111111);
-            // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
-            value >>>= 7;
-            if (value != 0) {
-                temp |= 0b10000000;
-            }
-            if (invert)
-                bytes[offset + 3 - i] = temp;
-            else
-                bytes[offset + i] = temp;
-            i++;
-        } while (i != 4);
-        return i;
+    public static int writeInt(ByteBuf bytes, int offset, int value, boolean invert) {
+        bytes.writeInt(value);
+        return 4;
     }
 
-    public static int writeVarInt(byte[] bytes, int offset, int value) {
+    public static int writeVarInt(ByteBuf bytes, int offset, int value) {
         int i = 0;
         do {
             byte temp = (byte) (value & 0b01111111);
@@ -108,13 +95,13 @@ public class PacketUtil {
             if (value != 0) {
                 temp |= 0b10000000;
             }
-            bytes[offset + i] = temp;
+            bytes.writeByte(temp);
             i++;
         } while (value != 0);
         return i;
     }
 
-    public static int writeVarLong(byte[] bytes, int offset, long value) {
+    public static int writeVarLong(ByteBuf bytes, int offset, long value) {
         int i = 0;
         do {
             byte temp = (byte) (value & 0b01111111);
@@ -123,23 +110,19 @@ public class PacketUtil {
             if (value != 0) {
                 temp |= 0b10000000;
             }
-            bytes[offset + i] = temp;
+            bytes.writeByte(temp);
             i++;
         } while (value != 0);
         return i;
     }
 
-    public static int writeLong(byte[] bytes, int offset, long value) {
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        buffer.putLong(value);
-        for (int i = 0; i < 8; i++) {
-            bytes[offset + i] = buffer.get(i);
-        }
+    public static int writeLong(ByteBuf bytes, int offset, long value) {
+        bytes.writeLong(value);
         return 8;
     }
 
     public static void writePacketToOutputStream(Channel connection, OutboundPacket packet) {
-        byte[] bytes = new byte[256 * 256 * 256];
+        ByteBuf bytes = Unpooled.buffer();
         int length = 0;
         int offset = 0;
         Player player = Omega.getPlayerByChannel(connection);
@@ -191,8 +174,8 @@ public class PacketUtil {
             } else if (data instanceof Slot) {
                 offset += addByteToByteArray(bytes, offset, (byte) (((Slot) data).isItem() ? 0x01 : 0x00));
                 if (((Slot) data).isItem()) {
-                    offset+= writeVarInt(bytes,offset,((Slot) data).getId());
-                    offset += writeByte(bytes,offset,((Slot) data).getAmount());
+                    offset += writeVarInt(bytes, offset, ((Slot) data).getId());
+                    offset += writeByte(bytes, offset, ((Slot) data).getAmount());
                     try {
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         NBTWriter.write(((Slot) data).getNBT(), out, false);
@@ -224,18 +207,10 @@ public class PacketUtil {
             }
         }
         length = offset;
-        byte[] varIntLength = new byte[3];
-        if (length >= 2097151) {
-            System.out.println("Packet to long. Dumping data:");
-            System.out.println(DebuggingUtil.dumpBytes(bytes, length));
-        }
-        int l = writeVarInt(varIntLength, 0, length);
         ByteBuf bytebuf = Unpooled.buffer();
-        for (int i = 0; i < l; i++) {
-            bytebuf.writeByte(varIntLength[i]);
-        }
+        writeVarInt(bytebuf,0,length);
         for (int i = 0; i < length; i++) {
-            bytebuf.writeByte(bytes[i]);
+            bytebuf.writeByte(bytes.getByte(i));
         }
         //  if(packet.getType()==PacketType.HANDSHAKE)
         bytebuf.writeByte(0);
@@ -259,28 +234,22 @@ public class PacketUtil {
         }
     }
 
-    private static int writeShort(byte[] bytes, int offset, short length) {
-        ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.putShort(length);
-        for (int i = 0; i < 2; i++) {
-            bytes[offset + i] = buffer.get(i);
-        }
+    private static int writeShort(ByteBuf bytes, int offset, short length) {
+        bytes.writeShort(length);
         return 2;
     }
 
-    private static int writeByte(byte[] bytes, int offset, byte i) {
-        bytes[offset] = i;
+    private static int writeByte(ByteBuf bytes, int offset, byte i) {
+        bytes.writeByte(i);
         return 1;
     }
 
-    public static int writeBytes(byte[] bytes, int offset, byte[] writeToBase64) {
-        for (int i = 0; i < writeToBase64.length; i++) {
-            bytes[offset + i] = writeToBase64[i];
-        }
+    public static int writeBytes(ByteBuf bytes, int offset, byte[] writeToBase64) {
+        bytes.writeBytes(writeToBase64);
         return writeToBase64.length;
     }
 
-    private static int writeString(byte[] bytes, int offset, String data) {
+    private static int writeString(ByteBuf bytes, int offset, String data) {
         int offset2 = 0;
         offset2 += writeVarInt(bytes, offset, data.getBytes().length);
         offset2 += addStringToByteArray(bytes, offset + offset2, data);
@@ -300,7 +269,7 @@ public class PacketUtil {
         return byteBuf.readLong();
     }
 
-    public static int writeUUID(byte[] bytes, int offset, UUID uuid) {
+    public static int writeUUID(ByteBuf bytes, int offset, UUID uuid) {
         int i = 0;
         long value = uuid.getMostSignificantBits();
         long value2 = uuid.getLeastSignificantBits();
@@ -308,8 +277,8 @@ public class PacketUtil {
         return i;
     }
 
-    private static int writeUUID(byte[] bytes, int offset, long value, long value2) {
-        int i = 0;
+    private static int writeUUID(ByteBuf bytes, int offset, long value, long value2) {
+       /* int i = 0;
         do {
             byte temp;
             if (i < 8) {
@@ -325,7 +294,10 @@ public class PacketUtil {
             bytes[offset + i] = temp;
             i++;
         } while (i != 16);
-        return i;
+        return i;*/
+        bytes.writeLong(value);
+        bytes.writeLong(value2);
+        return 16;
     }
 
     public static boolean readBoolean(ByteBuf bytebuf) {
@@ -337,28 +309,25 @@ public class PacketUtil {
     }
 
 
-
-    public static int addShortToByteArray(byte[] bytes,int offset, short number){
-        ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.putShort(number);
-        for(int i = 0; i < 2 ; i++) {
-            bytes[offset+i] = buffer.get(i);
-        }
+    public static int addShortToByteArray(ByteBuf bytes, int offset, short number) {
+        bytes.writeShort(number);
         return 2;
     }
-    public static int addStringToByteArray(byte[] bytes,int offset, String message){
+
+    public static int addStringToByteArray(ByteBuf bytes, int offset, String message) {
         byte[] chars = message.getBytes(StandardCharsets.UTF_8);
-        for(int i = 0; i < chars.length ; i++) {
-            bytes[offset+i] = chars[i];
+        for (int i = 0; i < chars.length; i++) {
+            bytes.writeByte(chars[i]);
         }
         return chars.length;
     }
-    public static String buildString(ByteBuf buf, int size){
+
+    public static String buildString(ByteBuf buf, int size) {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             try {
                 sb.append((char) buf.readByte());
-            }catch (IndexOutOfBoundsException e4){
+            } catch (IndexOutOfBoundsException e4) {
                 e4.printStackTrace();
                 break;
             }
@@ -366,36 +335,27 @@ public class PacketUtil {
         return sb.toString();
     }
 
-    public static int addByteToByteArray(byte[] bytes, int offset, byte length) {
-        bytes[offset]=length;
+    public static int addByteToByteArray(ByteBuf bytes, int offset, byte length) {
+        bytes.writeByte(length);
         return 1;
     }
 
-    public static int addIntToByteArray(byte[] bytes, int offset, Integer data) {
-        ByteBuf buf = Unpooled.buffer();
-        buf.writeInt(data);
-        for(int i = 0; i < buf.writerIndex();i++){
-            bytes[offset+i] = buf.readByte();
-        }
-        buf.release();
-        return buf.writerIndex();
+    public static int addIntToByteArray(ByteBuf bytes, int offset, Integer data) {
+        bytes.writeInt(data);
+        return 4;
     }
 
-    public static int addFloatToByteArray(byte[] bytes, int offset, float data) {
-        ByteBuf buf = Unpooled.buffer();
-        buf.writeFloat(data);
-        for(int i = 0; i < buf.writerIndex();i++){
-            bytes[offset+i] = buf.readByte();
-        }
-        buf.release();
-        return buf.writerIndex();
+    public static int addFloatToByteArray(ByteBuf bytes, int offset, float data) {
+        bytes.writeFloat(data);
+        return 4;
     }
 
-    public static long getChunkSectionPositionAsALong(Chunk chunk, int y){
-        System.out.println(((((long)chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long)chunk.getZ()) & 0x3FFFFF) << 20));
-        return ((((long)chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long)chunk.getZ()) & 0x3FFFFF) << 20);
+    public static long getChunkSectionPositionAsALong(Chunk chunk, int y) {
+        System.out.println(((((long) chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long) chunk.getZ()) & 0x3FFFFF) << 20));
+        return ((((long) chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long) chunk.getZ()) & 0x3FFFFF) << 20);
     }
-    public static VarLong encodeBlockToBlocksArray(int protocolversion, Block block){
+
+    public static VarLong encodeBlockToBlocksArray(int protocolversion, Block block) {
         int x = block.getLocation().getBlockX();
         int y = block.getLocation().getBlockY();
         int z = block.getLocation().getBlockZ();
@@ -408,26 +368,21 @@ public class PacketUtil {
         if(z < 0) {
             z = -z;
         }*/
-        byte blockLocalX =(byte)(x & 0x0F);
-        byte blockLocalY = (byte)(y & 0x0F);
-        byte blockLocalZ = (byte)(z & 0x0F);
+        byte blockLocalX = (byte) (x & 0x0F);
+        byte blockLocalY = (byte) (y & 0x0F);
+        byte blockLocalZ = (byte) (z & 0x0F);
         long blockid = (ProtocolManager.getBlockIDByType(protocolversion, block.getType()));
-        if(blockid==-1)
-            blockid=1;
+        if (blockid == -1)
+            blockid = 1;
         return new VarLong(blockid << 12 | (blockLocalX << 8 | blockLocalZ << 4 | blockLocalY));
     }
 
-    public static int addDoubleToByteArray(byte[] bytes, int offset, double data) {
-        ByteBuf buf = Unpooled.buffer();
-        buf.writeDouble(data);
-        for(int i = 0; i < buf.writerIndex();i++){
-            bytes[offset+i] = buf.readByte();
-        }
-        buf.release();
-        return buf.writerIndex();
+    public static int addDoubleToByteArray(ByteBuf bytes, int offset, double data) {
+        bytes.writeDouble(data);
+        return 8;
     }
 
     public static String buildString(ByteBuf bytebuf) {
-        return buildString(bytebuf,PacketUtil.readVarInt(bytebuf));
+        return buildString(bytebuf, PacketUtil.readVarInt(bytebuf));
     }
 }
