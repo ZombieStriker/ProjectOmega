@@ -31,20 +31,21 @@ public class EventHandler<T extends Event> {
     }
 
     public void fire(T event) {
-        subscriptions.forEach(((priority, eventSubscriptions) -> eventSubscriptions.forEach(subscriptions -> {
+        subscriptions.forEach(((priority, eventSubscriptions) -> eventSubscriptions.forEach(subscription -> {
             try {
-                subscriptions.handle(event);
+                subscription.handle(event);
             } catch (Throwable throwable) {
                 StackTraceElement[] elements = throwable.getStackTrace();
                 List<StackTraceElement> stackTrace = new ArrayList<>(elements.length);
                 Collections.addAll(stackTrace, elements);
                 stackTrace.removeIf(c -> c.getClassName().contains(MethodHandle.class.getName()));
+                stackTrace.removeIf(c -> c.getClassName().contains(EventHandler.class.getName()));
                 stackTrace.removeIf(c -> c.getClassName().contains(EventSubscription.class.getName()));
                 stackTrace.removeIf(c -> c.getClassName().contains(EventBus.class.getName()));
                 stackTrace.removeIf(c -> c.getClassName().contains(EventBus.RuntimeEventSubscription.class.getName()));
                 stackTrace.removeIf(c -> c.getClassName().contains("java.util.stream"));
                 throwable.setStackTrace(stackTrace.toArray(new StackTraceElement[0]));
-                Omega.getLogger().log(Level.WARNING, subscriptions.getListenerName() + " threw an exception while handling event", throwable);
+                Omega.getLogger().log(Level.WARNING, subscription.getListenerName() + " threw an exception while handling event", throwable);
             }
         })));
     }

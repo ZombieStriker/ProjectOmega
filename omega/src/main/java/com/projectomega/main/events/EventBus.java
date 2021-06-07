@@ -64,5 +64,9 @@ public class EventBus {
         @Override public Priority getPriority() {
             return priority;
         }
+
+        @Override public OmegaPlugin getPlugin() {
+            return plugin;
+        }
     }
 }

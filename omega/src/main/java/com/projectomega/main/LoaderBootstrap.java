@@ -20,6 +20,9 @@ public class LoaderBootstrap implements OmegaBootstrap {
                     "4.1.42-Final"
             )
 
+            .dependency("com.google.guava", "guava", "30.1.1-jre")
+            .dependency("org.ow2.asm", "asm", "9.1")
+            .dependency("org.ow2.asm", "asm-commons", "9.1")
             .dependency("com.google.code.gson", "gson", "2.8.6")
             .dependency("com.github.TheNullicorn", "Nedit", "v1.1.1")
             .dependency("org.yaml", "snakeyaml", "1.28")
