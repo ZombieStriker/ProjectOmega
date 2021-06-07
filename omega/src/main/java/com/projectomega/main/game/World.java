@@ -55,7 +55,7 @@ public class World {
         NBTCompound blockentities = new NBTCompound();
         //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
 
-        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(127), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
+        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(1), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
         //sendBlocks(chunk,player);
 
 
@@ -105,6 +105,7 @@ public class World {
         }
 
         int offset = 0;
+        offset += PacketUtil.addShortToByteArray(data,offset, (short) 4096);
         offset += PacketUtil.addByteToByteArray(data, offset, new UnsignedByte(bitsperblock).getUnsignedByte());
         offset += PacketUtil.writeVarInt(data, offset, palletelength);
         for (int i = 0; i < palletelength; i++) {
@@ -114,12 +115,12 @@ public class World {
         for (long d : dataarray) {
             offset += PacketUtil.writeLong(data, offset, d);
         }
-        for (int i = 0; i < blocklight.length; i++) {
+       /* for (int i = 0; i < blocklight.length; i++) {
             offset += PacketUtil.addByteToByteArray(data, offset, blocklight[i]);
         }
         for (int i = 0; i < skylight.length; i++) {
             offset += PacketUtil.addByteToByteArray(data, offset, skylight[i]);
-        }
+        }*/
 
 
         return offset;

@@ -1,9 +1,6 @@
 package com.projectomega.main.game.chunk;
 
-import com.projectomega.main.game.Chunk;
-import com.projectomega.main.game.ChunkPosition;
-import com.projectomega.main.game.Omega;
-import com.projectomega.main.game.Player;
+import com.projectomega.main.game.*;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.task.Duration;
@@ -30,12 +27,9 @@ public class ChunkManager {
         }
         chunk.getWorld().sendChunkData(new ChunkPosition(chunk.getX(), chunk.getZ()), player);
 
-        Omega.getTaskManager().getMainThread().runTaskLater(new Task() {
-            @Override
-            protected void run() {
-                chunk.getWorld().sendChunkData(new ChunkPosition(chunk.getX(), chunk.getZ()), player);
-            }
-        }, Duration.seconds(1));
+        BlockByBlockBuilder.buildChunkForPlayer(player, chunk);
+
+        chunk.getWorld().sendChunkData(new ChunkPosition(chunk.getX(), chunk.getZ()), player);
         if (loadedChunks == null) {
             loadedChunks = new ArrayList<>();
             chunksLoadedByPlayer.put(player.getUuid(), loadedChunks);
@@ -49,8 +43,10 @@ public class ChunkManager {
             if (!loadedChunks.contains(chunk))
                 return;
         }
+        if (loadedChunks == null)
+            return;
         loadedChunks.remove(chunk);
-        OutboundPacket packet = new OutboundPacket(PacketType.UNLOAD_CHUNK,chunk.getX(),chunk.getZ());
+        OutboundPacket packet = new OutboundPacket(PacketType.UNLOAD_CHUNK, chunk.getX(), chunk.getZ());
         player.sendPacket(packet);
 
     }
@@ -58,4 +54,5 @@ public class ChunkManager {
     public static void removePlayer(Player player) {
         chunksLoadedByPlayer.remove(player.getUuid());
     }
+
 }

@@ -1,12 +1,10 @@
 package example.com.testplugin;
 
 import com.projectomega.main.game.*;
-import com.projectomega.main.game.entity.Entity;
-import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.game.inventory.ItemStack;
 import com.projectomega.main.game.sound.Sound;
 import com.projectomega.main.game.sound.SoundCategory;
-import com.projectomega.main.game.utils.ExperiencePointsUtil;
+import com.projectomega.main.utils.ExperiencePointsUtil;
 import com.projectomega.main.packets.InboundPacket;
 import com.projectomega.main.packets.PacketListener;
 

@@ -17,10 +17,12 @@ public class Position {
     }
 
     public byte[] build() {
-        ByteBuf byteBuf = Unpooled.buffer();
+        ByteBuf byteBuf = Unpooled.buffer(8);
         long build = positionToLong(x, y, z);
         PacketUtil.writeLong(byteBuf, 0, build);
-        return byteBuf.array();
+        byte[] bytes = byteBuf.array();
+        byteBuf.release();
+        return bytes;
     }
 
     public static long positionToLong(int x, int y, int z) {

@@ -16,7 +16,10 @@ public class Chunk {
         for (int x1 = 0; x1 < 16; x1++) {
             for (int z1 = 0; z1 < 16; z1++) {
                 for (int y1 = 0; y1 < 256; y1++) {
-                    blocks[x1][y1][z1] = new Block(Location.at(xoff + x1, y1, zoff + z1, world), (y1 < 16?Material.IRON_ORE:Material.AIR));
+                    blocks[x1][y1][z1] = new Block(Location.at(xoff + x1, y1, zoff + z1, world),
+                            (y1 ==0 ?Material.BEDROCK:y1 ==1 ?Material.DIRT:y1 ==2 ?Material.GRASS_BLOCK:
+                                    Material.AIR)
+                    );
                 }
             }
         }

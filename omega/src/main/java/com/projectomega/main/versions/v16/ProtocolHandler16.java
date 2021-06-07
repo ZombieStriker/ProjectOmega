@@ -13,7 +13,7 @@ public class ProtocolHandler16 extends ProtocolHandler {
         packetIDs.put(PacketType.SPAWN_ENTITY, 0x00);
         packetIDs.put(PacketType.SPAWN_LIVING_ENTITY, 0x02);
         packetIDs.put(PacketType.CLIENT_STATUS, 0x04);
-        packetIDs.put(PacketType.BLOCK_CHANGE, 0x08);
+        packetIDs.put(PacketType.BLOCK_CHANGE, 0x0B);
         packetIDs.put(PacketType.BOSS_BAR, 0x0C);
         packetIDs.put(PacketType.CHAT_CLIENTBOUND, 0x0E);
         packetIDs.put(PacketType.PLAYER_POSITION, 0x12);

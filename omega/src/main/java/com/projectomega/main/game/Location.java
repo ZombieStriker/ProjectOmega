@@ -172,6 +172,8 @@ public class Location {
     }
 
     public Block getBlock() {
+        if(getBlockY() < 0 || getBlockY() >= 256)
+            return null;
         Chunk chunk = getChunk();
         int chuckRelX = chunk.getX()*16;
         int chunlRelZ = chunk.getZ()*16;

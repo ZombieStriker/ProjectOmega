@@ -4,7 +4,7 @@ public enum BlockDataTag {
 
     DIRECTIONAL(3),
     POWERED(16),
-    NOTEBLOCK_TYPE(10),
+    NOTEBLOCK_TYPE(16),
     WALL_NORTH_TYPE(3),
     WALL_SOUTH_TYPE(3),
     WALL_EAST_TYPE(3),
@@ -34,9 +34,4 @@ public enum BlockDataTag {
         this.statecount = statecount;
     }
 
-    enum DirectionalTag {
-        X_AXIS,
-        Y_AXIS,
-        Z_AXIS;
-    }
 }

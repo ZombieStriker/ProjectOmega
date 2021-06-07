@@ -1,4 +1,4 @@
-package com.projectomega.main.game.utils;
+package com.projectomega.main.utils;
 
 public class ExperiencePointsUtil {
 

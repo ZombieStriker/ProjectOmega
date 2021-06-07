@@ -130,6 +130,10 @@ public class PacketUtil {
         if (player != null) {
             protocolVersion = player.getProtocolVersion();
         }
+        if(packet==null){
+            Omega.getLogger().warning("Somehow a null packet was attempting to be sent. Ignoring");
+            return;
+        }
         int packetid = ProtocolManager.getPacketIDForProtocol(protocolVersion, packet.getType());
         offset += writeVarInt(bytes, offset, packetid);
         for (int dataIndex = 0; dataIndex < packet.getDataLength(); dataIndex++) {
@@ -172,7 +176,7 @@ public class PacketUtil {
             } else if (data instanceof MetaData) {
                 offset += writeBytes(bytes, offset, ((MetaData) data).build());
             } else if (data instanceof Slot[]) {
-                for(Slot slot : (Slot[])data) {
+                for (Slot slot : (Slot[]) data) {
                     offset += addByteToByteArray(bytes, offset, (byte) (slot.isItem() ? 0x01 : 0x00));
                     if (slot.isItem()) {
                         offset += writeVarInt(bytes, offset, slot.getId());
@@ -225,14 +229,14 @@ public class PacketUtil {
         }
         length = offset;
         ByteBuf bytebuf = Unpooled.buffer();
-        writeVarInt(bytebuf,0,length);
+        writeVarInt(bytebuf, 0, length);
         for (int i = 0; i < length; i++) {
             bytebuf.writeByte(bytes.getByte(i));
         }
         //  if(packet.getType()==PacketType.HANDSHAKE)
-        bytebuf.writeByte(0);
-        bytebuf.writeByte(0);
-        bytebuf.writeByte(0);
+         bytebuf.writeByte(0);
+         bytebuf.writeByte(0);
+         bytebuf.writeByte(0);
 
         List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersBy(packet.getType());
         if (packethandlers != null) {
@@ -246,6 +250,7 @@ public class PacketUtil {
             if (DebuggingUtil.DEBUG)
                 System.out.println("Writing " + length + " bytes for packetid: " + packetid + "  || " + bytebuf.array().length);
             connection.writeAndFlush(bytebuf).awaitUninterruptibly().sync();
+            bytes.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -368,7 +373,6 @@ public class PacketUtil {
     }
 
     public static long getChunkSectionPositionAsALong(Chunk chunk, int y) {
-        System.out.println(((((long) chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long) chunk.getZ()) & 0x3FFFFF) << 20));
         return ((((long) chunk.getX()) & 0x3FFFFF) << 42) | (y & 0xFFFFF) | ((((long) chunk.getZ()) & 0x3FFFFF) << 20);
     }
 
@@ -376,15 +380,6 @@ public class PacketUtil {
         int x = block.getLocation().getBlockX();
         int y = block.getLocation().getBlockY();
         int z = block.getLocation().getBlockZ();
-        /*if(x < 0) {
-            x = -x;
-        }
-        if(y < 0) {
-            y = -y;
-        }
-        if(z < 0) {
-            z = -z;
-        }*/
         byte blockLocalX = (byte) (x & 0x0F);
         byte blockLocalY = (byte) (y & 0x0F);
         byte blockLocalZ = (byte) (z & 0x0F);

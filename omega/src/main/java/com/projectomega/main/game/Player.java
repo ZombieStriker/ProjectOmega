@@ -50,6 +50,7 @@ public class Player extends OfflinePlayer implements CommandSender {
     private int food = 20;
     private float foodSaturation = 0.0f;
 
+    private List<OutboundPacket> outgoingPackets = new ArrayList<>();
 
     private Inventory viewedInventory = null;
     private Inventory playerInventory = new PlayerInventory(this);
@@ -129,8 +130,6 @@ public class Player extends OfflinePlayer implements CommandSender {
     public void setChatColors(boolean chatcolors) {
         this.chatColors = chatcolors;
     }
-
-    private List<OutboundPacket> outgoingPackets = new ArrayList<>();
 
     public List<OutboundPacket> getOutgoingPackets() {
         return new ArrayList<>(outgoingPackets);
