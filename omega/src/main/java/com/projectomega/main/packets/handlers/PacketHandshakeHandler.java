@@ -1,4 +1,4 @@
-package com.projectomega.main.packets.types;
+package com.projectomega.main.packets.handlers;
 
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.packets.*;
@@ -7,10 +7,10 @@ import io.netty.channel.Channel;
 
 import java.util.List;
 
-public class PacketHandshake extends PacketHandler {
+public class PacketHandshakeHandler extends PacketHandler {
 
 
-    public PacketHandshake() {
+    public PacketHandshakeHandler() {
         super(PacketType.HANDSHAKE);
     }
 

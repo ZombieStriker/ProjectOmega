@@ -4,6 +4,7 @@ import com.projectomega.main.game.Player;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.VarInt;
+import com.projectomega.main.packets.types.PacketBossBar;
 
 import java.util.UUID;
 
@@ -30,14 +31,11 @@ public class BossBar {
     }
 
     public void sendBossbarPacketToPlayer(Player player) {
-        String titleJson = TextMessage.text(title);
-        OutboundPacket outboundPacket = new OutboundPacket(PacketType.BOSS_BAR, bossbaruuid, new VarInt(0), titleJson, health, new VarInt(color.getId()), new VarInt(divisions.getId()), (byte) 0);
-        player.sendPacket(outboundPacket);
+        player.sendPacket(new PacketBossBar(player).setAddBossBar(bossbaruuid,title,health,color,divisions));
     }
 
     public void removeBossbarFromPlayer(Player player) {
-        OutboundPacket outboundPacket = new OutboundPacket(PacketType.BOSS_BAR, bossbaruuid, new VarInt(1));
-        player.sendPacket(outboundPacket);
+        player.sendPacket(new PacketBossBar(player).setRemoveBossBar(bossbaruuid));
     }
 
     public boolean isCreateFog() {

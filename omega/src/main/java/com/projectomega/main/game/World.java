@@ -7,11 +7,15 @@ import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.*;
+import com.projectomega.main.packets.types.PacketEntityMetaData;
+import com.projectomega.main.packets.types.PacketTypeSpawnEntity;
+import com.projectomega.main.packets.types.PacketTypeSpawnLivingEntity;
 import com.projectomega.main.versions.ProtocolManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import me.nullicorn.nedit.type.NBTCompound;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +23,17 @@ public class World {
 
     private final List<Region> regions = new ArrayList<>();
     private final String name;
+    private final File worldFolder;
     private final List<Entity> entities = new ArrayList<>();
     private Location spawn = Location.at(-5, 16, -5, this);
 
-    public World(String name) {
+    public World(String name, File worldFolder) {
         this.name = name;
+        this.worldFolder = worldFolder;
+    }
+
+    public File getWorldFolder() {
+        return worldFolder;
     }
 
     public String getName() {
@@ -35,49 +45,12 @@ public class World {
         int x = position.getX();
         int z = position.getZ();
         Chunk chunk = region.getOrLoadChunk(x, z);
-        NBTCompound heightmap = new NBTCompound();
-        //NBTList motion_blocking = new NBTList(TagType.LONG);
-        long[] motion_blocking = new long[36];
-        for (int i = 0; i < 36; i++) {
-            motion_blocking[i] = 0l;
-        }
-        heightmap.put("MOTION_BLOCKING", motion_blocking);
-        VarInt[] biomes = new VarInt[1024];
-        for (int i = 0; i < biomes.length; i++) {
-            biomes[i] = new VarInt(0);
-        }
-        ByteBuf data = Unpooled.buffer();
-        int length = createChunkSectionStructure(chunk,16,player, data);
-        byte[] b = new byte[length];
-        for (int i = 0; i < length; i++) {
-            b[i] = data.getByte(i);
-        }
-
-        NBTCompound blockentities = new NBTCompound();
-        //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
-
-        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(65535), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
-        //sendBlocks(chunk,player);
-
-
-        //player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x, z, false, new VarInt(255), heightmap, new VarInt(length), b, new VarInt(0)}));
+      //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(65535), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
 
     }
 
-    private void sendBlocks(Chunk chunk, Player player) {
-        List<VarLong> varLongs = new ArrayList<>();
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
-                for (int z = 0; z < 16; z++) {
-                    varLongs.add(PacketUtil.encodeBlockToBlocksArray(player.getProtocolVersion(), chunk.getBlockAtChunkRelative(x, y, z)));
-                }
-            }
-        }
-        OutboundPacket multiblockChange = new OutboundPacket(PacketType.MULTI_BLOCK_CHANGE, PacketUtil.getChunkSectionPositionAsALong(chunk, 0), false, new VarInt(varLongs.size()), varLongs.toArray(new VarLong[varLongs.size()]));
-        player.sendPacket(multiblockChange);
-    }
 
-    private int createChunkSectionStructure(Chunk chunk, int sections, Player player, ByteBuf data) {
+    public static int createChunkSectionStructure(Chunk chunk, int sections, Player player, ByteBuf data) {
         int offset = 0;
         for(int section = 0; section < sections; section++) {
             byte bitsperblock = 8;
@@ -150,17 +123,11 @@ public class World {
         System.out.println(type.isLiving());
         if (type.isLiving()) {
             for (Player player : getPlayers()) {
-                OutboundPacket spawnLivingEntity = new OutboundPacket(PacketType.SPAWN_LIVING_ENTITY, new VarInt(ent.getEntityID()), ent.getUniqueID(),
-                        ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
-                        new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), new Angle(ent.getLocation().getPitch()), (short) 0, (short) 0, (short) 0);
-                player.sendPacket(spawnLivingEntity);
+                player.sendPacket(new PacketTypeSpawnLivingEntity(player,ent));
             }
         } else {
             for (Player player : getPlayers()) {
-                OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new VarInt(ent.getEntityID()), ent.getUniqueID(),
-                        ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
-                        new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0);
-                player.sendPacket(spawnEntity);
+                player.sendPacket(new PacketTypeSpawnEntity(player,ent));
             }
         }
         return ent;
@@ -173,13 +140,11 @@ public class World {
     private Entity dropItem(int unusedEID, ItemStack is, Location location) {
         Entity ent = new Entity(unusedEID, location, EntityType.ITEM);
         entities.add(ent);
-        OutboundPacket spawnEntity = new OutboundPacket(PacketType.SPAWN_ENTITY, new VarInt(ent.getEntityID()), ent.getUniqueID(),
-                ent.getType(), ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(),
-                new Angle(ent.getLocation().getYaw()), new Angle(ent.getLocation().getPitch()), 0, (short) 0, (short) 0, (short) 0);
         NBTCompound itemmeta = new NBTCompound();
-        OutboundPacket metaData = new OutboundPacket(PacketType.ENTITY_METADATA, new VarInt(ent.getEntityID()), new MetaData().add(6, new Slot((short) 10, (byte) 2, (short) 0, itemmeta)));
         for (Player player : getPlayers()) {
+            OutboundPacket spawnEntity = new PacketTypeSpawnEntity(player,ent);
             player.sendPacket(spawnEntity);
+            OutboundPacket metaData = new PacketEntityMetaData(player,ent,new MetaData().add(6, new Slot((short) 10, (byte) 2, (short) 0, itemmeta)));
             player.sendPacket(metaData);
         }
         return ent;

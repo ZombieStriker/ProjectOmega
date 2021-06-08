@@ -1,4 +1,4 @@
-package com.projectomega.main.packets.types;
+package com.projectomega.main.packets.handlers;
 
 import com.projectomega.main.packets.*;
 import io.netty.buffer.ByteBuf;
@@ -6,8 +6,8 @@ import io.netty.channel.Channel;
 
 import java.util.List;
 
-public class PacketClientStatus extends PacketHandler {
-    public PacketClientStatus() {
+public class PacketClientStatusHandler extends PacketHandler {
+    public PacketClientStatusHandler() {
         super(PacketType.CLIENT_STATUS);
     }
 

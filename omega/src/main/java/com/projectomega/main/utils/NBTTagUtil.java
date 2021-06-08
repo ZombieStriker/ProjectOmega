@@ -40,6 +40,8 @@ public class NBTTagUtil {
         tag.put("coordinate_scale",1.0f);
         tag.put("ultrawarm",(byte)0);
         tag.put("has_ceiling",(byte)0);
+        tag.put("height",256);
+        tag.put("min_y",0);
         return tag;
     }
 
@@ -88,6 +90,8 @@ public class NBTTagUtil {
         elementData.put("coordinate_scale",1f);
         elementData.put("ultrawarm",(byte)0);
         elementData.put("has_ceiling",(byte)0);
+        elementData.put("height",256);
+        elementData.put("min_y",0);
         tag.put("element", elementData);
         return tag;
     }

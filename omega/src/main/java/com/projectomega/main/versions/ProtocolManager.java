@@ -5,12 +5,13 @@ import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.versions.handshake.ProtocolHandlerHandshake;
 import com.projectomega.main.versions.v16.ProtocolHandler16;
+import com.projectomega.main.versions.v17.ProtocolHandler17;
 
 public class ProtocolManager {
 
     public static ProtocolHandler handlerhandshake = new ProtocolHandlerHandshake();
     public static ProtocolHandler handler16 = new ProtocolHandler16();
-    public static ProtocolHandler handler17 = new ProtocolHandler16();
+    public static ProtocolHandler handler17 = new ProtocolHandler17();
 
     public static int getPacketIDForProtocol(int protocolVersion, PacketType type){
         if(protocolVersion<=0)

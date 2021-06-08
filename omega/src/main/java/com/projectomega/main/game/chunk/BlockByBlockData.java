@@ -38,8 +38,8 @@ public class BlockByBlockData {
             System.out.println("Failed to find blockid for "+block.getType());
             return;
         }
-        OutboundPacket outboundPacket = new OutboundPacket(PacketType.BLOCK_CHANGE,new Position(x+(chunk.getX()*16),y,z+(chunk.getZ()*16)),new VarInt(blockid));
-        player.sendPacket(outboundPacket);
+       //  OutboundPacket outboundPacket = new OutboundPacket(PacketType.BLOCK_CHANGE,new Position(x+(chunk.getX()*16),y,z+(chunk.getZ()*16)),new VarInt(blockid));
+       // player.sendPacket(outboundPacket);
         sendPacket[x][y][z]= (byte) (sendPacket[x][y][z]+1);
     }
 

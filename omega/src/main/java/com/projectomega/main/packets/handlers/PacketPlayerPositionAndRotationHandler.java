@@ -1,4 +1,4 @@
-package com.projectomega.main.packets.types;
+package com.projectomega.main.packets.handlers;
 
 import com.projectomega.main.packets.*;
 import io.netty.buffer.ByteBuf;
@@ -6,8 +6,8 @@ import io.netty.channel.Channel;
 
 import java.util.List;
 
-public class PacketPlayerPositionAndRotation extends PacketHandler {
-    public PacketPlayerPositionAndRotation() {
+public class PacketPlayerPositionAndRotationHandler extends PacketHandler {
+    public PacketPlayerPositionAndRotationHandler() {
         super(PacketType.PLAYER_POSITION_AND_ROTATION);
     }
 

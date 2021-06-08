@@ -8,7 +8,7 @@ import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
 import com.projectomega.main.game.entity.EntityType;
 import com.projectomega.main.packets.datatype.*;
-import com.projectomega.main.packets.types.*;
+import com.projectomega.main.packets.handlers.*;
 import com.projectomega.main.versions.ProtocolManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -18,7 +18,6 @@ import me.nullicorn.nedit.type.NBTCompound;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -28,16 +27,16 @@ public class PacketUtil {
     private static ServerThread server;
 
     public static void init(ServerThread serverThread) {
-        handlers.put(PacketType.HANDSHAKE, new ArrayList<>(Arrays.asList(new PacketHandshake())));
-        handlers.put(PacketType.HANDSHAKE_PING, new ArrayList<>(Arrays.asList(new PacketPing())));
-        handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketKeepAlive())));
-        handlers.put(PacketType.CHAT_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketInboundChat())));
-        handlers.put(PacketType.CLIENT_SETTINGS, new ArrayList<>(Arrays.asList(new PacketClientSettings())));
-        handlers.put(PacketType.CLICK_WINDOW, new ArrayList<>(Arrays.asList(new PacketClickWindow())));
-        handlers.put(PacketType.CLIENT_STATUS, new ArrayList<>(Arrays.asList(new PacketClientStatus())));
-        handlers.put(PacketType.HELD_ITEM_CHANGE_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketHeldItemChange())));
-        handlers.put(PacketType.PLAYER_POSITION, new ArrayList<>(Arrays.asList(new PacketPlayerPosition())));
-        handlers.put(PacketType.PLAYER_POSITION_AND_ROTATION, new ArrayList<>(Arrays.asList(new PacketPlayerPositionAndRotation())));
+        handlers.put(PacketType.HANDSHAKE, new ArrayList<>(Arrays.asList(new PacketHandshakeHandler())));
+        handlers.put(PacketType.HANDSHAKE_PING, new ArrayList<>(Arrays.asList(new PacketPingHandler())));
+        handlers.put(PacketType.KEEP_ALIVE_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketKeepAliveHandler())));
+        handlers.put(PacketType.CHAT_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketInboundChatHandler())));
+        handlers.put(PacketType.CLIENT_SETTINGS, new ArrayList<>(Arrays.asList(new PacketClientSettingsHandler())));
+        handlers.put(PacketType.CLICK_WINDOW, new ArrayList<>(Arrays.asList(new PacketClickWindowHandler())));
+        handlers.put(PacketType.CLIENT_STATUS, new ArrayList<>(Arrays.asList(new PacketClientStatusHandler())));
+        handlers.put(PacketType.HELD_ITEM_CHANGE_SERVERBOUND, new ArrayList<>(Arrays.asList(new PacketHeldItemChangeHandler())));
+        handlers.put(PacketType.PLAYER_POSITION, new ArrayList<>(Arrays.asList(new PacketPlayerPositionHandler())));
+        handlers.put(PacketType.PLAYER_POSITION_AND_ROTATION, new ArrayList<>(Arrays.asList(new PacketPlayerPositionAndRotationHandler())));
         server = serverThread;
     }
 
@@ -234,9 +233,6 @@ public class PacketUtil {
             bytebuf.writeByte(bytes.getByte(i));
         }
         //  if(packet.getType()==PacketType.HANDSHAKE)
-         bytebuf.writeByte(0);
-         bytebuf.writeByte(0);
-         bytebuf.writeByte(0);
 
         List<PacketHandler> packethandlers = PacketUtil.getPacketHandlersBy(packet.getType());
         if (packethandlers != null) {

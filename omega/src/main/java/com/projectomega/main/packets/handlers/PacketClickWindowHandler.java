@@ -1,4 +1,4 @@
-package com.projectomega.main.packets.types;
+package com.projectomega.main.packets.handlers;
 
 import com.projectomega.main.packets.*;
 import io.netty.buffer.ByteBuf;
@@ -10,8 +10,8 @@ import me.nullicorn.nedit.type.NBTCompound;
 import java.io.IOException;
 import java.util.List;
 
-public class PacketClickWindow extends PacketHandler {
-    public PacketClickWindow() {
+public class PacketClickWindowHandler extends PacketHandler {
+    public PacketClickWindowHandler() {
         super(PacketType.CLICK_WINDOW);
     }
 

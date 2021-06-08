@@ -14,6 +14,8 @@ import com.projectomega.main.game.packetlogic.PacketLogicManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
+import com.projectomega.main.packets.types.PacketChatClientBound;
+import com.projectomega.main.packets.types.PacketKeepAlive;
 import com.projectomega.main.plugin.PluginManager;
 import com.projectomega.main.task.TaskManager;
 import io.netty.channel.Channel;
@@ -60,8 +62,6 @@ public class Omega extends Thread {
     private Omega() {
         instance = this;
         createWorld("world");
-        createWorld("world_nether");
-        createWorld("world_the_end");
     }
 
     public static TaskManager getTaskManager() {
@@ -86,9 +86,19 @@ public class Omega extends Thread {
     }
 
     public static World createWorld(String name) {
-        World world = new World(name);
+        File worldFolder = new File(getServerDirectory(),name);
+        if(!worldFolder.exists()){
+            makeWorldFolder(worldFolder);
+        }
+        World world = new World(name,worldFolder);
         worlds.add(world);
         return world;
+    }
+
+    public static void makeWorldFolder(File worldFolder) {
+        worldFolder.mkdirs();
+        File regionsFolder = new File(worldFolder,"region");
+        regionsFolder.mkdirs();
     }
 
     public static List<World> getWorlds() {
@@ -117,15 +127,16 @@ public class Omega extends Thread {
     private static void broadcastMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0, player.getUuid()));
+                player.sendPacket(new PacketChatClientBound(player,s,0,player.getUuid()));//new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0, player.getUuid()));
             }
         }
     }
 
+    @Deprecated
     public static void broadcastJSONMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, s, (byte) 0, player.getUuid()));
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND,player.getProtocolVersion(), s, (byte) 0, player.getUuid()));
             }
         }
     }
@@ -185,7 +196,7 @@ public class Omega extends Thread {
                 if (player.getProtocolVersion() < 754) {
                     //player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND_OLD, new Object[]{start}));
                 } else {
-                    player.sendPacket(new OutboundPacket(PacketType.KEEP_ALIVE_CLIENTBOUND, start));
+                    player.sendPacket(new PacketKeepAlive(player));
                 }
                 for (OutboundPacket packet : player.getOutgoingPackets()) {
                     try {

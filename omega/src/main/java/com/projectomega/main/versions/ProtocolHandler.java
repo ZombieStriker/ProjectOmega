@@ -1,6 +1,7 @@
 package com.projectomega.main.versions;
 
 import com.projectomega.main.game.Material;
+import com.projectomega.main.game.Player;
 import com.projectomega.main.game.block.BlockData;
 import com.projectomega.main.game.block.BlockDataTag;
 import com.projectomega.main.game.entity.EntityType;
@@ -89,5 +90,8 @@ public abstract class ProtocolHandler {
         return -1;
     }
 
+    public static void sendPacket(Player player){
+
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.projectomega.main.packets.types;
+package com.projectomega.main.packets.handlers;
 
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.game.Player;
@@ -8,8 +8,8 @@ import com.projectomega.main.packets.PacketUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
-public class PacketClientSettings extends PacketHandler {
-    public PacketClientSettings() {
+public class PacketClientSettingsHandler extends PacketHandler {
+    public PacketClientSettingsHandler() {
         super(PacketType.CLIENT_SETTINGS);
     }
 

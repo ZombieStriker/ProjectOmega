@@ -8,6 +8,8 @@ import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.MetaData;
 import com.projectomega.main.packets.datatype.VarInt;
+import com.projectomega.main.packets.types.PacketEntityMetaData;
+import com.projectomega.main.packets.types.PacketEntityTeleport;
 
 import java.util.UUID;
 
@@ -45,10 +47,10 @@ public class Entity {
 
     public void teleport(Location location) {
         this.location = location;
-        OutboundPacket teleport = new OutboundPacket(PacketType.ENTITY_TELEPORT, new VarInt(entityID), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch(), true);
         for (Player player : Omega.getPlayers()) {
             if (player.getWorld().equals(location.getWorld())) {
-                player.sendPacket(teleport);
+                if (player.getEntity() != this)
+                    player.sendPacket(new PacketEntityTeleport(player, this));
             } else {
 
             }
@@ -62,17 +64,15 @@ public class Entity {
 
     public void setCustomNameVisable(boolean b) {
         this.customnamevisable = b;
-        OutboundPacket customnameVisable = new OutboundPacket(PacketType.ENTITY_METADATA, new VarInt(getEntityID()), new MetaData().add(3, b));
         for (Player player : Omega.getPlayers()) {
-            player.sendPacket(customnameVisable);
+            player.sendPacket(new PacketEntityMetaData(player,this,new MetaData().add(3,b)));
         }
     }
 
     public void setCustomName(String customname) {
         this.customname = customname;
-        OutboundPacket customnamepacket = new OutboundPacket(PacketType.ENTITY_METADATA, new VarInt(getEntityID()), new MetaData().add(2, TextMessage.text(customname)));
         for (Player player : Omega.getPlayers()) {
-            player.sendPacket(customnamepacket);
+            player.sendPacket(new PacketEntityMetaData(player,this, new MetaData().add(2, TextMessage.text(customname))));
         }
     }
 

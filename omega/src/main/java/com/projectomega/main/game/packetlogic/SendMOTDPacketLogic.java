@@ -7,6 +7,7 @@ import com.projectomega.main.events.types.PingServerEvent;
 import com.projectomega.main.game.OfflinePlayer;
 import com.projectomega.main.game.Omega;
 import com.projectomega.main.packets.*;
+import com.projectomega.main.packets.types.PacketStatusPing;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
@@ -54,8 +55,7 @@ public class SendMOTDPacketLogic implements PacketListener {
                 object.addProperty("favicon", "data:image/png;base64," +
                         Base64.getEncoder().encodeToString(data));
             }
-            OutboundPacket outboundPacket = new OutboundPacket(PacketType.STATUS_PING, object.toString());
-            PacketUtil.writePacketToOutputStream(packet.getChannel(), outboundPacket);
+            PacketUtil.writePacketToOutputStream(packet.getChannel(),new PacketStatusPing(event.getVersionID(),object.toString()));
         }
     }
 }

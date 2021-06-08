@@ -55,7 +55,8 @@ public enum PacketType {
     SET_SLOT(PacketDirection.CLIENTBOUND),
     DISCONNECT(PacketDirection.CLIENTBOUND),
     UNLOAD_CHUNK(PacketDirection.CLIENTBOUND),
-    ;
+    SET_TITLE_TEXT(PacketDirection.CLIENTBOUND),
+    SET_TITLE_SUBTITLE(PacketDirection.CLIENTBOUND);
 
     private PacketDirection direction;
 

@@ -13,7 +13,7 @@ public class SendRespawnPacketLogic implements PacketListener {
         if(((int)packet.getData(0))==0){
             //Perform Respawn
             System.out.println("Respawn packet sent");
-            OutboundPacket respawnPAcket = new OutboundPacket(PacketType.RESPAWN, 0,0L,new UnsignedByte((byte) 0),"default");
+            OutboundPacket respawnPAcket = new OutboundPacket(PacketType.RESPAWN, 762,0,0L,new UnsignedByte((byte) 0),"default");
             Player player = Omega.getPlayerByChannel(packet.getChannel());
             player.sendPacket(respawnPAcket);
         }

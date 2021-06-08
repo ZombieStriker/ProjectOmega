@@ -1,4 +1,4 @@
-package com.projectomega.main.packets.types;
+package com.projectomega.main.packets.handlers;
 
 import com.projectomega.main.packets.*;
 import io.netty.buffer.ByteBuf;
@@ -6,10 +6,10 @@ import io.netty.channel.Channel;
 
 import java.util.List;
 
-public class PacketPing extends PacketHandler {
+public class PacketPingHandler extends PacketHandler {
 
 
-    public PacketPing() {
+    public PacketPingHandler() {
         super(PacketType.HANDSHAKE_PING);
     }
 

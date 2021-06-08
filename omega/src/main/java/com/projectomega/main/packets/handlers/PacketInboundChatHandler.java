@@ -1,4 +1,4 @@
-package com.projectomega.main.packets.types;
+package com.projectomega.main.packets.handlers;
 
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerChatEvent;
@@ -12,9 +12,9 @@ import io.netty.channel.Channel;
 
 import java.util.List;
 
-public class PacketInboundChat extends PacketHandler {
+public class PacketInboundChatHandler extends PacketHandler {
 
-    public PacketInboundChat() {
+    public PacketInboundChatHandler() {
         super(PacketType.CHAT_SERVERBOUND);
     }
 

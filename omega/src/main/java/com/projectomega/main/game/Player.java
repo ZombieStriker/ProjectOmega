@@ -19,6 +19,7 @@ import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.VarInt;
+import com.projectomega.main.packets.types.*;
 import com.projectomega.main.utils.MojangAPI;
 import io.netty.channel.Channel;
 import org.jetbrains.annotations.NotNull;
@@ -145,7 +146,7 @@ public class Player extends OfflinePlayer implements CommandSender {
 
     public Player(String name, UUID uuid, Channel connection, int protocolversion, Location location) {
         super(name, uuid);
-        this.displayname=name;
+        this.displayname = name;
         this.connection = connection;
         this.protocolVersion = protocolversion;
         this.world = location.getWorld();
@@ -153,11 +154,6 @@ public class Player extends OfflinePlayer implements CommandSender {
     }
 
     public void addPlayerToPlayerList(OfflinePlayer player) {
-        GameProfile profile = MojangAPI.getGameProfile(player.getUuid());
-        OutboundPacket packet = new OutboundPacket(PacketType.PLAYER_INFO, new VarInt(0), new VarInt(1), player.getUuid(), player.getName(),
-                new VarInt(0),/* new VarInt(1), profile.getName(),profile.getValue(),profile.isSigned(),*/
-                new VarInt(0), new VarInt(0), true, TextMessage.text(player.getName()));
-        sendPacket(packet);
     }
 
     public Channel getConnection() {
@@ -196,8 +192,7 @@ public class Player extends OfflinePlayer implements CommandSender {
         }
         viewedInventory = newinv;
         viewedInventory.addViewer(this);
-        OutboundPacket open = new OutboundPacket(PacketType.OPEN_WINDOW, new VarInt(viewedInventory.getWindowID()), new VarInt(viewedInventory.getType().getId()), TextMessage.text("inv"), 0);
-        this.sendPacket(open);
+        this.sendPacket(new PacketOpenWindow(this, viewedInventory));
     }
 
     public Inventory getViewedInventory() {
@@ -220,20 +215,21 @@ public class Player extends OfflinePlayer implements CommandSender {
 
     public void setXP(float barLevel, int level, int totalXP) {
         this.xp = xp;
-        OutboundPacket packet = new OutboundPacket(PacketType.SET_EXPERIENCE, barLevel, new VarInt(level), new VarInt(totalXP));
-        sendPacket(packet);
+        sendPacket(new PacketSetExperience(this, barLevel, level, totalXP));
     }
 
     public void setHealth(float health) {
         this.health = health;
-        updateHealth();
+        this.sendPacket(new PacketUpdateHealth(this));
     }
 
-    public float getHealth() {return health;}
+    public float getHealth() {
+        return health;
+    }
 
     public void setFood(int food) {
         this.food = food;
-        updateHealth();
+        this.sendPacket(new PacketUpdateHealth(this));
     }
 
     public int getFood() {
@@ -244,13 +240,8 @@ public class Player extends OfflinePlayer implements CommandSender {
         return xp;
     }
 
-    public void updateHealth() {
-        OutboundPacket packet = new OutboundPacket(PacketType.UPDATE_HEALTH, health, new VarInt(food), foodSaturation);
-        sendPacket(packet);
-    }
-
     public void sendMessage(String s) {
-        sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.text(s), (byte) 0, getUuid()));
+        sendPacket(new PacketChatClientBound(this, s, 0, getUuid()));
     }
 
     @Override
@@ -270,23 +261,27 @@ public class Player extends OfflinePlayer implements CommandSender {
         }
     }
 
-    public void playSound(Sound sound, SoundCategory catagory, Location location, float volume, float pitch) {
-        OutboundPacket packet = new OutboundPacket(PacketType.SOUND_EFFECT, new VarInt(sound.getId()), new VarInt(catagory.getId()), location.getBlockX() * 8, location.getBlockY() * 8, location.getBlockZ() * 8, volume, pitch);
-        sendPacket(packet);
+    public void playSound(Sound sound, SoundCategory category, Location location, float volume, float pitch) {
+        sendPacket(new PacketSoundEffect(this,sound,category,location,volume,pitch));
     }
 
     public void sendTitle(String title, String subtitle, int fadein, int stay, int fadeout) {
-        OutboundPacket settile = new OutboundPacket(PacketType.TITLE, new VarInt(0), TextMessage.text(title));
-        OutboundPacket setsubtitle = new OutboundPacket(PacketType.TITLE, new VarInt(1), TextMessage.text(subtitle));
-        OutboundPacket settimesanddisplay = new OutboundPacket(PacketType.TITLE, new VarInt(2), fadein, stay, fadeout);
-        sendPacket(settile);
-        sendPacket(setsubtitle);
-        //sendPacket(settimesanddisplay);
+        if (protocolVersion <= 760) {
+            OutboundPacket settile = new OutboundPacket(PacketType.TITLE, protocolVersion, new VarInt(0), TextMessage.text(title));
+            OutboundPacket setsubtitle = new OutboundPacket(PacketType.TITLE, protocolVersion, new VarInt(1), TextMessage.text(subtitle));
+            OutboundPacket settimesanddisplay = new OutboundPacket(PacketType.TITLE, protocolVersion, new VarInt(2), fadein, stay, fadeout);
+            sendPacket(settile);
+            sendPacket(setsubtitle);
+        } else {
+            sendPacket(new PacketSetTitleText(this, title));
+            sendPacket(new PacketSetTitleSubtitle(this, subtitle));
+        }
     }
 
     public void teleport(Location location) {
-        OutboundPacket positionAndLook = new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch(), (byte) (0), new VarInt(1));
-        sendPacket(positionAndLook);
+       // OutboundPacket positionAndLook = new OutboundPacket(PacketType.PLAYER_POSITION_AND_LOOK, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch(), (byte) (0), new VarInt(1));
+        playerEntity.teleport(location);
+        sendPacket(new PacketPlayerPositionAndLook(this));
         //playerEntity.teleport(location);
     }
 
@@ -322,12 +317,11 @@ public class Player extends OfflinePlayer implements CommandSender {
         //TODO: Spectator Target
     }
 
-    public void kick(String message){
-        PlayerKickEvent kickEvent = new PlayerKickEvent(this,message,this.getName()+" has been kicked");
+    public void kick(String message) {
+        PlayerKickEvent kickEvent = new PlayerKickEvent(this, message, this.getName() + " has been kicked");
         EventBus.INSTANCE.post(kickEvent);
-        if(!kickEvent.isCancelled()){
-            OutboundPacket disconnectPacket = new OutboundPacket(PacketType.DISCONNECT,kickEvent.getReason());
-            PacketUtil.writePacketToOutputStream(getConnection(), disconnectPacket);
+        if (!kickEvent.isCancelled()) {
+            PacketUtil.writePacketToOutputStream(getConnection(), new PacketDisconnect(this,kickEvent.getReason()));
             Omega.removePlayer(this);
         }
     }
@@ -420,27 +414,61 @@ public class Player extends OfflinePlayer implements CommandSender {
         return playerEntity.getLocation();
     }
 
-    @Override public boolean isOp() {return permissionStore.isOp();}
+    @Override
+    public boolean isOp() {
+        return permissionStore.isOp();
+    }
 
-    @Override public void setOp(boolean op) {permissionStore.setOp(op);}
+    @Override
+    public void setOp(boolean op) {
+        permissionStore.setOp(op);
+    }
 
-    @Override public void allowPermission(@NotNull String permission) {permissionStore.allowPermission(permission);}
+    @Override
+    public void allowPermission(@NotNull String permission) {
+        permissionStore.allowPermission(permission);
+    }
 
-    @Override public void allowPermission(@NotNull Permission permission) {permissionStore.allowPermission(permission);}
+    @Override
+    public void allowPermission(@NotNull Permission permission) {
+        permissionStore.allowPermission(permission);
+    }
 
-    @Override public void denyPermission(@NotNull String permission) {permissionStore.denyPermission(permission);}
+    @Override
+    public void denyPermission(@NotNull String permission) {
+        permissionStore.denyPermission(permission);
+    }
 
-    @Override public void denyPermission(@NotNull Permission permission) {permissionStore.denyPermission(permission);}
+    @Override
+    public void denyPermission(@NotNull Permission permission) {
+        permissionStore.denyPermission(permission);
+    }
 
-    @Override public PermissionState getState(@NotNull Permission permission) {return permissionStore.getState(permission);}
+    @Override
+    public PermissionState getState(@NotNull Permission permission) {
+        return permissionStore.getState(permission);
+    }
 
-    @Override public PermissionState getState(@NotNull String permission) {return permissionStore.getState(permission);}
+    @Override
+    public PermissionState getState(@NotNull String permission) {
+        return permissionStore.getState(permission);
+    }
 
-    @Override public boolean hasPermission(@NotNull Permission permission) {return permissionStore.hasPermission(permission);}
+    @Override
+    public boolean hasPermission(@NotNull Permission permission) {
+        return permissionStore.hasPermission(permission);
+    }
 
-    @Override public boolean hasPermission(@NotNull String permission) {return permissionStore.hasPermission(permission);}
+    @Override
+    public boolean hasPermission(@NotNull String permission) {
+        return permissionStore.hasPermission(permission);
+    }
 
     public boolean isKicked() {
         return connected;
+    }
+
+    public float getSaturation() {
+        return foodSaturation;
     }
 }

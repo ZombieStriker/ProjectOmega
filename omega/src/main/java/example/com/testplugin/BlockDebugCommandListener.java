@@ -25,7 +25,7 @@ public class BlockDebugCommandListener extends ExecutableCommand {
             throw new CommandException("You must be a player to use this command!");
         }
         Player player = (Player) sender;
-        player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Position(1, 17, 1), new VarInt(32)));
+       // player.sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Position(1, 17, 1), new VarInt(32)));
         for (int x = 0; x < 32; x++) {
             for (int z = 0; z < 256; z++) {
                 //   event.getPlayer().sendPacket(new OutboundPacket(PacketType.BLOCK_CHANGE, new Position(x,17,z), new VarInt(x + z*32)));

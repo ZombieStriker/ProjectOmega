@@ -9,8 +9,10 @@ import com.projectomega.main.game.chunk.ChunkManager;
 import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.datatype.VarInt;
+import com.projectomega.main.packets.types.PacketUpdateViewPosition;
 import com.projectomega.main.task.Duration;
 
+import javax.xml.stream.Location;
 import java.util.ArrayList;
 
 public class ChunkManagerListener {
@@ -42,7 +44,7 @@ public class ChunkManagerListener {
                 }
             }
             Omega.getTaskManager().getMainThread().runTaskLater(() -> {
-                event.getPlayer().sendPacket(new OutboundPacket(PacketType.UPDATE_VIEW_POSITION, new VarInt(newLocationChunk.getX()), new VarInt(newLocationChunk.getZ())));
+                event.getPlayer().sendPacket(new PacketUpdateViewPosition(event.getPlayer()));
             }, Duration.ticks(5));
         }
     }

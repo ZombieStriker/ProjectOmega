@@ -1,4 +1,4 @@
-package com.projectomega.main.packets.types;
+package com.projectomega.main.packets.handlers;
 
 import com.projectomega.main.packets.*;
 import io.netty.buffer.ByteBuf;
@@ -6,8 +6,8 @@ import io.netty.channel.Channel;
 
 import java.util.List;
 
-public class PacketHeldItemChange extends PacketHandler {
-    public PacketHeldItemChange() {
+public class PacketHeldItemChangeHandler extends PacketHandler {
+    public PacketHeldItemChangeHandler() {
         super(PacketType.HELD_ITEM_CHANGE_SERVERBOUND);
     }
 
