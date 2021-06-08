@@ -170,7 +170,7 @@ public class Omega extends Thread {
         System.out.println("Starting Server...");
         PacketLogicManager.init();
         GameLogic.init();
-        BlockByBlockBuilder.init();
+        //BlockByBlockBuilder.init();
         pluginManager.searchPlugins();
         pluginManager.enablePlugins();
         while (true) {

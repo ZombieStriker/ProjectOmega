@@ -7,6 +7,7 @@ import com.projectomega.main.packets.OutboundPacket;
 import com.projectomega.main.packets.PacketType;
 import com.projectomega.main.packets.PacketUtil;
 import com.projectomega.main.packets.datatype.*;
+import com.projectomega.main.versions.ProtocolManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import me.nullicorn.nedit.type.NBTCompound;
@@ -19,7 +20,7 @@ public class World {
     private final List<Region> regions = new ArrayList<>();
     private final String name;
     private final List<Entity> entities = new ArrayList<>();
-    private Location spawn = Location.at(-5,16,-5,this);
+    private Location spawn = Location.at(-5, 16, -5, this);
 
     public World(String name) {
         this.name = name;
@@ -33,7 +34,7 @@ public class World {
         Region region = getRegion(position.getRegionX(), position.getRegionZ());
         int x = position.getX();
         int z = position.getZ();
-        Chunk chunk = region.getOrLoadChunk(x,z);
+        Chunk chunk = region.getOrLoadChunk(x, z);
         NBTCompound heightmap = new NBTCompound();
         //NBTList motion_blocking = new NBTList(TagType.LONG);
         long[] motion_blocking = new long[36];
@@ -46,7 +47,7 @@ public class World {
             biomes[i] = new VarInt(0);
         }
         ByteBuf data = Unpooled.buffer();
-        int length = createChunkSectionStructure(data);
+        int length = createChunkSectionStructure(chunk,16,player, data);
         byte[] b = new byte[length];
         for (int i = 0; i < length; i++) {
             b[i] = data.getByte(i);
@@ -55,7 +56,7 @@ public class World {
         NBTCompound blockentities = new NBTCompound();
         //  player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, new Object[]{x,z,false,new VarInt(255),heightmap,new VarInt(length),b,new VarInt(0)}));
 
-        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(1), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
+        player.sendPacket(new OutboundPacket(PacketType.CHUNK_DATA, x, z, true, new VarInt(65535), heightmap, new VarInt(biomes.length), biomes, new VarInt(length), b, new VarInt(0)));
         //sendBlocks(chunk,player);
 
 
@@ -65,63 +66,66 @@ public class World {
 
     private void sendBlocks(Chunk chunk, Player player) {
         List<VarLong> varLongs = new ArrayList<>();
-        for(int x = 0; x < 16; x++){
-            for(int y = 0; y < 16; y++){
-                for(int z = 0; z < 16; z++){
-                    varLongs.add(PacketUtil.encodeBlockToBlocksArray(player.getProtocolVersion(), chunk.getBlockAtChunkRelative(x,y,z)));
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 16; y++) {
+                for (int z = 0; z < 16; z++) {
+                    varLongs.add(PacketUtil.encodeBlockToBlocksArray(player.getProtocolVersion(), chunk.getBlockAtChunkRelative(x, y, z)));
                 }
             }
         }
-        OutboundPacket multiblockChange = new OutboundPacket(PacketType.MULTI_BLOCK_CHANGE, PacketUtil.getChunkSectionPositionAsALong(chunk,0),false,new VarInt(varLongs.size()),varLongs.toArray(new VarLong[varLongs.size()]));
+        OutboundPacket multiblockChange = new OutboundPacket(PacketType.MULTI_BLOCK_CHANGE, PacketUtil.getChunkSectionPositionAsALong(chunk, 0), false, new VarInt(varLongs.size()), varLongs.toArray(new VarLong[varLongs.size()]));
         player.sendPacket(multiblockChange);
     }
 
-    private int createChunkSectionStructure(ByteBuf data) {
-        byte bitsperblock = 8;
-
-        int palletelength = 0;
-        List<Integer> pallete = new ArrayList<>();
-        if (bitsperblock <= 4) {
-
-        } else if (bitsperblock <= 8) {
-            pallete.add(0);
-            pallete.add(1);
-            palletelength = pallete.size();
-        } else {
-            //Direct
-            //No fields
-        }
-        int dataarraylength = 4096;
-        long[] dataarray = new long[4096];
-        for (int i = 0; i < dataarray.length; i++) {
-            dataarray[i] = i % palletelength;
-        }
-
-        byte[] blocklight = new byte[4096 / 2];
-        byte[] skylight = new byte[4096 / 2];
-        for (int i = 0; i < blocklight.length; i++) {
-            blocklight[i] = 127;
-            skylight[i] = 127;
-        }
-
+    private int createChunkSectionStructure(Chunk chunk, int sections, Player player, ByteBuf data) {
         int offset = 0;
-        offset += PacketUtil.addShortToByteArray(data,offset, (short) 4096);
-        offset += PacketUtil.addByteToByteArray(data, offset, new UnsignedByte(bitsperblock).getUnsignedByte());
-        offset += PacketUtil.writeVarInt(data, offset, palletelength);
-        for (int i = 0; i < palletelength; i++) {
-            offset += PacketUtil.writeVarInt(data, offset, pallete.get(i));
-        }
-        offset += PacketUtil.writeVarInt(data, offset, dataarraylength);
-        for (long d : dataarray) {
-            offset += PacketUtil.writeLong(data, offset, d);
-        }
-       /* for (int i = 0; i < blocklight.length; i++) {
-            offset += PacketUtil.addByteToByteArray(data, offset, blocklight[i]);
-        }
-        for (int i = 0; i < skylight.length; i++) {
-            offset += PacketUtil.addByteToByteArray(data, offset, skylight[i]);
-        }*/
+        for(int section = 0; section < sections; section++) {
+            byte bitsperblock = 8;
 
+            int palletelength = 0;
+            int[] pallet = new int[256];
+            int[] indexes = new int[16 * 16 * 16];
+            List<Material> materials = new ArrayList<>();
+            for (int x = 0; x < 16; x++) {
+                for (int y = 0; y < 16; y++) {
+                    for (int z = 0; z < 16; z++) {
+                        Block block = chunk.getBlockAtChunkRelative(x, y + (section * 16), z);
+                        if (!materials.contains(block.getType())) {
+                            materials.add(block.getType());
+                        }
+                        indexes[x + (z * 16) + (y * 16 * 16)] = materials.indexOf(block.getType());
+                    }
+                }
+            }
+            for (int i = 0; i < Math.min(256, materials.size()); i++) {
+                pallet[i] = ProtocolManager.getBlockIDByType(player.getProtocolVersion(), materials.get(i));
+            }
+            palletelength = materials.size();
+            if (bitsperblock <= 4) {
+            } else if (bitsperblock <= 8) {
+            } else {
+                //Direct
+                //No fields
+            }
+            int dataarraylength = 4096 * bitsperblock / 64;
+            long[] dataarray = new long[4096 * bitsperblock / 64];
+            for (int i = 0; i < dataarray.length; i++) {
+                dataarray[i] = 0;
+                for (int j = 0; j < 64 / bitsperblock; j++) {
+                    dataarray[i] = dataarray[i] << bitsperblock | (indexes[(i * (64 / bitsperblock) + j)]);
+                }
+            }
+            offset += PacketUtil.addShortToByteArray(data, offset, (short) 4096);
+            offset += PacketUtil.addByteToByteArray(data, offset, bitsperblock);
+            offset += PacketUtil.writeVarInt(data, offset, palletelength);
+            for (int i = 0; i < palletelength; i++) {
+                offset += PacketUtil.writeVarInt(data, offset, pallet[i]);
+            }
+            offset += PacketUtil.writeVarInt(data, offset, dataarraylength);
+            for (long d : dataarray) {
+                offset += PacketUtil.writeLong(data, offset, d);
+            }
+        }
 
         return offset;
     }
@@ -210,12 +214,12 @@ public class World {
     }
 
     public Chunk getChunkAt(int x, int z) {
-        int regionx = x/32;
-        if (regionx<0)
-            regionx-=1;
-        int regionz = z/32;
-        if (regionz<0)
-            regionz-=1;
-        return getRegion(regionx,regionz).getOrLoadChunk(x,z);
+        int regionx = x / 32;
+        if (regionx < 0)
+            regionx -= 1;
+        int regionz = z / 32;
+        if (regionz < 0)
+            regionz -= 1;
+        return getRegion(regionx, regionz).getOrLoadChunk(x, z);
     }
 }

@@ -12,6 +12,7 @@ public class PlayerCollidesWithBlocksListener {
             return;
         if(!event.getPlayer().getLocation().getBlock().getType().isSolid() && event.getNewLocation().getBlock().getType().isSolid()){
             event.setCancelled(true);
+            ChunkManager.unloadChunk(event.getNewLocation().getChunk(), event.getPlayer());
             ChunkManager.loadChunk(event.getNewLocation().getChunk(), event.getPlayer());
         }
     }
