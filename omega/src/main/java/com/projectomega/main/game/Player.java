@@ -247,7 +247,7 @@ public class Player extends OfflinePlayer implements CommandSender {
     @Override
     public void issueCommand(String command) {
         try {
-            Omega.getCommandHandler().execute(this, command.substring(1));
+            Omega.getCommandHandler().execute(this, command);
         } catch (CommandException e) {
             sendMessage(e.getMessage());
         }

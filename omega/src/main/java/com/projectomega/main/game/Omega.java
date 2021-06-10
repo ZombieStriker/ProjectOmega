@@ -1,13 +1,12 @@
 package com.projectomega.main.game;
 
+import com.projectomega.main.Main;
 import com.projectomega.main.command.OmegaCommandHandler;
 import com.projectomega.main.events.EventBus;
 import com.projectomega.main.events.types.PlayerQuitEvent;
 import com.projectomega.main.game.chat.BossBar;
 import com.projectomega.main.game.chat.BossBarColor;
 import com.projectomega.main.game.chat.BossBarDivisions;
-import com.projectomega.main.game.chat.TextMessage;
-import com.projectomega.main.game.chunk.BlockByBlockBuilder;
 import com.projectomega.main.game.chunk.ChunkManager;
 import com.projectomega.main.game.logic.GameLogic;
 import com.projectomega.main.game.packetlogic.PacketLogicManager;
@@ -86,18 +85,18 @@ public class Omega extends Thread {
     }
 
     public static World createWorld(String name) {
-        File worldFolder = new File(getServerDirectory(),name);
-        if(!worldFolder.exists()){
+        File worldFolder = new File(getServerDirectory(), name);
+        if (!worldFolder.exists()) {
             makeWorldFolder(worldFolder);
         }
-        World world = new World(name,worldFolder);
+        World world = new World(name, worldFolder);
         worlds.add(world);
         return world;
     }
 
     public static void makeWorldFolder(File worldFolder) {
         worldFolder.mkdirs();
-        File regionsFolder = new File(worldFolder,"region");
+        File regionsFolder = new File(worldFolder, "region");
         regionsFolder.mkdirs();
     }
 
@@ -127,7 +126,7 @@ public class Omega extends Thread {
     private static void broadcastMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new PacketChatClientBound(player,s,0,player.getUuid()));//new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0, player.getUuid()));
+                player.sendPacket(new PacketChatClientBound(player, s, 0, player.getUuid()));//new OutboundPacket(PacketType.CHAT_CLIENTBOUND, TextMessage.translate("text", s), (byte) 0, player.getUuid()));
             }
         }
     }
@@ -136,7 +135,7 @@ public class Omega extends Thread {
     public static void broadcastJSONMessage(String s) {
         for (Player player : players) {
             if (player.getChatmode() == 0) {
-                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND,player.getProtocolVersion(), s, (byte) 0, player.getUuid()));
+                player.sendPacket(new OutboundPacket(PacketType.CHAT_CLIENTBOUND, player.getProtocolVersion(), s, (byte) 0, player.getUuid()));
             }
         }
     }
@@ -161,7 +160,7 @@ public class Omega extends Thread {
     }
 
     public static File getServerDirectory() {
-        return getJarFile().getParentFile();
+        return Main.getRunDirectory();
     }
 
     public static List<Player> getPlayers() {
