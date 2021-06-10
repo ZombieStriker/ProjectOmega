@@ -10,6 +10,8 @@ import java.util.Objects;
 
 public class LoaderBootstrap implements OmegaBootstrap {
 
+    private final File runDirectory;
+
     private static final DependencyData DEPENDENCY_DATA = DependencyData.builder()
 
             .repository("https://jitpack.io")
@@ -29,16 +31,22 @@ public class LoaderBootstrap implements OmegaBootstrap {
 
             .build();
 
+    public LoaderBootstrap(File runDirectory) {
+        this.runDirectory = runDirectory;
+    }
+
     @Override public void start() {
         ClassPathAppender appender = new JarInJarClassPathAppender(getClass().getClassLoader());
-        File libsFolder = new File("libs");
+        File libsFolder = new File(runDirectory, "libs");
         libsFolder.mkdirs();
+        File plugins = new File(runDirectory, "plugins");
+        plugins.mkdirs();
         try {
             if (!libsFolder.exists() || Objects.requireNonNull(libsFolder.listFiles()).length == 0) {
                 System.out.println("Downloading libraries... please wait.");
             }
             DEPENDENCY_DATA.load(libsFolder, null, appender);
-            Main.main();
+            new Main(runDirectory);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
