@@ -1,6 +1,8 @@
 
 package com.projectomega.bootstrap;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,7 +66,8 @@ public class JarInJarClassLoader extends URLClassLoader {
      * @param bootstrapClass the name of the bootstrap plugin class
      * @return the instantiated bootstrap plugin
      */
-    public OmegaBootstrap instantiate(String bootstrapClass) throws LoadingException {
+    public OmegaBootstrap instantiate(String bootstrapClass,
+                                      @NotNull File runDirectory) throws LoadingException {
         Class<?> bootstrap;
         try {
             bootstrap = loadClass(bootstrapClass);
@@ -74,13 +77,13 @@ public class JarInJarClassLoader extends URLClassLoader {
 
         Constructor<?> constructor;
         try {
-            constructor = bootstrap.getConstructor();
+            constructor = bootstrap.getConstructor(File.class);
         } catch (ReflectiveOperationException e) {
             throw new LoadingException("Unable to get bootstrap constructor", e);
         }
 
         try {
-            return (OmegaBootstrap) constructor.newInstance();
+            return (OmegaBootstrap) constructor.newInstance(runDirectory);
         } catch (ReflectiveOperationException e) {
             throw new LoadingException("Unable to create bootstrap plugin instance", e);
         }
